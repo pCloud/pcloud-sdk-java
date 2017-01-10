@@ -16,40 +16,12 @@
 
 package com.pcloud.sdk.api;
 
-import com.pcloud.sdk.authentication.Authenticator;
-import okhttp3.Cache;
-import okhttp3.ConnectionPool;
-import okhttp3.Dispatcher;
-import okhttp3.OkHttpClient;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
+import com.pcloud.sdk.internal.networking.GetFolderResponse;
+import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.POST;
 
 public interface ApiService {
 
-    Builder newBuilder();
-
-    interface Builder {
-        Builder cache(Cache cache);
-
-        Builder connectionPool(ConnectionPool connectionPool);
-
-        Builder dispatcher(Dispatcher dispatcher);
-
-        Builder withClient(OkHttpClient client);
-
-        Builder readTimeout(long timeout, TimeUnit timeUnit);
-
-        Builder writeTimeout(long timeout, TimeUnit timeUnit);
-
-        Builder connectTimeout(long timeout, TimeUnit timeUnit);
-
-        Builder retryOnFailure(boolean retryOnFailure);
-
-        Builder authenticator(Authenticator authenticator);
-
-        Builder callbackExecutor(Executor callbackExecutor);
-
-        ApiService create();
-    }
 }

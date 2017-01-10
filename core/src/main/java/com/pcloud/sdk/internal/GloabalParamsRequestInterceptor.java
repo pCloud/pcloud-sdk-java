@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-package com.pcloud.sdk.authentication;
+package com.pcloud.sdk.internal;
 
+import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.Route;
 
 import java.io.IOException;
 
-class OAuthAuthenticator extends RealAuthenticator implements okhttp3.Authenticator{
-
-    private String accessToken;
-
-    public OAuthAuthenticator(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
+class GloabalParamsRequestInterceptor implements Interceptor {
     @Override
-    public Request authenticate(Route route, Response response) throws IOException {
-        return response.request()
-                .newBuilder()
-                .header("Authorization", accessToken)
+    public Response intercept(Chain chain) throws IOException {
+        Request newRequest = chain.request()
+                .newBuilder().
+                addHeader("Cookie", "timeformat=timestamp; Domain=api.pcloud.com; Path=/; Secure; HttpOnly")
                 .build();
+        return chain.proceed(newRequest);
     }
 }

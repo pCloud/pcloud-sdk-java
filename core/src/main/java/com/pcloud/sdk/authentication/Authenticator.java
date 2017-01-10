@@ -16,21 +16,6 @@
 
 package com.pcloud.sdk.authentication;
 
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.Route;
+public abstract class Authenticator {
 
-import java.io.IOException;
-
-public interface Authenticator {
-
-    /**
-     * A default authenticator that doesn't do any authentication.
-     */
-    Authenticator DEFAULT = new RealAuthenticator() {
-        @Override
-        public Request authenticate(Route route, Response response) throws IOException {
-            return null;
-        }
-    };
 }

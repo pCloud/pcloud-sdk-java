@@ -16,5 +16,7 @@
 
 package com.pcloud.sdk.authentication;
 
-public abstract class RealAuthenticator implements Authenticator, okhttp3.Authenticator {
+import okhttp3.Interceptor;
+
+public abstract class RealAuthenticator extends Authenticator implements Interceptor {
 }

@@ -21,13 +21,13 @@ import java.util.List;
 public class RemoteFolder extends FileEntry{
 
     private Long folderId;
-    private List<RemoteFolder> children;
+    private List<FileEntry> children;
 
     public Long getFolderId() {
         return folderId;
     }
 
-    public List<RemoteFolder> getChildren() {
+    public List<FileEntry> getChildren() {
         return children;
     }
 

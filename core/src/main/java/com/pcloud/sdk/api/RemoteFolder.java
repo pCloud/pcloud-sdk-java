@@ -16,11 +16,19 @@
 
 package com.pcloud.sdk.api;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class RemoteFolder extends FileEntry{
 
+    @Expose
+    @SerializedName("folderid")
     private Long folderId;
+
+    @Expose
+    @SerializedName("contents")
     private List<FileEntry> children;
 
     public Long getFolderId() {

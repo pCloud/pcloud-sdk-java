@@ -20,12 +20,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pcloud.sdk.api.ApiService;
 import com.pcloud.sdk.api.ApiServiceBuilder;
+import com.pcloud.sdk.api.FileEntry;
+import com.pcloud.sdk.internal.networking.DateTypeAdapter;
+import com.pcloud.sdk.internal.networking.FileEntryDeserializer;
 import com.pcloud.sdk.authentication.RealAuthenticator;
 import okhttp3.*;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -133,13 +137,14 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
         }
 
         httpClientBuilder.authenticator(Authenticator.NONE);
-        httpClientBuilder.interceptors().clear();
         if (authenticator != null) {
             httpClientBuilder.addInterceptor((RealAuthenticator)authenticator);
         }
 
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
+                .registerTypeAdapter(FileEntry.class, new FileEntryDeserializer())
+                .registerTypeAdapter(Date.class, new DateTypeAdapter())
                 .create();
 
         Retrofit.Builder retrofitBuilder = new Retrofit.Builder()

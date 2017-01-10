@@ -16,11 +16,33 @@
 
 import com.pcloud.sdk.PCloudApi;
 import com.pcloud.sdk.api.ApiService;
+import com.pcloud.sdk.api.FileEntry;
+import com.pcloud.sdk.api.RemoteFolder;
+import com.pcloud.sdk.authentication.Authenticator;
+import com.pcloud.sdk.internal.networking.GetFolderResponse;
+
+import java.io.IOException;
 
 public class Main {
 
     public static void main(String... args) {
         ApiService apiService = PCloudApi.newApiService()
+                .authenticator(Authenticator.newOAuthAuthenticator("sometoken"))
                 .create();
+
+        try {
+            GetFolderResponse response =  apiService.listFolder(0, true).execute().body();
+
+            if (response.isSuccessful()) {
+                for (FileEntry entry : response.getFolder().getChildren()) {
+                    System.out.format("%s | Created:%s | Modified: %s | size:%s", entry.getName(), entry.getCreated(), entry.getLastModified(), entry.isFile() ? String.valueOf(entry.asFile().getSize()) : "-");
+                }
+            } else {
+                System.out.format("Response error: %d - %s", response.getStatusCode(), response.getMessage());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk.internal.networking;
 
-import com.pcloud.sdk.internal.networking.GetFolderResponse;
-import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.POST;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import com.pcloud.sdk.api.RemoteFolder;
 
-public interface ApiService {
+public class GetFolderResponse extends ApiResponse {
 
-    @POST("listfolder")
-    @FormUrlEncoded
-    Call<GetFolderResponse> listFolder(@Field("folderid") long folderId, @Field("recursive") boolean recursive);
+    @Expose
+    @SerializedName("metadata")
+    private RemoteFolder folder;
+
+    public RemoteFolder getFolder() {
+        return folder;
+    }
 }

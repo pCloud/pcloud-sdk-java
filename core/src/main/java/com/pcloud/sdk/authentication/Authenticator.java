@@ -18,4 +18,7 @@ package com.pcloud.sdk.authentication;
 
 public abstract class Authenticator {
 
+    public static Authenticator newOAuthAuthenticator(String accessToken){
+        return new AccessTokenAuthenticator(accessToken);
+    }
 }

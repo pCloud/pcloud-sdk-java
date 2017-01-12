@@ -27,13 +27,14 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String... args) {
+        String token = System.getenv("pcloud_token");
         ApiService apiService = PCloudApi.newApiService()
-                .authenticator(Authenticator.newOAuthAuthenticator("sometoken"))
+                .authenticator(Authenticator.newOAuthAuthenticator(token))
                 .create();
         try {
             RemoteFolder folder = apiService.getFolder(0).execute();
             for (FileEntry entry : folder.getChildren()) {
-                System.out.format("%s | Created:%s | Modified: %s | size:%s", entry.getName(), entry.getCreated(), entry.getLastModified(), entry.isFile() ? String.valueOf(entry.asFile().getSize()) : "-");
+                System.out.format("%s | Created:%s | Modified: %s | size:%s\n", entry.getName(), entry.getCreated(), entry.getLastModified(), entry.isFile() ? String.valueOf(entry.asFile().getSize()) : "-");
             }
         } catch (IOException e) {
             e.printStackTrace();

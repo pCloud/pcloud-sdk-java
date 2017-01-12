@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk.internal;
 
-import java.util.List;
+import com.pcloud.sdk.api.ApiError;
+import okhttp3.Response;
 
-public interface ApiService {
+import java.io.IOException;
 
-    Call<RemoteFolder> getFolder(long folderId);
-    Call<List<FileEntry>> listFiles(RemoteFolder folder);
-
-    ApiServiceBuilder newBuilder();
+public interface ResponseAdapter<T> {
+    T adapt(Response response) throws IOException, ApiError;
 }

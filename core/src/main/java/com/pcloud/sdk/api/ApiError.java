@@ -16,12 +16,24 @@
 
 package com.pcloud.sdk.api;
 
-import java.util.List;
+import java.util.Locale;
 
-public interface ApiService {
+public class ApiError extends Exception {
 
-    Call<RemoteFolder> getFolder(long folderId);
-    Call<List<FileEntry>> listFiles(RemoteFolder folder);
+    private int errorCode;
+    private String errorMessage;
 
-    ApiServiceBuilder newBuilder();
+    public ApiError(int errorCode, String errorMessage) {
+        super(String.format(Locale.US, "%d - %s", errorCode, errorMessage));
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 }

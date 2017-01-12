@@ -15,6 +15,7 @@
  */
 
 import com.pcloud.sdk.PCloudApi;
+import com.pcloud.sdk.api.ApiError;
 import com.pcloud.sdk.api.ApiService;
 import com.pcloud.sdk.api.FileEntry;
 import com.pcloud.sdk.api.RemoteFolder;
@@ -29,20 +30,15 @@ public class Main {
         ApiService apiService = PCloudApi.newApiService()
                 .authenticator(Authenticator.newOAuthAuthenticator("sometoken"))
                 .create();
-
         try {
-            GetFolderResponse response =  apiService.listFolder(0, true).execute().body();
-
-            if (response.isSuccessful()) {
-                for (FileEntry entry : response.getFolder().getChildren()) {
-                    System.out.format("%s | Created:%s | Modified: %s | size:%s", entry.getName(), entry.getCreated(), entry.getLastModified(), entry.isFile() ? String.valueOf(entry.asFile().getSize()) : "-");
-                }
-            } else {
-                System.out.format("Response error: %d - %s", response.getStatusCode(), response.getMessage());
+            RemoteFolder folder = apiService.getFolder(0).execute();
+            for (FileEntry entry : folder.getChildren()) {
+                System.out.format("%s | Created:%s | Modified: %s | size:%s", entry.getName(), entry.getCreated(), entry.getLastModified(), entry.isFile() ? String.valueOf(entry.asFile().getSize()) : "-");
             }
-
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ApiError apiError) {
+            apiError.printStackTrace();
         }
     }
 }

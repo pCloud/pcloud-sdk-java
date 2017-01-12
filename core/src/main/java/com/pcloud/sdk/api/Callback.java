@@ -16,12 +16,8 @@
 
 package com.pcloud.sdk.api;
 
-import java.util.List;
+public interface Callback<T> {
+    void onResponse(Call<T> call, T response);
 
-public interface ApiService {
-
-    Call<RemoteFolder> getFolder(long folderId);
-    Call<List<FileEntry>> listFiles(RemoteFolder folder);
-
-    ApiServiceBuilder newBuilder();
+    void onFailure(Call<T> call, Throwable t);
 }

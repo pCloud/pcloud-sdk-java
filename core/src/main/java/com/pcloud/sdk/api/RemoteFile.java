@@ -16,11 +16,25 @@
 
 package com.pcloud.sdk.api;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class RemoteFile extends FileEntry {
 
+    @Expose
+    @SerializedName("fileid")
     private Long fileId;
+
+    @Expose
+    @SerializedName("contenttype")
     private String contentType;
+
+    @Expose
+    @SerializedName("size")
     private long size;
+
+    @Expose
+    @SerializedName("hash")
     private long hash;
 
     public Long getFileId() {

@@ -184,6 +184,30 @@ class RealApiService implements ApiService {
     }
 
     @Override
+    public Call<RemoteFolder> copyFolder(long folderId, long toFolderId) {
+        return newCall(createCopyFolderRequest(folderId, toFolderId), new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
+    }
+
+    private Request createCopyFolderRequest(long folderId, long toFolderId) {
+        RequestBody body =  new FormBody.Builder()
+                .add("folderid", String.valueOf(folderId))
+                .add("tofolderid", String.valueOf(toFolderId))
+                .build();
+
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("copyfolder")
+                        .build())
+                .post(body)
+                .build();
+    }
+
+    @Override
     public ApiServiceBuilder newBuilder() {
         throw new UnsupportedOperationException();
     }

@@ -26,6 +26,7 @@ public interface ApiService {
     Call<RemoteFolder> deleteFolder(long folderId);
     Call<RemoteFolder> renameFolder(long folderId, String newFolderName);
     Call<RemoteFolder> moveFolder(long folderId, long toFolderId);
+    Call<RemoteFolder> copyFolder(long folderId, long toFolderId);
 
     ApiServiceBuilder newBuilder();
 }

@@ -106,6 +106,29 @@ class RealApiService implements ApiService {
                 .post(body)
                 .build();
     }
+
+    @Override
+    public Call<RemoteFolder> deleteFolder(long folderId) {
+        return newCall(createDeleteFolderRequest(folderId), new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
+    }
+
+    private Request createDeleteFolderRequest(long folderId) {
+        RequestBody body = new FormBody.Builder()
+                .add("folderid", String.valueOf(folderId))
+                .build();
+
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("deletefolder")
+                        .build())
+                .post(body)
+                .build();
+    }
                         .build())
                 .get()
                 .build();

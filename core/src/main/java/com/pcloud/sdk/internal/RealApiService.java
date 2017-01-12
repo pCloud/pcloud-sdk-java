@@ -22,9 +22,11 @@ import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.api.Call;
 import com.pcloud.sdk.internal.networking.ApiResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
+
 import okhttp3.HttpUrl;
 import okhttp3.*;
 import okhttp3.Request;
+import okio.BufferedSink;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -129,8 +131,31 @@ class RealApiService implements ApiService {
                 .post(body)
                 .build();
     }
+
+    @Override
+    public Call<RemoteFolder> renameFolder(long folderId, String newFolderName) {
+        if (newFolderName == null) {
+            throw new IllegalArgumentException("Folder name is null");
+        }
+        return newCall(createRenameFolderRequest(folderId, newFolderName), new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
+    }
+
+    private Request createRenameFolderRequest(long folderId, String newFolderName) {
+        RequestBody body = new FormBody.Builder()
+                .add("folderid", String.valueOf(folderId))
+                .add("toname", newFolderName)
+                .build();
+
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("renamefolder")
                         .build())
-                .get()
+                .post(body)
                 .build();
     }
 
@@ -147,7 +172,7 @@ class RealApiService implements ApiService {
         Call<T> apiCall = new OkHttpCall<>(httpClient.newCall(request), adapter);
         if (callbackExecutor != null) {
             return new ExecutorCallbackCall<>(apiCall, callbackExecutor);
-        }else {
+        } else {
             return apiCall;
         }
     }

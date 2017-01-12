@@ -15,14 +15,12 @@
  */
 
 import com.pcloud.sdk.PCloudApi;
-import com.pcloud.sdk.api.ApiError;
-import com.pcloud.sdk.api.ApiService;
-import com.pcloud.sdk.api.FileEntry;
-import com.pcloud.sdk.api.RemoteFolder;
+import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.authentication.Authenticator;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 public class Main {
 
@@ -32,14 +30,32 @@ public class Main {
                 .authenticator(Authenticator.newOAuthAuthenticator(token))
                 .create();
         try {
-            RemoteFolder folder = apiService.getFolder(0).execute();
-            for (FileEntry entry : folder.getChildren()) {
-                System.out.format("%s | Created:%s | Modified: %s | size:%s\n", entry.getName(), entry.getCreated(), entry.getLastModified(), entry.isFile() ? String.valueOf(entry.asFile().getSize()) : "-");
-            }
+            RemoteFolder folder = apiService.getFolder(RemoteFolder.ROOT_FOLDER_ID).execute();
+            printFolder(folder);
+
+            RemoteFile newFile = uploadData(apiService);
+            printFileAttributes(newFile);
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ApiError apiError) {
             apiError.printStackTrace();
         }
+    }
+
+    private static void printFolder(RemoteFolder folder) throws IOException, ApiError {
+        for (FileEntry entry : folder.getChildren()) {
+            printFileAttributes(entry);
+        }
+    }
+
+    private static void printFileAttributes(FileEntry entry) {
+        System.out.format("%s | Created:%s | Modified: %s | size:%s\n", entry.getName(), entry.getCreated(), entry.getLastModified(), entry.isFile() ? String.valueOf(entry.asFile().getSize()) : "-");
+    }
+
+    private static RemoteFile uploadData(ApiService apiService) throws IOException, ApiError {
+        String someText = "An empty text file";
+        byte[] fileContents = someText.getBytes();
+        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, "someText.txt", Data.create(fileContents)).execute();
     }
 }

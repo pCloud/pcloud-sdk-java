@@ -14,35 +14,21 @@
  * limitations under the License.
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk.internal.networking;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.pcloud.sdk.api.RemoteFile;
 
 import java.util.List;
 
-public class RemoteFolder extends FileEntry{
-
-    public static final int ROOT_FOLDER_ID = 0;
+public class UploadFilesResponse extends ApiResponse {
 
     @Expose
-    @SerializedName("folderid")
-    private Long folderId;
+    @SerializedName("metadata")
+    private List<RemoteFile> uploadedFiles;
 
-    @Expose
-    @SerializedName("contents")
-    private List<FileEntry> children;
-
-    public Long getFolderId() {
-        return folderId;
-    }
-
-    public List<FileEntry> getChildren() {
-        return children;
-    }
-
-    @Override
-    public final RemoteFolder asFolder() {
-        return this;
+    public List<RemoteFile> getUploadedFiles() {
+        return uploadedFiles;
     }
 }

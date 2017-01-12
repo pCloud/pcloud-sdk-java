@@ -21,7 +21,12 @@ import java.util.List;
 public interface ApiService {
 
     Call<RemoteFolder> getFolder(long folderId);
+
     Call<List<FileEntry>> listFiles(RemoteFolder folder);
+
+    Call<RemoteFile> createFile(RemoteFolder folder, String filename, Data data);
+
+    Call<RemoteFile> createFile(long folderId, String filename, Data data);
 
     ApiServiceBuilder newBuilder();
 }

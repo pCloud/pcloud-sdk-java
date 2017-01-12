@@ -14,35 +14,23 @@
  * limitations under the License.
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk.internal;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import java.io.Closeable;
 
-import java.util.List;
+public final class IOUtils {
 
-public class RemoteFolder extends FileEntry{
-
-    public static final int ROOT_FOLDER_ID = 0;
-
-    @Expose
-    @SerializedName("folderid")
-    private Long folderId;
-
-    @Expose
-    @SerializedName("contents")
-    private List<FileEntry> children;
-
-    public Long getFolderId() {
-        return folderId;
+    private IOUtils() {
     }
 
-    public List<FileEntry> getChildren() {
-        return children;
-    }
-
-    @Override
-    public final RemoteFolder asFolder() {
-        return this;
+    public static void closeQuietly(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (RuntimeException rethrown) {
+                throw rethrown;
+            } catch (Exception ignored) {
+            }
+        }
     }
 }

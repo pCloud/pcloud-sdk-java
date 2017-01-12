@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pcloud.sdk.internal.networking;
+package com.pcloud.sdk.internal.networking.serialization;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

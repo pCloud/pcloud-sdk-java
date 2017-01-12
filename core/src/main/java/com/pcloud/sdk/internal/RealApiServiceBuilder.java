@@ -21,11 +21,13 @@ import com.google.gson.GsonBuilder;
 import com.pcloud.sdk.api.ApiService;
 import com.pcloud.sdk.api.ApiServiceBuilder;
 import com.pcloud.sdk.api.FileEntry;
-import com.pcloud.sdk.internal.networking.DateTypeAdapter;
-import com.pcloud.sdk.internal.networking.FileEntryDeserializer;
+import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
+import com.pcloud.sdk.internal.networking.serialization.FileEntryDeserializer;
 import com.pcloud.sdk.authentication.RealAuthenticator;
 import okhttp3.*;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.Executor;
@@ -121,6 +123,7 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .addInterceptor(new GloabalParamsRequestInterceptor());
 
+        httpClientBuilder.proxy(new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved("localhost",8888)));
 
         if (dispatcher != null) {
                 httpClientBuilder.dispatcher(dispatcher);

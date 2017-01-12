@@ -35,7 +35,7 @@ public class RemoteFile extends FileEntry {
 
     @Expose
     @SerializedName("hash")
-    private long hash;
+    private String hash;
 
     public Long getFileId() {
         return fileId;
@@ -49,7 +49,7 @@ public class RemoteFile extends FileEntry {
         return size;
     }
 
-    public long getHash() {
+    public String getHash() {
         return hash;
     }
 

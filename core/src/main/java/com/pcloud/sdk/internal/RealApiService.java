@@ -17,12 +17,14 @@
 package com.pcloud.sdk.internal;
 
 import com.google.gson.*;
+import com.google.gson.internal.bind.JsonTreeWriter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.api.Call;
 import com.pcloud.sdk.internal.networking.ApiResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
-
+import com.pcloud.sdk.internal.networking.UploadFilesResponse;
 import okhttp3.HttpUrl;
 import okhttp3.*;
 import okhttp3.Request;
@@ -35,7 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
-import static okhttp3.internal.Util.closeQuietly;
+import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
+
 
 class RealApiService implements ApiService {
 
@@ -72,18 +75,66 @@ class RealApiService implements ApiService {
         });
     }
 
-    private Request createListFolderRequest(long folderId) {
-        return newRequest()
-                .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("listfolder")
-                        .addQueryParameter("folderid", String.valueOf(folderId))
-                        .addQueryParameter("noshares", String.valueOf(1))
-                        .build())
-                .get()
-                .build();
+    @Override
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, Data data) {
+        if (folder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return createFile(folder.getFolderId(), filename, data);
     }
 
     @Override
+    public Call<RemoteFile> createFile(long folderId, String filename, Data data) {
+        if (filename == null) {
+            throw new IllegalArgumentException("Filename cannot be null.");
+        }
+        if (data == null) {
+            throw new IllegalArgumentException("File data cannot be null.");
+        }
+
+        RequestBody dataBody = new RequestBody() {
+            @Override
+            public MediaType contentType() {
+                return MediaType.parse("multipart/form-data");
+            }
+
+            @Override
+            public void writeTo(BufferedSink sink) throws IOException {
+                data.writeTo(sink);
+            }
+
+            @Override
+            public long contentLength() throws IOException {
+                return data.contentLength();
+            }
+        };
+
+        RequestBody compositeBody = new MultipartBody.Builder("--")
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", filename, dataBody)
+                .build();
+
+        Request uploadRequest = new Request.Builder()
+                .url(API_BASE_URL.newBuilder().
+                        addPathSegment("uploadfile")
+                        .addQueryParameter("folderid", String.valueOf(folderId))
+                        .build())
+                .method("POST",compositeBody)
+                .build();
+
+        return newCall(uploadRequest, new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                UploadFilesResponse body = getAsApiResponse(response, UploadFilesResponse.class);
+                if (!body.getUploadedFiles().isEmpty()) {
+                    return body.getUploadedFiles().get(0);
+                } else {
+                    throw new IOException("API uploaded file but did not return remote file data.");
+                }
+            }
+        });
+    }
+  @Override
     public Call<RemoteFolder> createFolder(long parentFolderId, String folderName) {
         if (folderName == null) {
             throw new IllegalArgumentException("Folder name is null");
@@ -206,7 +257,6 @@ class RealApiService implements ApiService {
                 .post(body)
                 .build();
     }
-
     @Override
     public ApiServiceBuilder newBuilder() {
         throw new UnsupportedOperationException();
@@ -216,11 +266,22 @@ class RealApiService implements ApiService {
         return new Request.Builder().url(API_BASE_URL);
     }
 
+    private Request createListFolderRequest(long folderId) {
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("listfolder")
+                        .addQueryParameter("folderid", String.valueOf(folderId))
+                        .addQueryParameter("noshares",String.valueOf(1))
+                        .build())
+                .get()
+                .build();
+    }
+
     private <T> Call<T> newCall(Request request, ResponseAdapter<T> adapter) {
         Call<T> apiCall = new OkHttpCall<>(httpClient.newCall(request), adapter);
         if (callbackExecutor != null) {
             return new ExecutorCallbackCall<>(apiCall, callbackExecutor);
-        } else {
+        }else {
             return apiCall;
         }
     }

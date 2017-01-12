@@ -22,6 +22,7 @@ public interface ApiService {
 
     Call<RemoteFolder> getFolder(long folderId);
     Call<List<FileEntry>> listFiles(RemoteFolder folder);
+    Call<RemoteFolder> createFolder(long parentFolderId, String folderName);
 
     ApiServiceBuilder newBuilder();
 }

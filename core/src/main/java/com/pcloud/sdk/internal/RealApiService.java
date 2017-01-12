@@ -75,7 +75,37 @@ class RealApiService implements ApiService {
                 .url(API_BASE_URL.newBuilder()
                         .addPathSegment("listfolder")
                         .addQueryParameter("folderid", String.valueOf(folderId))
-                        .addQueryParameter("noshares",String.valueOf(1))
+                        .addQueryParameter("noshares", String.valueOf(1))
+                        .build())
+                .get()
+                .build();
+    }
+
+    @Override
+    public Call<RemoteFolder> createFolder(long parentFolderId, String folderName) {
+        if (folderName == null) {
+            throw new IllegalArgumentException("Folder name is null");
+        }
+        return newCall(createFolderRequest(parentFolderId, folderName), new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
+    }
+
+    private Request createFolderRequest(long parentFolderId, String folderName) {
+        RequestBody body = new FormBody.Builder()
+                .add("folderid", String.valueOf(parentFolderId))
+                .add("name", folderName)
+                .build();
+
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("createfolder").build())
+                .post(body)
+                .build();
+    }
                         .build())
                 .get()
                 .build();

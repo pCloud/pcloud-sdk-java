@@ -26,6 +26,7 @@ public interface ApiService {
 
     Call<RemoteFolder> createFolder(long parentFolderId, String folderName);
 
+    Call<RemoteFolder> createFolder(RemoteFolder parentFolder, String folderName);
     Call<RemoteFolder> deleteFolder(long folderId);
 
     Call<RemoteFolder> deleteFolder(RemoteFolder folder);

@@ -137,6 +137,14 @@ class RealApiService implements ApiService {
     }
 
     @Override
+    public Call<RemoteFolder> createFolder(RemoteFolder parentFolder, String folderName) {
+        if (parentFolder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return createFolder(parentFolder.getFolderId(), folderName);
+    }
+
+    @Override
     public Call<RemoteFolder> createFolder(long parentFolderId, String folderName) {
         if (folderName == null) {
             throw new IllegalArgumentException("Folder name is null");

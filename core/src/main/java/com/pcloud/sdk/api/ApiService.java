@@ -23,11 +23,24 @@ public interface ApiService {
     Call<RemoteFolder> getFolder(long folderId);
 
     Call<List<FileEntry>> listFiles(RemoteFolder folder);
+
     Call<RemoteFolder> createFolder(long parentFolderId, String folderName);
+
     Call<RemoteFolder> deleteFolder(long folderId);
+
+    Call<RemoteFolder> deleteFolder(RemoteFolder folder);
+
     Call<RemoteFolder> renameFolder(long folderId, String newFolderName);
+
+    Call<RemoteFolder> renameFolder(RemoteFolder folder, String newFolderName);
+
     Call<RemoteFolder> moveFolder(long folderId, long toFolderId);
+
+    Call<RemoteFolder> moveFolder(RemoteFolder folder, RemoteFolder toFolder);
+
     Call<RemoteFolder> copyFolder(long folderId, long toFolderId);
+
+    Call<RemoteFolder> copyFolder(RemoteFolder folder, RemoteFolder toFolder);
 
     Call<RemoteFile> createFile(RemoteFolder folder, String filename, Data data);
 

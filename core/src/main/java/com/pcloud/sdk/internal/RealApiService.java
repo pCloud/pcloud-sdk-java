@@ -25,6 +25,7 @@ import com.pcloud.sdk.api.Call;
 import com.pcloud.sdk.internal.networking.ApiResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
 import com.pcloud.sdk.internal.networking.UploadFilesResponse;
+
 import okhttp3.HttpUrl;
 import okhttp3.*;
 import okhttp3.Request;
@@ -119,7 +120,7 @@ class RealApiService implements ApiService {
                         addPathSegment("uploadfile")
                         .addQueryParameter("folderid", String.valueOf(folderId))
                         .build())
-                .method("POST",compositeBody)
+                .method("POST", compositeBody)
                 .build();
 
         return newCall(uploadRequest, new ResponseAdapter<RemoteFile>() {
@@ -134,7 +135,8 @@ class RealApiService implements ApiService {
             }
         });
     }
-  @Override
+
+    @Override
     public Call<RemoteFolder> createFolder(long parentFolderId, String folderName) {
         if (folderName == null) {
             throw new IllegalArgumentException("Folder name is null");
@@ -161,6 +163,14 @@ class RealApiService implements ApiService {
     }
 
     @Override
+    public Call<RemoteFolder> deleteFolder(RemoteFolder folder) {
+        if (folder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return deleteFolder(folder.getFolderId());
+    }
+
+    @Override
     public Call<RemoteFolder> deleteFolder(long folderId) {
         return newCall(createDeleteFolderRequest(folderId), new ResponseAdapter<RemoteFolder>() {
             @Override
@@ -181,6 +191,14 @@ class RealApiService implements ApiService {
                         .build())
                 .post(body)
                 .build();
+    }
+
+    @Override
+    public Call<RemoteFolder> renameFolder(RemoteFolder folder, String newFolderName) {
+        if (folder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return renameFolder(folder.getFolderId(), newFolderName);
     }
 
     @Override
@@ -211,6 +229,14 @@ class RealApiService implements ApiService {
     }
 
     @Override
+    public Call<RemoteFolder> moveFolder(RemoteFolder folder, RemoteFolder toFolder) {
+        if (folder == null || toFolder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return moveFolder(folder.getFolderId(), toFolder.getFolderId());
+    }
+
+    @Override
     public Call<RemoteFolder> moveFolder(long folderId, long toFolderId) {
         return newCall(createMoveFolderRequest(folderId, toFolderId), new ResponseAdapter<RemoteFolder>() {
             @Override
@@ -235,6 +261,14 @@ class RealApiService implements ApiService {
     }
 
     @Override
+    public Call<RemoteFolder> copyFolder(RemoteFolder folder, RemoteFolder toFolder) {
+        if (folder == null || toFolder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return copyFolder(folder.getFolderId(), toFolder.getFolderId());
+    }
+
+    @Override
     public Call<RemoteFolder> copyFolder(long folderId, long toFolderId) {
         return newCall(createCopyFolderRequest(folderId, toFolderId), new ResponseAdapter<RemoteFolder>() {
             @Override
@@ -245,7 +279,7 @@ class RealApiService implements ApiService {
     }
 
     private Request createCopyFolderRequest(long folderId, long toFolderId) {
-        RequestBody body =  new FormBody.Builder()
+        RequestBody body = new FormBody.Builder()
                 .add("folderid", String.valueOf(folderId))
                 .add("tofolderid", String.valueOf(toFolderId))
                 .build();
@@ -257,6 +291,7 @@ class RealApiService implements ApiService {
                 .post(body)
                 .build();
     }
+
     @Override
     public ApiServiceBuilder newBuilder() {
         throw new UnsupportedOperationException();
@@ -271,7 +306,7 @@ class RealApiService implements ApiService {
                 .url(API_BASE_URL.newBuilder()
                         .addPathSegment("listfolder")
                         .addQueryParameter("folderid", String.valueOf(folderId))
-                        .addQueryParameter("noshares",String.valueOf(1))
+                        .addQueryParameter("noshares", String.valueOf(1))
                         .build())
                 .get()
                 .build();
@@ -281,7 +316,7 @@ class RealApiService implements ApiService {
         Call<T> apiCall = new OkHttpCall<>(httpClient.newCall(request), adapter);
         if (callbackExecutor != null) {
             return new ExecutorCallbackCall<>(apiCall, callbackExecutor);
-        }else {
+        } else {
             return apiCall;
         }
     }

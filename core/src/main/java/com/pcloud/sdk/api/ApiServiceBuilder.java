@@ -69,7 +69,6 @@ public interface ApiServiceBuilder {
      */
     ApiServiceBuilder connectTimeout(long timeout, TimeUnit timeUnit);
 
-    ApiServiceBuilder retryOnFailure(boolean retryOnFailure);
     /**
      * Sets {@link Authenticator}.
      */

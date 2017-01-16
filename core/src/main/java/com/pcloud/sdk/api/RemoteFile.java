@@ -37,22 +37,37 @@ public class RemoteFile extends FileEntry {
     @SerializedName("hash")
     private String hash;
 
+    /**
+     * Returns the fileId of the RemoteFile.
+     */
     public Long getFileId() {
         return fileId;
     }
 
+    /**
+     * Returns the content type of the RemoteFile.
+     */
     public String getContentType() {
         return contentType;
     }
 
+    /**
+     * Returns the size of the RemoteFile.
+     */
     public long getSize() {
         return size;
     }
 
+    /**
+     * Returns the hash of the RemoteFile .
+     */
     public String getHash() {
         return hash;
     }
 
+    /**
+     * Returns this RemoteFile instance.
+     */
     @Override
     public RemoteFile asFile() {
         return this;

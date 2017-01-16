@@ -17,6 +17,7 @@
 package com.pcloud.sdk.api;
 
 import com.pcloud.sdk.authentication.Authenticator;
+
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
@@ -26,25 +27,62 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public interface ApiServiceBuilder {
+    /**
+     * Sets the response cache to be used to read and write cached responses.
+     */
     ApiServiceBuilder cache(Cache cache);
 
+    /**
+     * Sets the connectionPool used to recycle HTTP and HTTPS connections.
+     * <p>
+     * <p>If unset, a new connection pool will be used.
+     */
     ApiServiceBuilder connectionPool(ConnectionPool connectionPool);
+
+    /**
+     * Sets the {@link Dispatcher} used to set policy and execute asynchronous requests. Must not be null.
+     */
 
     ApiServiceBuilder dispatcher(Dispatcher dispatcher);
 
+    /**
+     * Sets {@link OkHttpClient} instance which will be used for API calls. Must not be null.
+     */
     ApiServiceBuilder withClient(OkHttpClient client);
 
+    /**
+     * Sets the default read timeout for new connections. A value of 0 means no timeout, otherwise
+     * values must be between 1 and {@link Integer#MAX_VALUE} when converted to milliseconds.
+     */
     ApiServiceBuilder readTimeout(long timeout, TimeUnit timeUnit);
 
+    /**
+     * Sets the default write timeout for new connections. A value of 0 means no timeout, otherwise
+     * values must be between 1 and {@link Integer#MAX_VALUE} when converted to milliseconds.
+     */
     ApiServiceBuilder writeTimeout(long timeout, TimeUnit timeUnit);
 
+    /**
+     * Sets the default connect timeout for new connections. A value of 0 means no timeout,
+     * otherwise values must be between 1 and {@link Integer#MAX_VALUE} when converted to
+     * milliseconds.
+     */
     ApiServiceBuilder connectTimeout(long timeout, TimeUnit timeUnit);
 
-    ApiServiceBuilder retryOnFailure(boolean retryOnFailure);
-
+    /**
+     * Sets {@link Authenticator}.
+     */
     ApiServiceBuilder authenticator(Authenticator authenticator);
 
+    /**
+     * Sets executor for {@link Callback}.
+     */
     ApiServiceBuilder callbackExecutor(Executor callbackExecutor);
 
+    /**
+     * Setup new {@link ApiService}.
+     *
+     * @return {@link ApiService}
+     */
     ApiService create();
 }

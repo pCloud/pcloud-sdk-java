@@ -42,7 +42,6 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     private int readTimeoutMs;
     private int writeTimeoutMs;
     private int connecttimeoutMs;
-    private boolean retryOnFailure;
     private com.pcloud.sdk.authentication.Authenticator authenticator;
 
     RealApiServiceBuilder() {
@@ -73,8 +72,7 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
                 .dispatcher(client.dispatcher())
                 .readTimeout(client.readTimeoutMillis(), TimeUnit.MILLISECONDS)
                 .writeTimeout(client.writeTimeoutMillis(), TimeUnit.MILLISECONDS)
-                .connectTimeout(client.connectTimeoutMillis(), TimeUnit.MILLISECONDS)
-                .retryOnFailure(client.retryOnConnectionFailure());
+                .connectTimeout(client.connectTimeoutMillis(), TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -96,12 +94,6 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     }
 
     @Override
-    public ApiServiceBuilder retryOnFailure(boolean retryOnFailure) {
-        this.retryOnFailure = retryOnFailure;
-        return this;
-    }
-
-    @Override
     public ApiServiceBuilder authenticator(com.pcloud.sdk.authentication.Authenticator authenticator) {
         this.authenticator = authenticator;
         return this;
@@ -119,7 +111,7 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
                 .readTimeout(this.readTimeoutMs, TimeUnit.MILLISECONDS)
                 .writeTimeout(this.writeTimeoutMs, TimeUnit.MILLISECONDS)
                 .connectTimeout(this.connecttimeoutMs, TimeUnit.MILLISECONDS)
-                .retryOnConnectionFailure(this.retryOnFailure)
+                .retryOnConnectionFailure(true)
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .addInterceptor(new GloabalParamsRequestInterceptor());
 

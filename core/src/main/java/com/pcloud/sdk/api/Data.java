@@ -28,10 +28,22 @@ import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
 public abstract class Data {
 
+    /**
+     * Provide the length of the data instance content.
+     */
     public abstract long contentLength();
 
+    /**
+     * Writes data content to {@link BufferedSink}.
+     *
+     * @param sink {@link BufferedSink}
+     * @throws IOException
+     */
     public abstract void writeTo(BufferedSink sink) throws IOException;
 
+    /**
+     * Creates Data instance from byte[].
+     */
     public static Data create(final byte[] data) {
         return new Data() {
 
@@ -47,6 +59,9 @@ public abstract class Data {
         };
     }
 
+    /**
+     * Creates Data instance from ByteString.
+     */
     public static Data create(final ByteString data) {
         return new Data() {
 
@@ -62,6 +77,9 @@ public abstract class Data {
         };
     }
 
+    /**
+     * Creates Data instance from {@link File}.
+     */
     public static Data create(final File file) {
         return new Data() {
 

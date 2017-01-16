@@ -123,7 +123,7 @@ public interface ApiService {
      * Copy specified folder.
      *
      * @param folder   The {@link RemoteFolder} you would like to copy. Must not be null.
-     * @param toFolder The destination {@link RemoteFolder}
+     * @param toFolder The destination {@link RemoteFolder}. Must not be null.
      * @return {@link Call}
      */
     Call<RemoteFolder> copyFolder(RemoteFolder folder, RemoteFolder toFolder);
@@ -133,7 +133,7 @@ public interface ApiService {
      *
      * @param folder   The {@link RemoteFolder} where you would like to create the file. Must not be null.
      * @param filename The file name. Must not be null.
-     * @param data     {@link Data} object provides the file content.
+     * @param data     {@link Data} object provides the file content. Must not be null.
      * @return {@link Call}
      */
     Call<RemoteFile> createFile(RemoteFolder folder, String filename, Data data);
@@ -143,10 +143,67 @@ public interface ApiService {
      *
      * @param folderId The {@link RemoteFolder} id where you would like to create the file
      * @param filename The file name. Must not be null.
-     * @param data     {@link Data} object provides the file content.
+     * @param data     {@link Data} object provides the file content. Must not be null.
      * @return {@link Call}
      */
     Call<RemoteFile> createFile(long folderId, String filename, Data data);
 
+    /**
+     * Copy specified file.
+     *
+     * @param fileId The id of the {@link RemoteFile} you would like to copy.
+     * @param toFolderId The {@link RemoteFolder} id where you would like to copy the file.
+     * @return {@link Call}
+     */
+    Call<RemoteFile> copyFile(long fileId, long toFolderId);
+
+    /**
+     * Same as {@link #copyFile(long, long)}
+     *
+     * @param file The {@link RemoteFile} which you would like to copy.Must not be null.
+     * @param toFolder The {@link RemoteFolder}  where you would like to copy the file.Must not be null.
+     * @return {@link Call}
+     */
+    Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder);
+
+    /**
+     * Move specified file.
+     *
+     * @param fileId The id of the {@link RemoteFile} you would like to move.
+     * @param toFolderId The {@link RemoteFolder} id where you would like to move the file.
+     * @return {@link Call}
+     */
+    Call<RemoteFile> moveFile(long fileId, long toFolderId);
+
+    /**
+     * Same as {@link #moveFile(long, long)}
+     *
+     * @param file The {@link RemoteFile} which you would like to move. Must not be null.
+     * @param toFolder The {@link RemoteFolder}  where you would like to move the file.
+     * @return {@link Call}
+     */
+    Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder);
+
+    /**
+     * Rename specified file.
+     *
+     * @param fileId The id of the {@link RemoteFile} you would like to rename.
+     * @param newFileName The new file name. Must not be null.
+     * @return {@link Call}
+     */
+    Call<RemoteFile> renameFile(long fileId, String newFileName);
+
+    /**
+     * Same as {@link #renameFile(RemoteFile, String)}
+     *
+     * @param file The {@link RemoteFile} you would like to rename.Must not be null.
+     * @param newFileName The new file name. Must not be null.
+     * @return {@link Call}
+     */
+    Call<RemoteFile> renameFile(RemoteFile file, String newFileName);
+
+    /**
+     * Returns new ApiServiceBuilder.
+     */
     ApiServiceBuilder newBuilder();
 }

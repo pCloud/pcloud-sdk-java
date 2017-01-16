@@ -24,7 +24,7 @@ import java.util.List;
 public interface ApiService {
 
     /**
-     * This method will list a folder contents.
+     * Lists folder contents.
      *
      * @param folderId {@link RemoteFolder} id
      * @return {@link Call}
@@ -32,7 +32,7 @@ public interface ApiService {
     Call<RemoteFolder> getFolder(long folderId);
 
     /**
-     * This method will list a folder contents .
+     * Lists folder contents.
      *
      * @param folder The {@link RemoteFolder} to list. Must not be null.
      * @return {@link Call}
@@ -40,7 +40,7 @@ public interface ApiService {
     Call<List<FileEntry>> listFiles(RemoteFolder folder);
 
     /**
-     * This method will create a folder.
+     * Creates folder.
      *
      * @param parentFolderId The id of the parent folder for the newly created folder
      * @param folderName     The new folder name
@@ -49,7 +49,7 @@ public interface ApiService {
     Call<RemoteFolder> createFolder(long parentFolderId, String folderName);
 
     /**
-     * This method will create a folder.
+     * Creates  folder.
      *
      * @param parentFolder The parent {@link RemoteFolder} for the newly created folder. Must not be null.
      * @param folderName   The new folder name
@@ -58,7 +58,7 @@ public interface ApiService {
     Call<RemoteFolder> createFolder(RemoteFolder parentFolder, String folderName);
 
     /**
-     * This method will delete a folder.
+     * Delete specified folder.
      *
      * @param folderId The id if the folder you would like to delete
      * @return {@link Call}
@@ -66,7 +66,7 @@ public interface ApiService {
     Call<RemoteFolder> deleteFolder(long folderId);
 
     /**
-     * This method will delete a folder.
+     * Delete specified folder.
      *
      * @param folder {@link RemoteFolder} you would like to delete. Must not be null.
      * @return {@link Call}
@@ -75,7 +75,7 @@ public interface ApiService {
 
 
     /**
-     * This method will rename a folder.
+     * Rename specified folder.
      *
      * @param folderId      The id of the folder you would like to rename
      * @param newFolderName The new folder name
@@ -84,7 +84,7 @@ public interface ApiService {
     Call<RemoteFolder> renameFolder(long folderId, String newFolderName);
 
     /**
-     * This method will rename a folder.
+     * Rename specified folder.
      *
      * @param folder        The {@link RemoteFolder} you would like to rename. Must not be null.
      * @param newFolderName The new folder name
@@ -93,7 +93,7 @@ public interface ApiService {
     Call<RemoteFolder> renameFolder(RemoteFolder folder, String newFolderName);
 
     /**
-     * This method will move folder
+     * Move specified folder.
      *
      * @param folderId   The id of the folder you would like to move
      * @param toFolderId The id of the destination folder
@@ -102,7 +102,7 @@ public interface ApiService {
     Call<RemoteFolder> moveFolder(long folderId, long toFolderId);
 
     /**
-     * This method will move folder.
+     * Move specified folder.
      *
      * @param folder   The {@link RemoteFolder} you would like to move. Must not be null.
      * @param toFolder The destination {@link RemoteFolder}
@@ -111,7 +111,7 @@ public interface ApiService {
     Call<RemoteFolder> moveFolder(RemoteFolder folder, RemoteFolder toFolder);
 
     /**
-     * This method will copy folder.
+     * Copy specified folder.
      *
      * @param folderId   The id of the folder you would like to copy
      * @param toFolderId The id of the destination folder
@@ -120,7 +120,7 @@ public interface ApiService {
     Call<RemoteFolder> copyFolder(long folderId, long toFolderId);
 
     /**
-     * This method will copy folder.
+     * Copy specified folder.
      *
      * @param folder   The {@link RemoteFolder} you would like to copy. Must not be null.
      * @param toFolder The destination {@link RemoteFolder}
@@ -129,7 +129,7 @@ public interface ApiService {
     Call<RemoteFolder> copyFolder(RemoteFolder folder, RemoteFolder toFolder);
 
     /**
-     * This method will create(upload) a file.
+     * Create(upload) file.
      *
      * @param folder   The {@link RemoteFolder} where you would like to create the file. Must not be null.
      * @param filename The file name. Must not be null.
@@ -139,7 +139,7 @@ public interface ApiService {
     Call<RemoteFile> createFile(RemoteFolder folder, String filename, Data data);
 
     /**
-     * This method will create(upload) a file.
+     * Create(upload) file.
      *
      * @param folderId The {@link RemoteFolder} id where you would like to create the file
      * @param filename The file name. Must not be null.

@@ -33,14 +33,23 @@ public class RemoteFolder extends FileEntry{
     @SerializedName("contents")
     private List<FileEntry> children;
 
+    /**
+     * Returns the folderId for the RemoteFolder.
+     */
     public Long getFolderId() {
         return folderId;
     }
 
+    /**
+     * Returns a list of child entries of the RemoteFolder.
+     */
     public List<FileEntry> getChildren() {
         return children;
     }
 
+    /**
+     * Returns this RemoteFolder instance.
+     */
     @Override
     public final RemoteFolder asFolder() {
         return this;

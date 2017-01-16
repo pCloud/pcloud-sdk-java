@@ -46,38 +46,71 @@ public abstract class FileEntry {
     @SerializedName("isfolder")
     private boolean isFolder;
 
+    /**
+     * Returns the id for the entry.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the name for the entry.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the last modified date for the entry.
+     */
     public Date getLastModified() {
         return lastModified;
     }
 
+    /**
+     * Returns the creation date for the entry.
+     */
     public Date getCreated() {
         return created;
     }
 
+    /**
+     * Returns the parent-folder id for the entry.
+     */
     public long getParentFolderId() {
         return parentFolderId;
     }
 
+    /**
+     * Returns {@code true} if this is a file.
+     */
     public boolean isFile() {
         return !isFolder;
     }
 
+    /**
+     * Returns {@code true} if this is a folder.
+     */
     public boolean isFolder() {
         return isFolder;
     }
 
+    /**
+     * Returns this FileEntry as {@link RemoteFolder}
+     *
+     * @return {@link RemoteFolder}
+     * @throws IllegalStateException if this method is not overriden
+     */
     public RemoteFolder asFolder() {
         throw new IllegalStateException("Entry is not a folder");
     }
 
+    /**
+     * Returns this FileEntry as {@link RemoteFile}
+     *
+     * @return {@link RemoteFile}
+     * @throws IllegalStateException if this method is not overriden
+     */
     public RemoteFile asFile() {
         throw new IllegalStateException("Entry is not a file");
     }

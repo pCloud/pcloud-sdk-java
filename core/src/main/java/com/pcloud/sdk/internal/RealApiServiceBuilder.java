@@ -41,7 +41,6 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     private int writeTimeoutMs;
     private int connectTimeoutMs;
     private long progressCallbackThresholdBytes;
-    private boolean retryOnFailure;
     private Authenticator authenticator;
 
     RealApiServiceBuilder(OkHttpClient okHttpClient, Executor callbackExecutor, long progressCallbackThresholdBytes, Authenticator authenticator) {
@@ -84,8 +83,7 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
                 .dispatcher(client.dispatcher())
                 .readTimeout(client.readTimeoutMillis(), TimeUnit.MILLISECONDS)
                 .writeTimeout(client.writeTimeoutMillis(), TimeUnit.MILLISECONDS)
-                .connectTimeout(client.connectTimeoutMillis(), TimeUnit.MILLISECONDS)
-                .retryOnFailure(client.retryOnConnectionFailure());
+                .connectTimeout(client.connectTimeoutMillis(), TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -103,12 +101,6 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     @Override
     public ApiServiceBuilder connectTimeout(long timeout, TimeUnit timeUnit) {
         this.connectTimeoutMs = (int) timeUnit.toMillis(timeout);
-        return this;
-    }
-
-    @Override
-    public ApiServiceBuilder retryOnFailure(boolean retryOnFailure) {
-        this.retryOnFailure = retryOnFailure;
         return this;
     }
 
@@ -139,7 +131,6 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
                 .readTimeout(this.readTimeoutMs, TimeUnit.MILLISECONDS)
                 .writeTimeout(this.writeTimeoutMs, TimeUnit.MILLISECONDS)
                 .connectTimeout(this.connectTimeoutMs, TimeUnit.MILLISECONDS)
-                .retryOnConnectionFailure(this.retryOnFailure)
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .addInterceptor(new GloabalParamsRequestInterceptor());
 

@@ -20,12 +20,29 @@ import java.io.IOException;
 
 public interface RemoteFile extends FileEntry, RemoteData {
 
+    /**
+     * Returns the fileId of the RemoteFile.
+     */
     long getFileId();
 
+    /**
+     * Returns the content type of the RemoteFile.
+     *
+     * <p>For more information, see
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">here</a></p>
+     */
     String getContentType();
 
+    /**
+     * Returns the size of the file in bytes.
+     */
     long getSize();
 
+    /**
+     * Returns a hash of the file content.
+     *
+     * <p>This parameter can be used to detect content changes.</p>
+     */
     String getHash();
 
     FileLink getDownloadLink(DownloadOptions options) throws IOException, ApiError;

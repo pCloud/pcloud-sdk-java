@@ -20,21 +20,60 @@ import java.util.Date;
 
 public interface FileEntry {
 
+    /**
+     * Returns the entry id.
+     */
     String getId();
 
+    /**
+     * Returns the entry filename.
+     */
     String getName();
 
+    /**
+     * Returns the last modification date.
+     */
     Date getLastModified();
 
+    /**
+     * Returns the creation date.
+     */
     Date getCreated();
 
+    /**
+     * Returns the parent folder's id for the entry.
+     *
+     * <p>See {@linkplain RemoteFolder#getFolderId()} ()}.</p>
+     */
     long getParentFolderId();
 
+    /**
+     * Returns {@code true} if this entry is a file.
+     */
     boolean isFile();
 
+    /**
+     * Returns {@code true} if this entry is a folder.
+     */
     boolean isFolder();
 
+    /**
+     * Returns this FileEntry as a {@link RemoteFolder}
+     *
+     * <p>See {@linkplain #isFolder()}.</p>
+     *
+     * @return {@link RemoteFolder}
+     * @throws IllegalStateException if the entry is not a folder
+     */
     RemoteFolder asFolder();
 
+    /**
+     * Returns this FileEntry as {@link RemoteFile}
+     *
+     * <p>See {@linkplain #isFile()}.</p>
+     *
+     * @return {@link RemoteFile}
+     * @throws IllegalStateException if the entry is not a file
+     */
     RemoteFile asFile();
 }

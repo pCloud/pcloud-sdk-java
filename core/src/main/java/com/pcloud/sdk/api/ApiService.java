@@ -32,7 +32,9 @@ public interface ApiService {
 
     Call<RemoteFile> createFile(long folderId, String filename, DataSource data, ProgressListener listener);
 
-    Call<RemoteFile> createFile(long folderId, String filename, Data data);
+    Call<Boolean> deleteFile(RemoteFile file);
+
+    Call<Boolean> deleteFile(long fileId);
 
     ApiServiceBuilder newBuilder();
 }

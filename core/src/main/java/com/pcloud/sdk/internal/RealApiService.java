@@ -159,6 +159,33 @@ class RealApiService implements ApiService {
     }
 
     @Override
+    public Call<Boolean> deleteFile(RemoteFile file) {
+        if (file == null) {
+            throw new IllegalArgumentException("File argument cannot be null.");
+        }
+        return deleteFile(file.getFileId());
+    }
+
+    @Override
+    public Call<Boolean> deleteFile(long fileId) {
+        Request request = new Request.Builder()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("deletefile")
+                        .build())
+                .get()
+                .put(new FormBody.Builder()
+                        .add("fileid", String.valueOf(fileId))
+                        .build())
+                .build();
+        return newCall(request, new ResponseAdapter<Boolean>() {
+            @Override
+            public Boolean adapt(Response response) throws IOException, ApiError {
+                GetFileResponse body = deserializeResponseBody(response, GetFileResponse.class);
+                return body.isSuccessful() && body.getFile() != null;
+            }
+        });
+    }
+
     public ApiServiceBuilder newBuilder() {
         throw new UnsupportedOperationException();
     }

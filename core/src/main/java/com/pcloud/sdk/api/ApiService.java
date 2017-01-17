@@ -24,7 +24,13 @@ public interface ApiService {
 
     Call<List<FileEntry>> listFiles(RemoteFolder folder);
 
-    Call<RemoteFile> createFile(RemoteFolder folder, String filename, Data data);
+    Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data);
+
+    Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, ProgressListener listener);
+
+    Call<RemoteFile> createFile(long folderId, String filename, DataSource data);
+
+    Call<RemoteFile> createFile(long folderId, String filename, DataSource data, ProgressListener listener);
 
     Call<RemoteFile> createFile(long folderId, String filename, Data data);
 

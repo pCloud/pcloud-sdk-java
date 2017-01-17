@@ -16,26 +16,26 @@
 
 package com.pcloud.sdk.internal;
 
-import com.google.gson.*;
-import com.google.gson.internal.bind.JsonTreeWriter;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.api.Call;
-import com.pcloud.sdk.internal.networking.ApiResponse;
-import com.pcloud.sdk.internal.networking.GetFolderResponse;
-import com.pcloud.sdk.internal.networking.UploadFilesResponse;
-import okhttp3.HttpUrl;
+import com.pcloud.sdk.authentication.Authenticator;
+import com.pcloud.sdk.authentication.RealAuthenticator;
+import com.pcloud.sdk.internal.networking.*;
 import okhttp3.*;
-import okhttp3.Request;
 import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.Executor;
 
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
@@ -43,16 +43,18 @@ import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
 class RealApiService implements ApiService {
 
+    private long progressCallbackThresholdBytes;
     private Gson gson;
     private OkHttpClient httpClient;
     private Executor callbackExecutor;
 
-    private static final HttpUrl API_BASE_URL = HttpUrl.parse("http://api.pcloud.com");
+    private static final HttpUrl API_BASE_URL = HttpUrl.parse("https://api.pcloud.com");
 
-    RealApiService(Gson gson, OkHttpClient httpClient, Executor callbackExecutor) {
+    RealApiService(Gson gson, OkHttpClient httpClient, Executor callbackExecutor, long progressCallbackThresholdBytes) {
         this.gson = gson;
         this.httpClient = httpClient;
         this.callbackExecutor = callbackExecutor;
+        this.progressCallbackThresholdBytes = progressCallbackThresholdBytes;
     }
 
     @Override
@@ -77,15 +79,25 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, Data data) {
-        if (folder == null) {
-            throw new IllegalArgumentException("folder argument cannot be null.");
-        }
-        return createFile(folder.getFolderId(), filename, data);
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data) {
+        return createFile(folder.getFolderId(), filename, data, null);
     }
 
     @Override
-    public Call<RemoteFile> createFile(long folderId, String filename, Data data) {
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, ProgressListener listener) {
+        if (folder == null) {
+            throw new IllegalArgumentException("Folder argument cannot be null.");
+        }
+        return createFile(folder.getFolderId(), filename, data, listener);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(long folderId, String filename, DataSource data) {
+        return createFile(folderId, filename, data, null);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(long folderId, String filename, DataSource data, ProgressListener listener) {
         if (filename == null) {
             throw new IllegalArgumentException("Filename cannot be null.");
         }
@@ -101,7 +113,15 @@ class RealApiService implements ApiService {
 
             @Override
             public void writeTo(BufferedSink sink) throws IOException {
+                if(listener != null){
+                    sink = Okio.buffer(new ProgressCountingSink(
+                            sink,
+                            data.contentLength(),
+                            listener,
+                            progressCallbackThresholdBytes));
+                }
                 data.writeTo(sink);
+                sink.flush();
             }
 
             @Override
@@ -119,6 +139,8 @@ class RealApiService implements ApiService {
                 .url(API_BASE_URL.newBuilder().
                         addPathSegment("uploadfile")
                         .addQueryParameter("folderid", String.valueOf(folderId))
+                        .addQueryParameter("renameifexists", String.valueOf(1))
+                        .addQueryParameter("nopartial", String.valueOf(1))
                         .build())
                 .method("POST",compositeBody)
                 .build();
@@ -180,8 +202,7 @@ class RealApiService implements ApiService {
     private <T> T deserializeResponseBody(Response response, Class<? extends T> bodyType) throws IOException {
         try {
             if (!response.isSuccessful()) {
-                throw new IOException(String.format(Locale.US,
-                        "API returned \'%d - %s\' HTTP error.", response.code(), response.message()));
+                throw new APIHttpException(response.code(), response.message());
             }
 
             JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(response.body().byteStream())));

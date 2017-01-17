@@ -18,9 +18,9 @@ package com.pcloud.sdk.internal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.pcloud.sdk.api.ApiService;
-import com.pcloud.sdk.api.ApiServiceBuilder;
-import com.pcloud.sdk.api.FileEntry;
+import com.pcloud.sdk.api.*;
+import com.pcloud.sdk.authentication.*;
+import com.pcloud.sdk.authentication.Authenticator;
 import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
 import com.pcloud.sdk.internal.networking.serialization.FileEntryDeserializer;
 import com.pcloud.sdk.authentication.RealAuthenticator;
@@ -41,9 +41,22 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     private Dispatcher dispatcher;
     private int readTimeoutMs;
     private int writeTimeoutMs;
-    private int connecttimeoutMs;
+    private int connectTimeoutMs;
+    private long progressCallbackThresholdBytes;
     private boolean retryOnFailure;
-    private com.pcloud.sdk.authentication.Authenticator authenticator;
+    private Authenticator authenticator;
+
+    RealApiServiceBuilder(OkHttpClient okHttpClient, Executor callbackExecutor, long progressCallbackThresholdBytes, Authenticator authenticator) {
+        this.cache = okHttpClient.cache();
+        this.callbackExecutor = callbackExecutor;
+        this.connectionPool = okHttpClient.connectionPool();
+        this.dispatcher = okHttpClient.dispatcher();
+        this.readTimeoutMs = okHttpClient.readTimeoutMillis();
+        this.writeTimeoutMs = okHttpClient.writeTimeoutMillis();
+        this.connectTimeoutMs = okHttpClient.connectTimeoutMillis();
+        this.progressCallbackThresholdBytes = progressCallbackThresholdBytes;
+        this.authenticator = authenticator;
+    }
 
     RealApiServiceBuilder() {
     }
@@ -91,7 +104,7 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
 
     @Override
     public ApiServiceBuilder connectTimeout(long timeout, TimeUnit timeUnit) {
-        this.connecttimeoutMs = (int) timeUnit.toMillis(timeout);
+        this.connectTimeoutMs = (int) timeUnit.toMillis(timeout);
         return this;
     }
 
@@ -114,11 +127,20 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     }
 
     @Override
+    public ApiServiceBuilder progressCallbackThreshold(int bytes) {
+        if (bytes < 0) {
+            throw new IllegalArgumentException("Threshold parameter must a positive number.");
+        }
+        this.progressCallbackThresholdBytes = bytes;
+        return this;
+    }
+
+    @Override
     public ApiService create() {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .readTimeout(this.readTimeoutMs, TimeUnit.MILLISECONDS)
                 .writeTimeout(this.writeTimeoutMs, TimeUnit.MILLISECONDS)
-                .connectTimeout(this.connecttimeoutMs, TimeUnit.MILLISECONDS)
+                .connectTimeout(this.connectTimeoutMs, TimeUnit.MILLISECONDS)
                 .retryOnConnectionFailure(this.retryOnFailure)
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .addInterceptor(new GloabalParamsRequestInterceptor());
@@ -137,7 +159,7 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
             httpClientBuilder.cache(cache);
         }
 
-        httpClientBuilder.authenticator(Authenticator.NONE);
+        httpClientBuilder.authenticator(okhttp3.Authenticator.NONE);
         if (authenticator != null) {
             httpClientBuilder.addInterceptor((RealAuthenticator)authenticator);
         }
@@ -148,6 +170,8 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
                 .create();
 
-        return new RealApiService(gson, httpClientBuilder.build(), this.callbackExecutor);
+
+        RealApiService service = new RealApiService(gson, httpClientBuilder.build(), this.callbackExecutor, progressCallbackThresholdBytes);
+        return service;
     }
 }

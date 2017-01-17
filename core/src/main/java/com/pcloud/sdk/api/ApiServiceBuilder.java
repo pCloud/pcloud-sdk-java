@@ -46,5 +46,7 @@ public interface ApiServiceBuilder {
 
     ApiServiceBuilder callbackExecutor(Executor callbackExecutor);
 
+    ApiServiceBuilder progressCallbackThreshold(int bytes);
+
     ApiService create();
 }

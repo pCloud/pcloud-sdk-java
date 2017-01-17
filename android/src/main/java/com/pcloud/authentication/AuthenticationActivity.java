@@ -35,13 +35,13 @@ import static com.pcloud.authentication.Constants.REDIRECT_URI;
 public class AuthenticationActivity extends Activity {
 
     private static final String TAG = AuthenticationActivity.class.getSimpleName();
+    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
-        WebView webView = (WebView) findViewById(R.id.webView);
-
+        webView = (WebView) findViewById(R.id.webView);
 
         WebSettings ws = webView.getSettings();
         ws.setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -71,8 +71,13 @@ public class AuthenticationActivity extends Activity {
             }
         };
         webView.setWebViewClient(wc);
-        String url = buildUrl();
-        webView.loadUrl(url);
+        if (savedInstanceState != null) {
+            webView.restoreState(savedInstanceState);
+        } else {
+            String url = buildUrl();
+            webView.loadUrl(url);
+        }
+
     }
 
     private void setActivityResult(String token) {
@@ -89,6 +94,11 @@ public class AuthenticationActivity extends Activity {
                 .append(apiKey).append("&")
                 .append(REDIRECT_URI).append("=").append(redirectUri);
         return builder.toString();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        webView.saveState(outState);
     }
 
 }

@@ -24,7 +24,6 @@ public class AuthenticationIntentBuilder {
 
     private String apiKey;
     private Uri redirectUri;
-    private int themeResourceId;
 
     public AuthenticationIntentBuilder() {
     }
@@ -48,17 +47,6 @@ public class AuthenticationIntentBuilder {
     }
 
     /**
-     * Set your own theme.
-     *
-     * <p>Added for convenience so Toolbar color suits to your app colors.
-     * By default we get application Theme </p>
-     */
-    public AuthenticationIntentBuilder setTheme(int resourceId) {
-        this.themeResourceId = resourceId;
-        return this;
-    }
-
-    /**
      * Build intent. You should start it with {@code startActivityForResult} to obtain Access Token.
      */
     public Intent buildWithContext(Context context) {
@@ -68,13 +56,9 @@ public class AuthenticationIntentBuilder {
         if (redirectUri == null) {
             redirectUri = Uri.parse(DEFAULT_REDIRECT_URI);
         }
-        if (themeResourceId == 0) {
-            themeResourceId = context.getApplicationInfo().theme;
-        }
         Intent intent = new Intent(context, AuthenticationActivity.class);
         intent.putExtra(API_KEY, apiKey);
         intent.putExtra(REDIRECT_URI, redirectUri.toString());
-        intent.putExtra(THEME, themeResourceId);
 
         return intent;
     }

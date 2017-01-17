@@ -25,6 +25,7 @@ import com.pcloud.sdk.authentication.Authenticator;
 import com.pcloud.sdk.authentication.RealAuthenticator;
 import com.pcloud.sdk.internal.networking.*;
 import com.pcloud.sdk.internal.networking.ApiResponse;
+import com.pcloud.sdk.internal.networking.GetFileResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
 import com.pcloud.sdk.internal.networking.UploadFilesResponse;
 
@@ -318,6 +319,124 @@ class RealApiService implements ApiService {
                 return getAsRawBytes(response);
             }
         });
+    }
+
+    @Override
+    public Call<RemoteFile> copyFile(long fileId, long toFolderId) {
+        return newCall(createCopyFileRequest(fileId, toFolderId), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+    @Override
+    public Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder) {
+        if (file == null) {
+            throw new IllegalArgumentException("file argument cannot be null.");
+        }
+        if (toFolder == null) {
+            throw new IllegalArgumentException("toFolder argument cannot be null.");
+        }
+        return newCall(createCopyFileRequest(file.getFileId(), toFolder.getFolderId()), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    private Request createCopyFileRequest(long fileId, long toFolderId) {
+        RequestBody body = new FormBody.Builder()
+                .add("fileid", String.valueOf(fileId))
+                .add("tofolderid", String.valueOf(toFolderId))
+                .build();
+
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("copyfile")
+                        .build())
+                .post(body)
+                .build();
+    }
+
+    @Override
+    public Call<RemoteFile> moveFile(long fileId, long toFolderId) {
+        return newCall(createMoveFileRequest(fileId, toFolderId), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder) {
+        if (file == null) {
+            throw new IllegalArgumentException("file argument cannot be null.");
+        }
+        if (toFolder == null) {
+            throw new IllegalArgumentException("toFolder argument cannot be null.");
+        }
+        return newCall(createMoveFileRequest(file.getFileId(), toFolder.getFolderId()), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+    private Request createMoveFileRequest(long fileId, long toFolderId) {
+        RequestBody body = new FormBody.Builder()
+                .add("fileid", String.valueOf(fileId))
+                .add("tofolderid", String.valueOf(toFolderId))
+                .build();
+
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("renamefile")
+                        .build())
+                .post(body)
+                .build();
+    }
+
+    @Override
+    public Call<RemoteFile> renameFile(long fileId, String newFileName) {
+        return newCall(createRenameFileRequest(fileId, newFileName), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFile> renameFile(RemoteFile file, String newFileName) {
+        if (file == null) {
+            throw new IllegalArgumentException("file argument cannot be null.");
+        }
+        if (newFileName == null) {
+            throw new IllegalArgumentException("newFileName argument cannot be null.");
+        }
+        return newCall(createRenameFileRequest(file.getFileId(), newFileName), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    private Request createRenameFileRequest(long folderId, String newFileName) {
+        RequestBody body = new FormBody.Builder()
+                .add("fileid", String.valueOf(folderId))
+                .add("toname", newFileName)
+                .build();
+
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("renamefile")
+                        .build())
+                .post(body)
+                .build();
     }
 
     @Override

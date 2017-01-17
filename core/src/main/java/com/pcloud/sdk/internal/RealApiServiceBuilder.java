@@ -134,8 +134,6 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .addInterceptor(new GloabalParamsRequestInterceptor());
 
-        httpClientBuilder.proxy(new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved("localhost",8888)));
-
         if (dispatcher != null) {
                 httpClientBuilder.dispatcher(dispatcher);
         }

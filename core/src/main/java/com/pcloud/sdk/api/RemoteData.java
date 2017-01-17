@@ -16,13 +16,18 @@
 
 package com.pcloud.sdk.api;
 
-import java.util.List;
+import okio.BufferedSource;
 
-public interface RemoteFolder extends FileEntry{
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
-    int ROOT_FOLDER_ID = 0;
+public interface RemoteData {
+    InputStream byteStream() throws IOException;
 
-    long getFolderId();
+    BufferedSource source() throws IOException;
 
-    List<FileEntry> getChildren();
+    void download(DataSink sink, ProgressListener listener) throws IOException;
+
+    void download(DataSink sink) throws IOException;
 }

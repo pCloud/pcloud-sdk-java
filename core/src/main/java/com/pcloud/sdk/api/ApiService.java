@@ -16,6 +16,8 @@
 
 package com.pcloud.sdk.api;
 
+import okio.BufferedSource;
+
 import java.util.List;
 
 public interface ApiService {
@@ -35,6 +37,18 @@ public interface ApiService {
     Call<Boolean> deleteFile(RemoteFile file);
 
     Call<Boolean> deleteFile(long fileId);
+
+    Call<FileLink> getDownloadLink(RemoteFile file, DownloadOptions options);
+
+    Call<FileLink> getDownloadLink(long fileid, DownloadOptions options);
+
+    Call<Void> download(FileLink fileLink, DataSink sink);
+
+    Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener);
+
+    Call<BufferedSource> download(RemoteFile file);
+
+    Call<BufferedSource> download(FileLink fileLink);
 
     ApiServiceBuilder newBuilder();
 }

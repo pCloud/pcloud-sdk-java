@@ -186,8 +186,145 @@ class RealApiService implements ApiService {
         });
     }
 
+    @Override
+    public Call<FileLink> getDownloadLink(RemoteFile file, DownloadOptions options) {
+        if (file == null) {
+            throw new IllegalArgumentException("File argument cannot be null.");
+        }
+        return getDownloadLink(file.getFileId(), options);
+    }
+
+    @Override
+    public Call<FileLink> getDownloadLink(long fileId, DownloadOptions options) {
+        if (options == null) {
+            throw new IllegalArgumentException("DownloadOptions parameter cannot be null.");
+        }
+
+        Request request = newDownloadLinkRequest(fileId, options);
+
+        return newCall(request, new ResponseAdapter<FileLink>() {
+            @Override
+            public FileLink adapt(Response response) throws IOException, ApiError {
+                return getAsFileLink(response);
+            }
+        });
+
+    }
+
+    private FileLink getAsFileLink(Response response) throws IOException, ApiError {
+        GetLinkResponse body = getAsApiResponse(response, GetLinkResponse.class);
+        List<URL> downloadUrls = new ArrayList<>(body.getHosts().size());
+        for (String host : body.getHosts()) {
+            downloadUrls.add(new URL("https", host, body.getPath()));
+        }
+
+        return new RealFileLink(RealApiService.this, body.getExpires(), downloadUrls);
+    }
+
+    private Request newDownloadLinkRequest(long fileId, DownloadOptions options) {
+        HttpUrl.Builder urlBuilder = API_BASE_URL.newBuilder().
+                addPathSegment("getfilelink")
+                .addQueryParameter("fileid", String.valueOf(fileId));
+
+        if (options.forceDownload()) {
+            urlBuilder.addQueryParameter("forcedownload", String.valueOf(1));
+        }
+
+        if (options.skipFilename()) {
+            urlBuilder.addQueryParameter("skipfilename", String.valueOf(1));
+        }
+
+        if (options.contentType() != null) {
+            MediaType mediaType = MediaType.parse(options.contentType());
+            if (mediaType == null) {
+                throw new IllegalArgumentException("Invalid or not well-formatted content type DownloadOptions argument");
+            }
+            urlBuilder.addQueryParameter("contenttype", mediaType.toString());
+        }
+
+        return new Request.Builder()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+    }
+
+    @Override
+    public Call<Void> download(FileLink fileLink, DataSink sink) {
+        return download(fileLink, sink, null);
+    }
+
+    @Override
+    public Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener) {
+        if (fileLink == null) {
+            throw new IllegalArgumentException("FileLink argument cannot be null.");
+        }
+
+        if (!(fileLink instanceof RealFileLink)) {
+            throw new IllegalArgumentException("Invalid FileLink argument.");
+        }
+
+        if (sink == null) {
+            throw new IllegalArgumentException("DataSink argument cannot be null.");
+        }
+
+        Request request = newDownloadRequest(fileLink);
+        return newCall(request, new ResponseAdapter<Void>() {
+            @Override
+            public Void adapt(Response response) throws IOException, ApiError {
+                if (response.code() == 404) {
+                    response.close();
+                    throw new FileNotFoundException("The requested file cannot be found or the file link has expired.");
+                }
+                BufferedSource source = getAsRawBytes(response);
+                if (listener != null) {
+                    source = Okio.buffer(new ProgressCountingSource(
+                            source,
+                            response.body().contentLength(),
+                            listener,
+                            progressCallbackThresholdBytes));
+                }
+
+                sink.readAll(source);
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public Call<BufferedSource> download(RemoteFile file) {
+        DownloadOptions options = DownloadOptions.create()
+                .skipFilename(false)
+                .contentType(file.getContentType())
+                .build();
+        return newCall(newDownloadLinkRequest(file.getFileId(), options), new ResponseAdapter<BufferedSource>() {
+            @Override
+            public BufferedSource adapt(Response response) throws IOException, ApiError {
+                FileLink link = getAsFileLink(response);
+                return newDownloadCall(link);
+            }
+        });
+    }
+
+    @Override
+    public Call<BufferedSource> download(FileLink fileLink) {
+        return newCall(newDownloadRequest(fileLink), new ResponseAdapter<BufferedSource>() {
+            @Override
+            public BufferedSource adapt(Response response) throws IOException, ApiError {
+                return getAsRawBytes(response);
+            }
+        });
+    }
+
+    @Override
     public ApiServiceBuilder newBuilder() {
-        throw new UnsupportedOperationException();
+        Authenticator authenticator = null;
+        for (Interceptor interceptor: httpClient.interceptors()){
+            if (interceptor instanceof RealAuthenticator){
+                authenticator = (Authenticator) interceptor;
+                break;
+            }
+        }
+        return new RealApiServiceBuilder(httpClient, callbackExecutor, progressCallbackThresholdBytes, authenticator);
     }
 
     private Request.Builder newRequest() {
@@ -242,6 +379,38 @@ class RealApiService implements ApiService {
             }
         } finally {
             closeQuietly(response);
+        }
+    }
+
+    Request newDownloadRequest(FileLink link){
+        return new Request.Builder()
+                .url(link.getBestUrl())
+                .get()
+                .build();
+    }
+
+    BufferedSource newDownloadCall(FileLink fileLink) throws IOException {
+        return newDownloadCall(newDownloadRequest(fileLink));
+    }
+
+    BufferedSource newDownloadCall(Request request) throws IOException {
+        Response response = httpClient.newCall(request).execute();
+        return getAsRawBytes(response);
+    }
+
+    private BufferedSource getAsRawBytes(Response response) throws FileNotFoundException, APIHttpException {
+        boolean callWasSuccessful = false;
+        try {
+            if (response.isSuccessful()) {
+                callWasSuccessful = true;
+                return response.body().source();
+            } else {
+                throw new APIHttpException(response.code(), response.message());
+            }
+        } finally {
+            if (!callWasSuccessful){
+                closeQuietly(response);
+            }
         }
     }
 }

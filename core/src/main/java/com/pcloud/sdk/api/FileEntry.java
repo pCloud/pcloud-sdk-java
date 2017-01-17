@@ -16,69 +16,25 @@
 
 package com.pcloud.sdk.api;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Date;
 
-public abstract class FileEntry {
-    @Expose
-    @SerializedName("id")
-    private String id;
+public interface FileEntry {
 
-    @Expose
-    @SerializedName("parentFolderid")
-    private long parentFolderId;
+    String getId();
 
-    @Expose
-    @SerializedName("name")
-    private String name;
+    String getName();
 
-    @Expose
-    @SerializedName("modified")
-    private Date lastModified;
+    Date getLastModified();
 
-    @Expose
-    @SerializedName("created")
-    private Date created;
+    Date getCreated();
 
-    @Expose
-    @SerializedName("isfolder")
-    private boolean isFolder;
+    long getParentFolderId();
 
-    public String getId() {
-        return id;
-    }
+    boolean isFile();
 
-    public String getName() {
-        return name;
-    }
+    boolean isFolder();
 
-    public Date getLastModified() {
-        return lastModified;
-    }
+    RemoteFolder asFolder();
 
-    public Date getCreated() {
-        return created;
-    }
-
-    public long getParentFolderId() {
-        return parentFolderId;
-    }
-
-    public boolean isFile() {
-        return !isFolder;
-    }
-
-    public boolean isFolder() {
-        return isFolder;
-    }
-
-    public RemoteFolder asFolder() {
-        throw new IllegalStateException("Entry is not a folder");
-    }
-
-    public RemoteFile asFile() {
-        throw new IllegalStateException("Entry is not a file");
-    }
+    RemoteFile asFile();
 }

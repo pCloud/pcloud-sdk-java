@@ -16,45 +16,19 @@
 
 package com.pcloud.sdk.api;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import java.io.IOException;
 
-public class RemoteFile extends FileEntry {
+public interface RemoteFile extends FileEntry, RemoteData {
 
-    @Expose
-    @SerializedName("fileid")
-    private Long fileId;
+    long getFileId();
 
-    @Expose
-    @SerializedName("contenttype")
-    private String contentType;
+    String getContentType();
 
-    @Expose
-    @SerializedName("size")
-    private long size;
+    long getSize();
 
-    @Expose
-    @SerializedName("hash")
-    private String hash;
+    String getHash();
 
-    public Long getFileId() {
-        return fileId;
-    }
+    FileLink getDownloadLink(DownloadOptions options) throws IOException, ApiError;
 
-    public String getContentType() {
-        return contentType;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    @Override
-    public RemoteFile asFile() {
-        return this;
-    }
+    FileLink getDownloadLink() throws IOException, ApiError;
 }

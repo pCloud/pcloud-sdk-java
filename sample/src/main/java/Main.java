@@ -17,10 +17,12 @@
 import com.pcloud.sdk.PCloudApi;
 import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.authentication.Authenticator;
-import com.pcloud.sdk.internal.networking.GetFolderResponse;
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.*;
+import java.util.UUID;
 
 public class Main {
 
@@ -35,6 +37,13 @@ public class Main {
 
             RemoteFile newFile = uploadData(apiService);
             printFileAttributes(newFile);
+
+            FileLink downloadLink = apiService.getDownloadLink(newFile, DownloadOptions.DEFAULT).execute();
+            System.out.print(downloadLink.getBestUrl());
+
+            RemoteFile bigFile = uploadFile(apiService, new File("some file path"));
+            System.out.println(bigFile.getDownloadLink());
+            downloadFile(bigFile, new File("some directory path"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,8 +63,27 @@ public class Main {
     }
 
     private static RemoteFile uploadData(ApiService apiService) throws IOException, ApiError {
-        String someText = "An empty text file";
-        byte[] fileContents = someText.getBytes();
-        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, "someText.txt", Data.create(fileContents)).execute();
+        String someName = UUID.randomUUID().toString();
+        byte[] fileContents = someName.getBytes();
+        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents)).execute();
+    }
+
+    private static RemoteFile uploadFile(ApiService apiService, File file) throws IOException, ApiError {
+
+        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, file.getName(), DataSource.create(file), new ProgressListener() {
+            public void onProgress(long done, long total) {
+                System.out.format("\rUploading... %.1f\n", ((double) done / (double) total) * 100d);
+            }
+        }).execute();
+    }
+
+    private static File downloadFile(RemoteFile remoteFile, File folder) throws IOException, ApiError {
+        File destination = new File(folder, remoteFile.getName());
+        remoteFile.download(DataSink.create(destination), new ProgressListener() {
+            public void onProgress(long done, long total) {
+                System.out.format("\rDownloading... %.1f\n", ((double) done / (double) total) * 100d);
+            }
+        });
+        return destination;
     }
 }

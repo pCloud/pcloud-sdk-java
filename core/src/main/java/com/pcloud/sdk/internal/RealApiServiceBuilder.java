@@ -22,8 +22,6 @@ import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.authentication.*;
 import com.pcloud.sdk.authentication.Authenticator;
 import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
-import com.pcloud.sdk.internal.networking.serialization.FileEntryDeserializer;
-import com.pcloud.sdk.authentication.RealAuthenticator;
 import okhttp3.*;
 
 import java.net.InetSocketAddress;
@@ -164,14 +162,22 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
             httpClientBuilder.addInterceptor((RealAuthenticator)authenticator);
         }
 
+
+        RealRemoteFile.InstanceCreator fileCreator = new RealRemoteFile.InstanceCreator();
+        RealRemoteFolder.InstanceCreator folderCrator = new RealRemoteFolder.InstanceCreator();
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
-                .registerTypeAdapter(FileEntry.class, new FileEntryDeserializer())
+                .registerTypeAdapterFactory(new RealFileEntry.TypeAdapterFactory())
+                .registerTypeAdapter(FileEntry.class, new RealFileEntry.FileEntryDeserializer())
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
+                .registerTypeAdapter(RealRemoteFile.class, fileCreator)
+                .registerTypeAdapter(RealRemoteFolder.class, folderCrator)
                 .create();
 
 
         RealApiService service = new RealApiService(gson, httpClientBuilder.build(), this.callbackExecutor, progressCallbackThresholdBytes);
+        fileCreator.setApiService(service);
+        folderCrator.setApiService(service);
         return service;
     }
 }

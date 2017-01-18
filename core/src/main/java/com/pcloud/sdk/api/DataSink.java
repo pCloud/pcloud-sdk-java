@@ -29,7 +29,7 @@ public abstract class DataSink {
 
     public abstract void readAll(BufferedSource source) throws IOException;
 
-    public static DataSink create(File file) {
+    public static DataSink create(final File file) {
         return new DataSink() {
             @Override
             public void readAll(BufferedSource source) throws IOException{

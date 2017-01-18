@@ -22,6 +22,7 @@ import okio.BufferedSource;
 import okio.Okio;
 
 import java.io.*;
+import java.util.Date;
 import java.util.UUID;
 
 public class Main {
@@ -41,9 +42,9 @@ public class Main {
             FileLink downloadLink = apiService.getDownloadLink(newFile, DownloadOptions.DEFAULT).execute();
             System.out.print(downloadLink.getBestUrl());
 
-            RemoteFile bigFile = uploadFile(apiService, new File("some file path"));
+            RemoteFile bigFile = uploadFile(apiService, new File("C:\\Users\\Joro\\Desktop\\2.7Biturbo-SelfStudy.pdf"));
             System.out.println(bigFile.getDownloadLink());
-            downloadFile(bigFile, new File("some directory path"));
+            downloadFile(bigFile, new File("C:\\Users\\Joro\\Downloads"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -70,7 +71,7 @@ public class Main {
 
     private static RemoteFile uploadFile(ApiService apiService, File file) throws IOException, ApiError {
 
-        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, file.getName(), DataSource.create(file), new ProgressListener() {
+        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, file.getName(), DataSource.create(file), new Date(file.lastModified()), new ProgressListener() {
             public void onProgress(long done, long total) {
                 System.out.format("\rUploading... %.1f\n", ((double) done / (double) total) * 100d);
             }

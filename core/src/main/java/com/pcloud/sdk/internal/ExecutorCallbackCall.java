@@ -39,13 +39,13 @@ final class ExecutorCallbackCall<T> implements Call<T> {
     }
 
     @Override
-    public void enqueue(Callback<T> callback) {
+    public void enqueue(final Callback<T> callback) {
         if (callback == null) throw new NullPointerException("callback == null");
 
         delegate.enqueue(new Callback<T>() {
 
             @Override
-            public void onResponse(Call<T> call, T response) {
+            public void onResponse(Call<T> call, final T response) {
                 callbackExecutor.execute(new Runnable() {
                     @Override public void run() {
                         if (delegate.isCanceled()) {

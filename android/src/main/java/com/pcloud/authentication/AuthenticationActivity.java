@@ -56,6 +56,9 @@ public class AuthenticationActivity extends Activity {
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Log.e(TAG, description + " " + errorCode);
+                if(!isFinishing()){
+                    setFailedResultAndFinish(AuthData.Result.AUTH_ERROR);
+                }
             }
 
             @Override

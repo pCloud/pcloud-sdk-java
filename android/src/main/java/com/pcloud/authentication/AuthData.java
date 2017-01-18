@@ -22,7 +22,7 @@ import android.os.Parcelable;
 public class AuthData implements Parcelable {
 
     public enum Result {
-        OK(0), CANCELED(1), ACCESS_DENIED(2);
+        OK(0), CANCELED(1), ACCESS_DENIED(2), AUTH_ERROR(3);
         public final int code;
 
         public int getCode() {

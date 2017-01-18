@@ -19,6 +19,7 @@ package com.pcloud.authentication;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebSettings;
@@ -27,15 +28,18 @@ import android.webkit.WebViewClient;
 
 import com.pcloud.R;
 
-import static com.pcloud.authentication.Constants.ACCESS_TOKEN;
-import static com.pcloud.authentication.Constants.API_CALL_URI;
 import static com.pcloud.authentication.Constants.API_KEY;
 import static com.pcloud.authentication.Constants.REDIRECT_URI;
 
 public class AuthenticationActivity extends Activity {
 
     private static final String TAG = AuthenticationActivity.class.getSimpleName();
+    private final static String API_CALL_URI = "https://my.pcloud.com/oauth2/authorize?response_type=token";
+    private final static String ACCESS_TOKEN = "access_token";
+    private final static String RESULT = "result";
+
     private WebView webView;
+    private String redirectUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +60,15 @@ public class AuthenticationActivity extends Activity {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                if (url.contains(ACCESS_TOKEN)) {
-                    int start = url.indexOf("=");
-                    int end = url.indexOf("&");
-                    String token = url.substring(start, end);
-                    setActivityResult(token);
-                    finish();
+                if(url.startsWith(redirectUri)){
+                    if (url.contains(ACCESS_TOKEN)) {
+                        int start = url.indexOf("=");
+                        int end = url.indexOf("&");
+                        String token = url.substring(start, end);
+                        setSuccessResultAndFinish(token);
+                    }else {
+                        setFailedResultAndFinish(AuthResult.CODE.ACCESS_DENIED);
+                    }
                 }
             }
 
@@ -80,19 +87,29 @@ public class AuthenticationActivity extends Activity {
 
     }
 
-    private void setActivityResult(String token) {
+    private void setSuccessResultAndFinish(String token) {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(ACCESS_TOKEN, token);
+        AuthResult result = new AuthResult(token, AuthResult.CODE.OK);
+        resultIntent.putExtra(RESULT, result);
         setResult(RESULT_OK, resultIntent);
+        finish();
+    }
+
+    private void setFailedResultAndFinish(AuthResult.CODE code){
+        Intent resultIntent = new Intent();
+        AuthResult result = new AuthResult(null, code);
+        resultIntent.putExtra(RESULT, result);
+        setResult(RESULT_CANCELED, resultIntent);
+        finish();
     }
 
     private String buildUrl() {
         String apiKey = getIntent().getStringExtra(API_KEY);
-        String redirectUri = getIntent().getStringExtra(REDIRECT_URI);
-        StringBuilder builder = new StringBuilder()
-                .append(API_CALL_URI)
-                .append(apiKey).append("&")
-                .append(REDIRECT_URI).append("=").append(redirectUri);
+        redirectUri = getIntent().getStringExtra(REDIRECT_URI);
+        Uri.Builder builder = Uri.parse(API_CALL_URI).buildUpon()
+                .appendQueryParameter(API_KEY, apiKey)
+                .appendQueryParameter(REDIRECT_URI, redirectUri);
+
         return builder.toString();
     }
 
@@ -101,4 +118,8 @@ public class AuthenticationActivity extends Activity {
         webView.saveState(outState);
     }
 
+    @Override
+    public void onBackPressed() {
+        setFailedResultAndFinish(AuthResult.CODE.CANCELED);
+    }
 }

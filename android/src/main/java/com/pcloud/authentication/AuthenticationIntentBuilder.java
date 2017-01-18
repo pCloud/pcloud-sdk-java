@@ -19,8 +19,12 @@ package com.pcloud.authentication;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import static com.pcloud.authentication.Constants.*;
+
+import static com.pcloud.authentication.Constants.API_KEY;
+import static com.pcloud.authentication.Constants.REDIRECT_URI;
+
 public class AuthenticationIntentBuilder {
+    private final static String DEFAULT_REDIRECT_URI = "https://oauth2redirect";
 
     private String apiKey;
     private Uri redirectUri;
@@ -35,6 +39,7 @@ public class AuthenticationIntentBuilder {
         this.apiKey = apiKey;
         return this;
     }
+
     /**
      * Set a custom redirect Uri.
      *
@@ -47,7 +52,9 @@ public class AuthenticationIntentBuilder {
     }
 
     /**
-     * Build intent. You should start it with {@code startActivityForResult} to obtain Access Token.
+     * Builds intent for authentication.
+     *
+     * <p>You should start it with {@code Activity.startActivityForResult(..)} to obtain Authentication result - {@link AuthResult}.</p>
      */
     public Intent buildWithContext(Context context) {
         if (apiKey == null) {

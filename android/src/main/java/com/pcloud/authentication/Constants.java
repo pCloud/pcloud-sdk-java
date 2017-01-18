@@ -16,13 +16,9 @@
 
 package com.pcloud.authentication;
 
-public class Constants {
-    public final static int RESULT = 100;
-    public final static String ACCESS_TOKEN = "access_token";
+class Constants {
+
     final static String API_KEY = "client_id";
     final static String REDIRECT_URI = "redirect_uri";
-    final static String THEME = "theme";
-    final static String DEFAULT_REDIRECT_URI = "https://www.pcloud.com/login";
-    final static String API_CALL_URI = "https://my.pcloud.com/oauth2/authorize?response_type=token&client_id=";
 }
 

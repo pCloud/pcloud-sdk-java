@@ -633,17 +633,23 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<UserInfo> getUserInfo() {
-        return newCall(createUserInfoRequest(), new ResponseAdapter<UserInfo>() {
+        Request request = newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("userinfo")
+                        .build())
+                .get().build();
+
+        return newCall(request, new ResponseAdapter<UserInfo>() {
             @Override
             public UserInfo adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, UserInfoResponse.class).getUserInfo();
+                UserInfoResponse body = getAsApiResponse(response, UserInfoResponse.class);
+                return new RealUserInfo(body.getUserId(),
+                        body.getEmail(),
+                        body.isEmailVerified(),
+                        body.getTotalQuota(),
+                        body.getUsedQuota());
             }
         });
-    }
-
-    private Request createUserInfoRequest() {
-        return newRequest()
-                    .url(API_BASE_URL.newBuilder().addPathSegment("userinfo").build()).get().build();
     }
 
     private <T> Call<T> newCall(Request request, ResponseAdapter<T> adapter) {

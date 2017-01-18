@@ -5,23 +5,22 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-package com.pcloud.sdk.internal;
+package com.pcloud.sdk.internal.networking;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.pcloud.sdk.api.UserInfo;
-import com.pcloud.sdk.internal.networking.ApiResponse;
 
-class UserInfoResponse extends ApiResponse{
+public class UserInfoResponse extends ApiResponse{
     @Expose
     @SerializedName("userid")
     private long userId;
@@ -42,7 +41,23 @@ class UserInfoResponse extends ApiResponse{
     @SerializedName("usedquota")
     private long usedQuota ;
 
-    UserInfo getUserInfo() {
-        return new RealUserInfo(userId, email, isEmailVerified, totalQuota, usedQuota);
+    public long getUserId() {
+        return userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean isEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public long getTotalQuota() {
+        return totalQuota;
+    }
+
+    public long getUsedQuota() {
+        return usedQuota;
     }
 }

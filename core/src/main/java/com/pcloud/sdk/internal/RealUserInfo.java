@@ -16,29 +16,17 @@
 
 package com.pcloud.sdk.internal;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.pcloud.sdk.api.UserInfo;
 
  class RealUserInfo implements UserInfo {
-    @Expose
-    @SerializedName("userid")
     private long userId;
 
-    @Expose
-    @SerializedName("email")
     private String email;
 
-    @Expose
-    @SerializedName("emailverified")
     private boolean isEmailVerified;
 
-    @Expose
-    @SerializedName("quota")
     private long totalQuota;
 
-    @Expose
-    @SerializedName("usedquota")
     private long usedQuota;
 
     @Override

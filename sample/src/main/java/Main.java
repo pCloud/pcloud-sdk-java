@@ -17,9 +17,6 @@
 import com.pcloud.sdk.PCloudApi;
 import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.authentication.Authenticator;
-import okio.BufferedSink;
-import okio.BufferedSource;
-import okio.Okio;
 
 import java.io.*;
 import java.util.UUID;
@@ -44,6 +41,10 @@ public class Main {
             RemoteFile bigFile = uploadFile(apiService, new File("some file path"));
             System.out.println(bigFile.getDownloadLink());
             downloadFile(bigFile, new File("some directory path"));
+
+            UserInfo userInfo = apiService.getUserInfo().execute();
+            System.out.format(" User email: %s | Total quota %s | Used quota %s " , userInfo.getEmail(), userInfo.getTotalQuota(), userInfo.getUsedQuota());
+
 
         } catch (IOException e) {
             e.printStackTrace();

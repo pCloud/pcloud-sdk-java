@@ -224,6 +224,14 @@ public interface ApiService {
      */
     Call<RemoteFile> renameFile(RemoteFile file, String newFileName);
 
+
+    /**
+     * Get {@link UserInfo} .
+     *
+     * @return {@link Call}
+     */
+    Call<UserInfo> getUserInfo();
+
     /**
      * Returns new ApiServiceBuilder.
      */

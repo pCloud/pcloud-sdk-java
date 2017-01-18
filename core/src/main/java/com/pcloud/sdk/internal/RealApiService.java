@@ -498,7 +498,7 @@ class RealApiService implements ApiService {
 
         return newRequest()
                 .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("deletefolder")
+                        .addPathSegment("deletefolderrecursive")
                         .build())
                 .post(body)
                 .build();

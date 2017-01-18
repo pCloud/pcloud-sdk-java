@@ -41,8 +41,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
@@ -86,24 +88,24 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data) {
-        return createFile(folder.getFolderId(), filename, data, null);
+        return createFile(folder.getFolderId(), filename, data, null, null);
     }
 
     @Override
-    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, ProgressListener listener) {
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, Date modifiedDate, ProgressListener listener) {
         if (folder == null) {
             throw new IllegalArgumentException("Folder argument cannot be null.");
         }
-        return createFile(folder.getFolderId(), filename, data, listener);
+        return createFile(folder.getFolderId(), filename, data, modifiedDate, listener);
     }
 
     @Override
     public Call<RemoteFile> createFile(long folderId, String filename, DataSource data) {
-        return createFile(folderId, filename, data, null);
+        return createFile(folderId, filename, data, null, null);
     }
 
     @Override
-    public Call<RemoteFile> createFile(long folderId, String filename, DataSource data, ProgressListener listener) {
+    public Call<RemoteFile> createFile(long folderId, String filename, final DataSource data, Date modifiedDate, final ProgressListener listener) {
         if (filename == null) {
             throw new IllegalArgumentException("Filename cannot be null.");
         }
@@ -141,13 +143,18 @@ class RealApiService implements ApiService {
                 .addFormDataPart("file", filename, dataBody)
                 .build();
 
+        HttpUrl.Builder urlBuilder = API_BASE_URL.newBuilder().
+                addPathSegment("uploadfile")
+                .addQueryParameter("folderid", String.valueOf(folderId))
+                .addQueryParameter("renameifexists", String.valueOf(1))
+                .addQueryParameter("nopartial", String.valueOf(1));
+
+        if (modifiedDate != null) {
+            urlBuilder.addQueryParameter("mtime", String.valueOf(TimeUnit.MILLISECONDS.toSeconds(modifiedDate.getTime())));
+        }
+
         Request uploadRequest = new Request.Builder()
-                .url(API_BASE_URL.newBuilder().
-                        addPathSegment("uploadfile")
-                        .addQueryParameter("folderid", String.valueOf(folderId))
-                        .addQueryParameter("renameifexists", String.valueOf(1))
-                        .addQueryParameter("nopartial", String.valueOf(1))
-                        .build())
+                .url(urlBuilder.build())
                 .method("POST", compositeBody)
                 .build();
 
@@ -260,7 +267,7 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener) {
+    public Call<Void> download(FileLink fileLink, final DataSink sink, final ProgressListener listener) {
         if (fileLink == null) {
             throw new IllegalArgumentException("FileLink argument cannot be null.");
         }
@@ -323,7 +330,20 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<RemoteFile> copyFile(long fileId, long toFolderId) {
-        return newCall(createCopyFileRequest(fileId, toFolderId), new ResponseAdapter<RemoteFile>() {
+        RequestBody body = new FormBody.Builder()
+                .add("fileid", String.valueOf(fileId))
+                .add("tofolderid", String.valueOf(toFolderId))
+                .add("noover", String.valueOf(1))
+                .build();
+
+        Request request = newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("copyfile")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFile>() {
             @Override
             public RemoteFile adapt(Response response) throws IOException, ApiError {
                 return getAsApiResponse(response, GetFileResponse.class).getFile();
@@ -338,31 +358,25 @@ class RealApiService implements ApiService {
         if (toFolder == null) {
             throw new IllegalArgumentException("toFolder argument cannot be null.");
         }
-        return newCall(createCopyFileRequest(file.getFileId(), toFolder.getFolderId()), new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFileResponse.class).getFile();
-            }
-        });
+
+        return copyFile(file.getFileId(), toFolder.getFolderId());
     }
 
-    private Request createCopyFileRequest(long fileId, long toFolderId) {
+    @Override
+    public Call<RemoteFile> moveFile(long fileId, long toFolderId) {
         RequestBody body = new FormBody.Builder()
                 .add("fileid", String.valueOf(fileId))
                 .add("tofolderid", String.valueOf(toFolderId))
                 .build();
 
-        return newRequest()
+        Request request = newRequest()
                 .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("copyfile")
+                        .addPathSegment("renamefile")
                         .build())
                 .post(body)
                 .build();
-    }
 
-    @Override
-    public Call<RemoteFile> moveFile(long fileId, long toFolderId) {
-        return newCall(createMoveFileRequest(fileId, toFolderId), new ResponseAdapter<RemoteFile>() {
+        return newCall(request, new ResponseAdapter<RemoteFile>() {
             @Override
             public RemoteFile adapt(Response response) throws IOException, ApiError {
                 return getAsApiResponse(response, GetFileResponse.class).getFile();
@@ -378,25 +392,8 @@ class RealApiService implements ApiService {
         if (toFolder == null) {
             throw new IllegalArgumentException("toFolder argument cannot be null.");
         }
-        return newCall(createMoveFileRequest(file.getFileId(), toFolder.getFolderId()), new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFileResponse.class).getFile();
-            }
-        });
-    }
-    private Request createMoveFileRequest(long fileId, long toFolderId) {
-        RequestBody body = new FormBody.Builder()
-                .add("fileid", String.valueOf(fileId))
-                .add("tofolderid", String.valueOf(toFolderId))
-                .build();
 
-        return newRequest()
-                .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("renamefile")
-                        .build())
-                .post(body)
-                .build();
+        return moveFile(file.getFileId(), toFolder.getFolderId());
     }
 
     @Override
@@ -692,18 +689,18 @@ class RealApiService implements ApiService {
         }
     }
 
-    Request newDownloadRequest(FileLink link){
+    private Request newDownloadRequest(FileLink link){
         return new Request.Builder()
                 .url(link.getBestUrl())
                 .get()
                 .build();
     }
 
-    BufferedSource newDownloadCall(FileLink fileLink) throws IOException {
+    private BufferedSource newDownloadCall(FileLink fileLink) throws IOException {
         return newDownloadCall(newDownloadRequest(fileLink));
     }
 
-    BufferedSource newDownloadCall(Request request) throws IOException {
+    private BufferedSource newDownloadCall(Request request) throws IOException {
         Response response = httpClient.newCall(request).execute();
         return getAsRawBytes(response);
     }

@@ -19,6 +19,7 @@ import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.authentication.Authenticator;
 
 import java.io.*;
+import java.util.Date;
 import java.util.UUID;
 
 public class Main {
@@ -71,7 +72,7 @@ public class Main {
 
     private static RemoteFile uploadFile(ApiService apiService, File file) throws IOException, ApiError {
 
-        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, file.getName(), DataSource.create(file), new ProgressListener() {
+        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, file.getName(), DataSource.create(file), new Date(file.lastModified()), new ProgressListener() {
             public void onProgress(long done, long total) {
                 System.out.format("\rUploading... %.1f\n", ((double) done / (double) total) * 100d);
             }

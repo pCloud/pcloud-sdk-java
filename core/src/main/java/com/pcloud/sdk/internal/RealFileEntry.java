@@ -111,6 +111,7 @@ abstract class RealFileEntry implements FileEntry{
         private static final TypeToken<RemoteFile> REMOTE_FILE_TYPE_TOKEN = new TypeToken<RemoteFile>(){};
         private static final TypeToken<RemoteFolder> REMOTE_FOLDER_TYPE_TOKEN = new TypeToken<RemoteFolder>(){};
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
             if (FILE_ENTRY_TYPE_TOKEN.equals(type)){

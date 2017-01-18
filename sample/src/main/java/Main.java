@@ -42,9 +42,9 @@ public class Main {
             FileLink downloadLink = apiService.getDownloadLink(newFile, DownloadOptions.DEFAULT).execute();
             System.out.print(downloadLink.getBestUrl());
 
-            RemoteFile bigFile = uploadFile(apiService, new File("C:\\Users\\Joro\\Desktop\\2.7Biturbo-SelfStudy.pdf"));
+            RemoteFile bigFile = uploadFile(apiService, new File("some file path"));
             System.out.println(bigFile.getDownloadLink());
-            downloadFile(bigFile, new File("C:\\Users\\Joro\\Downloads"));
+            downloadFile(bigFile, new File("some directory path"));
 
         } catch (IOException e) {
             e.printStackTrace();

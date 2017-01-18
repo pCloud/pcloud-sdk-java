@@ -36,7 +36,7 @@ public class AuthenticationActivity extends Activity {
     private static final String TAG = AuthenticationActivity.class.getSimpleName();
     private final static String API_CALL_URI = "https://my.pcloud.com/oauth2/authorize?response_type=token";
     private final static String ACCESS_TOKEN = "access_token";
-    private final static String RESULT = "result";
+    private final static String AUTH_DATA = "auth_data";
 
     private WebView webView;
     private String redirectUri;
@@ -67,7 +67,7 @@ public class AuthenticationActivity extends Activity {
                         String token = url.substring(start, end);
                         setSuccessResultAndFinish(token);
                     }else {
-                        setFailedResultAndFinish(AuthResult.CODE.ACCESS_DENIED);
+                        setFailedResultAndFinish(AuthData.Result.ACCESS_DENIED);
                     }
                 }
             }
@@ -89,16 +89,16 @@ public class AuthenticationActivity extends Activity {
 
     private void setSuccessResultAndFinish(String token) {
         Intent resultIntent = new Intent();
-        AuthResult result = new AuthResult(token, AuthResult.CODE.OK);
-        resultIntent.putExtra(RESULT, result);
+        AuthData data = new AuthData(token, AuthData.Result.OK);
+        resultIntent.putExtra(AUTH_DATA, data);
         setResult(RESULT_OK, resultIntent);
         finish();
     }
 
-    private void setFailedResultAndFinish(AuthResult.CODE code){
+    private void setFailedResultAndFinish(AuthData.Result result){
         Intent resultIntent = new Intent();
-        AuthResult result = new AuthResult(null, code);
-        resultIntent.putExtra(RESULT, result);
+        AuthData data = new AuthData(null, result);
+        resultIntent.putExtra(AUTH_DATA, data);
         setResult(RESULT_CANCELED, resultIntent);
         finish();
     }
@@ -120,6 +120,6 @@ public class AuthenticationActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        setFailedResultAndFinish(AuthResult.CODE.CANCELED);
+        setFailedResultAndFinish(AuthData.Result.CANCELED);
     }
 }

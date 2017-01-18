@@ -19,9 +19,9 @@ package com.pcloud.authentication;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class AuthResult implements Parcelable {
+public class AuthData implements Parcelable {
 
-    public enum CODE {
+    public enum Result {
         OK(0), CANCELED(1), ACCESS_DENIED(2);
         public final int code;
 
@@ -29,18 +29,18 @@ public class AuthResult implements Parcelable {
             return code;
         }
 
-        CODE(int code) {
+        Result(int code) {
             this.code = code;
 
         }
     }
 
     private String token;
-    private CODE code;
+    private Result result;
 
-    AuthResult(String token, CODE code){
+    AuthData(String token, Result result){
         this.token = token;
-        this.code = code;
+        this.result = result;
     }
 
     public boolean isAuthSuccessfull(){
@@ -51,13 +51,13 @@ public class AuthResult implements Parcelable {
         return token;
     }
 
-    public CODE getCode() {
-        return code;
+    public Result getResult() {
+        return result;
     }
 
-    private AuthResult(Parcel in) {
+    private AuthData(Parcel in) {
         token = in.readString();
-        code = (CODE) in.readValue(CODE.class.getClassLoader());
+        result = (Result) in.readValue(Result.class.getClassLoader());
     }
 
     @Override
@@ -68,19 +68,19 @@ public class AuthResult implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(token);
-        dest.writeValue(code);
+        dest.writeValue(result);
     }
 
     @SuppressWarnings("unused")
-    public static final Parcelable.Creator<AuthResult> CREATOR = new Parcelable.Creator<AuthResult>() {
+    public static final Parcelable.Creator<AuthData> CREATOR = new Parcelable.Creator<AuthData>() {
         @Override
-        public AuthResult createFromParcel(Parcel in) {
-            return new AuthResult(in);
+        public AuthData createFromParcel(Parcel in) {
+            return new AuthData(in);
         }
 
         @Override
-        public AuthResult[] newArray(int size) {
-            return new AuthResult[size];
+        public AuthData[] newArray(int size) {
+            return new AuthData[size];
         }
     };
 }

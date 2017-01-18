@@ -54,7 +54,7 @@ public class AuthenticationIntentBuilder {
     /**
      * Builds intent for authentication.
      *
-     * <p>You should start it with {@code Activity.startActivityForResult(..)} to obtain Authentication result - {@link AuthResult}.</p>
+     * <p>You should start it with {@code Activity.startActivityForResult(..)} to obtain Authentication data - {@link AuthData}.</p>
      */
     public Intent buildWithContext(Context context) {
         if (apiKey == null) {

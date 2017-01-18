@@ -18,6 +18,7 @@ package com.pcloud.sdk.api;
 
 import okio.BufferedSource;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -140,7 +141,7 @@ public interface ApiService {
      */
     Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data);
 
-    Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, ProgressListener listener);
+    Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, Date modifiedDate, ProgressListener listener);
 
     /**
      * Create(upload) file.
@@ -152,7 +153,7 @@ public interface ApiService {
      */
     Call<RemoteFile> createFile(long folderId, String filename, DataSource data);
 
-    Call<RemoteFile> createFile(long folderId, String filename, DataSource data, ProgressListener listener);
+    Call<RemoteFile> createFile(long folderId, String filename, DataSource data, Date modifiedDate, ProgressListener listener);
 
     Call<Boolean> deleteFile(RemoteFile file);
 

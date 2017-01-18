@@ -16,19 +16,16 @@
 
 package com.pcloud.sdk.api;
 
+import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
-public interface RemoteFolder extends FileEntry{
+public interface FileLink extends RemoteData {
 
-    int ROOT_FOLDER_ID = 0;
+    Date getExpirationDate();
 
-    /**
-     * Returns the folderId for this folder.
-     */
-    long getFolderId();
+    List<URL> getUrls();
 
-    /**
-     * Returns the folder's children.
-     */
-    List<FileEntry> getChildren();
+    URL getBestUrl();
+
 }

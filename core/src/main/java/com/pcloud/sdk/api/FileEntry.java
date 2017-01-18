@@ -16,102 +16,64 @@
 
 package com.pcloud.sdk.api;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Date;
 
-public abstract class FileEntry {
-    @Expose
-    @SerializedName("id")
-    private String id;
-
-    @Expose
-    @SerializedName("parentFolderid")
-    private long parentFolderId;
-
-    @Expose
-    @SerializedName("name")
-    private String name;
-
-    @Expose
-    @SerializedName("modified")
-    private Date lastModified;
-
-    @Expose
-    @SerializedName("created")
-    private Date created;
-
-    @Expose
-    @SerializedName("isfolder")
-    private boolean isFolder;
+public interface FileEntry {
 
     /**
-     * Returns the id for the entry.
+     * Returns the entry id.
      */
-    public String getId() {
-        return id;
-    }
+    String getId();
 
     /**
-     * Returns the name for the entry.
+     * Returns the entry filename.
      */
-    public String getName() {
-        return name;
-    }
+    String getName();
 
     /**
-     * Returns the last modified date for the entry.
+     * Returns the last modification date.
      */
-    public Date getLastModified() {
-        return lastModified;
-    }
+    Date getLastModified();
 
     /**
-     * Returns the creation date for the entry.
+     * Returns the creation date.
      */
-    public Date getCreated() {
-        return created;
-    }
+    Date getCreated();
 
     /**
-     * Returns the parent-folder id for the entry.
+     * Returns the parent folder's id for the entry.
+     *
+     * <p>See {@linkplain RemoteFolder#getFolderId()} ()}.</p>
      */
-    public long getParentFolderId() {
-        return parentFolderId;
-    }
+    long getParentFolderId();
 
     /**
-     * Returns {@code true} if this is a file.
+     * Returns {@code true} if this entry is a file.
      */
-    public boolean isFile() {
-        return !isFolder;
-    }
+    boolean isFile();
 
     /**
-     * Returns {@code true} if this is a folder.
+     * Returns {@code true} if this entry is a folder.
      */
-    public boolean isFolder() {
-        return isFolder;
-    }
+    boolean isFolder();
 
     /**
-     * Returns this FileEntry as {@link RemoteFolder}
+     * Returns this FileEntry as a {@link RemoteFolder}
+     *
+     * <p>See {@linkplain #isFolder()}.</p>
      *
      * @return {@link RemoteFolder}
-     * @throws IllegalStateException if this method is not overriden
+     * @throws IllegalStateException if the entry is not a folder
      */
-    public RemoteFolder asFolder() {
-        throw new IllegalStateException("Entry is not a folder");
-    }
+    RemoteFolder asFolder();
 
     /**
      * Returns this FileEntry as {@link RemoteFile}
      *
+     * <p>See {@linkplain #isFile()}.</p>
+     *
      * @return {@link RemoteFile}
-     * @throws IllegalStateException if this method is not overriden
+     * @throws IllegalStateException if the entry is not a file
      */
-    public RemoteFile asFile() {
-        throw new IllegalStateException("Entry is not a file");
-    }
+    RemoteFile asFile();
 }

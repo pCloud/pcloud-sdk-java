@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk.internal.networking;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Locale;
 
-public interface RemoteFolder extends FileEntry{
+public class APIHttpException extends IOException {
 
-    int ROOT_FOLDER_ID = 0;
+    private int code;
 
-    /**
-     * Returns the folderId for this folder.
-     */
-    long getFolderId();
+    public APIHttpException(int code, String message) {
+        super(String.format(Locale.US, "API returned \'%d - %s\' HTTP error.", code, message));
+        this.code = code;
+    }
 
-    /**
-     * Returns the folder's children.
-     */
-    List<FileEntry> getChildren();
+    public int getCode() {
+        return code;
+    }
 }

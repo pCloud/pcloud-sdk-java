@@ -17,7 +17,6 @@
 package com.pcloud.sdk.api;
 
 import com.pcloud.sdk.authentication.Authenticator;
-
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
@@ -78,6 +77,8 @@ public interface ApiServiceBuilder {
      * Sets executor for {@link Callback}.
      */
     ApiServiceBuilder callbackExecutor(Executor callbackExecutor);
+
+    ApiServiceBuilder progressCallbackThreshold(int bytes);
 
     /**
      * Setup new {@link ApiService}.

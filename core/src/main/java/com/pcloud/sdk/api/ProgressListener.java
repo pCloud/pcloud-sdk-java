@@ -16,19 +16,6 @@
 
 package com.pcloud.sdk.api;
 
-import java.util.List;
-
-public interface RemoteFolder extends FileEntry{
-
-    int ROOT_FOLDER_ID = 0;
-
-    /**
-     * Returns the folderId for this folder.
-     */
-    long getFolderId();
-
-    /**
-     * Returns the folder's children.
-     */
-    List<FileEntry> getChildren();
+public interface ProgressListener {
+    void onProgress(long done, long total);
 }

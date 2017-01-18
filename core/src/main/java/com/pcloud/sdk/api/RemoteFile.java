@@ -16,60 +16,36 @@
 
 package com.pcloud.sdk.api;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import java.io.IOException;
 
-public class RemoteFile extends FileEntry {
-
-    @Expose
-    @SerializedName("fileid")
-    private Long fileId;
-
-    @Expose
-    @SerializedName("contenttype")
-    private String contentType;
-
-    @Expose
-    @SerializedName("size")
-    private long size;
-
-    @Expose
-    @SerializedName("hash")
-    private String hash;
+public interface RemoteFile extends FileEntry, RemoteData {
 
     /**
      * Returns the fileId of the RemoteFile.
      */
-    public Long getFileId() {
-        return fileId;
-    }
+    long getFileId();
 
     /**
      * Returns the content type of the RemoteFile.
+     *
+     * <p>For more information, see
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">here</a></p>
      */
-    public String getContentType() {
-        return contentType;
-    }
+    String getContentType();
 
     /**
-     * Returns the size of the RemoteFile.
+     * Returns the size of the file in bytes.
      */
-    public long getSize() {
-        return size;
-    }
+    long getSize();
 
     /**
-     * Returns the hash of the RemoteFile .
+     * Returns a hash of the file content.
+     *
+     * <p>This parameter can be used to detect content changes.</p>
      */
-    public String getHash() {
-        return hash;
-    }
+    String getHash();
 
-    /**
-     * Returns this RemoteFile instance.
-     */
-    @Override
-    public RemoteFile asFile() {
-        return this;
-    }
+    FileLink getDownloadLink(DownloadOptions options) throws IOException, ApiError;
+
+    FileLink getDownloadLink() throws IOException, ApiError;
 }

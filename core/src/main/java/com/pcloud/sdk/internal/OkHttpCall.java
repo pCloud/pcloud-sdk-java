@@ -40,7 +40,7 @@ final class OkHttpCall<T> implements Call<T> {
     }
 
     @Override
-    public void enqueue(Callback<T> callback) {
+    public void enqueue(final Callback<T> callback) {
         rawCall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {

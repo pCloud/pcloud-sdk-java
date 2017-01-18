@@ -16,19 +16,30 @@
 
 package com.pcloud.sdk.api;
 
-import java.util.List;
-
-public interface RemoteFolder extends FileEntry{
-
-    int ROOT_FOLDER_ID = 0;
+public interface UserInfo {
 
     /**
-     * Returns the folderId for this folder.
-     */
-    long getFolderId();
+     * Returns the id of this User.
+     * */
+    long getUserId();
 
     /**
-     * Returns the folder's children.
-     */
-    List<FileEntry> getChildren();
+     * Returns the email of this User.
+     * */
+    String getEmail();
+
+    /**
+     * Returns {@code true} if the user has verified his email address, {@code false} otherwise.
+     * */
+    boolean isEmailVerified();
+
+    /**
+     * Returns the available storage space in bytes.
+     * */
+    long getTotalQuota();
+
+    /**
+     * Returns the size of user content in bytes.
+     * */
+    long getUsedQuota();
 }

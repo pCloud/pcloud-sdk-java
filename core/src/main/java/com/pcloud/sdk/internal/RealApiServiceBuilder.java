@@ -18,12 +18,10 @@ package com.pcloud.sdk.internal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.pcloud.sdk.api.ApiService;
-import com.pcloud.sdk.api.ApiServiceBuilder;
-import com.pcloud.sdk.api.FileEntry;
+import com.pcloud.sdk.api.*;
+import com.pcloud.sdk.authentication.*;
+import com.pcloud.sdk.authentication.Authenticator;
 import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
-import com.pcloud.sdk.internal.networking.serialization.FileEntryDeserializer;
-import com.pcloud.sdk.authentication.RealAuthenticator;
 import okhttp3.*;
 
 import java.net.InetSocketAddress;
@@ -41,8 +39,21 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     private Dispatcher dispatcher;
     private int readTimeoutMs;
     private int writeTimeoutMs;
-    private int connecttimeoutMs;
-    private com.pcloud.sdk.authentication.Authenticator authenticator;
+    private int connectTimeoutMs;
+    private long progressCallbackThresholdBytes;
+    private Authenticator authenticator;
+
+    RealApiServiceBuilder(OkHttpClient okHttpClient, Executor callbackExecutor, long progressCallbackThresholdBytes, Authenticator authenticator) {
+        this.cache = okHttpClient.cache();
+        this.callbackExecutor = callbackExecutor;
+        this.connectionPool = okHttpClient.connectionPool();
+        this.dispatcher = okHttpClient.dispatcher();
+        this.readTimeoutMs = okHttpClient.readTimeoutMillis();
+        this.writeTimeoutMs = okHttpClient.writeTimeoutMillis();
+        this.connectTimeoutMs = okHttpClient.connectTimeoutMillis();
+        this.progressCallbackThresholdBytes = progressCallbackThresholdBytes;
+        this.authenticator = authenticator;
+    }
 
     RealApiServiceBuilder() {
     }
@@ -89,7 +100,7 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
 
     @Override
     public ApiServiceBuilder connectTimeout(long timeout, TimeUnit timeUnit) {
-        this.connecttimeoutMs = (int) timeUnit.toMillis(timeout);
+        this.connectTimeoutMs = (int) timeUnit.toMillis(timeout);
         return this;
     }
 
@@ -106,16 +117,22 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     }
 
     @Override
+    public ApiServiceBuilder progressCallbackThreshold(int bytes) {
+        if (bytes < 0) {
+            throw new IllegalArgumentException("Threshold parameter must a positive number.");
+        }
+        this.progressCallbackThresholdBytes = bytes;
+        return this;
+    }
+
+    @Override
     public ApiService create() {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .readTimeout(this.readTimeoutMs, TimeUnit.MILLISECONDS)
                 .writeTimeout(this.writeTimeoutMs, TimeUnit.MILLISECONDS)
-                .connectTimeout(this.connecttimeoutMs, TimeUnit.MILLISECONDS)
-                .retryOnConnectionFailure(true)
+                .connectTimeout(this.connectTimeoutMs, TimeUnit.MILLISECONDS)
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .addInterceptor(new GloabalParamsRequestInterceptor());
-
-        httpClientBuilder.proxy(new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved("localhost",8888)));
 
         if (dispatcher != null) {
                 httpClientBuilder.dispatcher(dispatcher);
@@ -129,17 +146,27 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
             httpClientBuilder.cache(cache);
         }
 
-        httpClientBuilder.authenticator(Authenticator.NONE);
+        httpClientBuilder.authenticator(okhttp3.Authenticator.NONE);
         if (authenticator != null) {
             httpClientBuilder.addInterceptor((RealAuthenticator)authenticator);
         }
 
+
+        RealRemoteFile.InstanceCreator fileCreator = new RealRemoteFile.InstanceCreator();
+        RealRemoteFolder.InstanceCreator folderCrator = new RealRemoteFolder.InstanceCreator();
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
-                .registerTypeAdapter(FileEntry.class, new FileEntryDeserializer())
+                .registerTypeAdapterFactory(new RealFileEntry.TypeAdapterFactory())
+                .registerTypeAdapter(FileEntry.class, new RealFileEntry.FileEntryDeserializer())
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
+                .registerTypeAdapter(RealRemoteFile.class, fileCreator)
+                .registerTypeAdapter(RealRemoteFolder.class, folderCrator)
                 .create();
 
-        return new RealApiService(gson, httpClientBuilder.build(), this.callbackExecutor);
+
+        RealApiService service = new RealApiService(gson, httpClientBuilder.build(), this.callbackExecutor, progressCallbackThresholdBytes);
+        fileCreator.setApiService(service);
+        folderCrator.setApiService(service);
+        return service;
     }
 }

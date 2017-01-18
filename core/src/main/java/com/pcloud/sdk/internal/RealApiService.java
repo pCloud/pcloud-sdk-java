@@ -16,43 +16,53 @@
 
 package com.pcloud.sdk.internal;
 
-import com.google.gson.*;
-import com.google.gson.internal.bind.JsonTreeWriter;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.api.Call;
+import com.pcloud.sdk.authentication.Authenticator;
+import com.pcloud.sdk.authentication.RealAuthenticator;
+import com.pcloud.sdk.internal.networking.*;
 import com.pcloud.sdk.internal.networking.ApiResponse;
+import com.pcloud.sdk.internal.networking.GetFileResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
 import com.pcloud.sdk.internal.networking.UploadFilesResponse;
 
 import okhttp3.HttpUrl;
 import okhttp3.*;
-import okhttp3.Request;
 import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
 
 class RealApiService implements ApiService {
 
+    private long progressCallbackThresholdBytes;
     private Gson gson;
     private OkHttpClient httpClient;
     private Executor callbackExecutor;
 
     private static final HttpUrl API_BASE_URL = HttpUrl.parse("https://api.pcloud.com");
 
-    RealApiService(Gson gson, OkHttpClient httpClient, Executor callbackExecutor) {
+    RealApiService(Gson gson, OkHttpClient httpClient, Executor callbackExecutor, long progressCallbackThresholdBytes) {
         this.gson = gson;
         this.httpClient = httpClient;
         this.callbackExecutor = callbackExecutor;
+        this.progressCallbackThresholdBytes = progressCallbackThresholdBytes;
     }
 
     @Override
@@ -77,15 +87,25 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, Data data) {
-        if (folder == null) {
-            throw new IllegalArgumentException("folder argument cannot be null.");
-        }
-        return createFile(folder.getFolderId(), filename, data);
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data) {
+        return createFile(folder.getFolderId(), filename, data, null, null);
     }
 
     @Override
-    public Call<RemoteFile> createFile(long folderId, String filename, Data data) {
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, Date modifiedDate, ProgressListener listener) {
+        if (folder == null) {
+            throw new IllegalArgumentException("Folder argument cannot be null.");
+        }
+        return createFile(folder.getFolderId(), filename, data, modifiedDate, listener);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(long folderId, String filename, DataSource data) {
+        return createFile(folderId, filename, data, null, null);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(long folderId, String filename, final DataSource data, Date modifiedDate, final ProgressListener listener) {
         if (filename == null) {
             throw new IllegalArgumentException("Filename cannot be null.");
         }
@@ -101,7 +121,15 @@ class RealApiService implements ApiService {
 
             @Override
             public void writeTo(BufferedSink sink) throws IOException {
+                if(listener != null){
+                    sink = Okio.buffer(new ProgressCountingSink(
+                            sink,
+                            data.contentLength(),
+                            listener,
+                            progressCallbackThresholdBytes));
+                }
                 data.writeTo(sink);
+                sink.flush();
             }
 
             @Override
@@ -115,11 +143,18 @@ class RealApiService implements ApiService {
                 .addFormDataPart("file", filename, dataBody)
                 .build();
 
+        HttpUrl.Builder urlBuilder = API_BASE_URL.newBuilder().
+                addPathSegment("uploadfile")
+                .addQueryParameter("folderid", String.valueOf(folderId))
+                .addQueryParameter("renameifexists", String.valueOf(1))
+                .addQueryParameter("nopartial", String.valueOf(1));
+
+        if (modifiedDate != null) {
+            urlBuilder.addQueryParameter("mtime", String.valueOf(TimeUnit.MILLISECONDS.toSeconds(modifiedDate.getTime())));
+        }
+
         Request uploadRequest = new Request.Builder()
-                .url(API_BASE_URL.newBuilder().
-                        addPathSegment("uploadfile")
-                        .addQueryParameter("folderid", String.valueOf(folderId))
-                        .build())
+                .url(urlBuilder.build())
                 .method("POST", compositeBody)
                 .build();
 
@@ -134,6 +169,271 @@ class RealApiService implements ApiService {
                 }
             }
         });
+    }
+
+    @Override
+    public Call<Boolean> deleteFile(RemoteFile file) {
+        if (file == null) {
+            throw new IllegalArgumentException("File argument cannot be null.");
+        }
+        return deleteFile(file.getFileId());
+    }
+
+    @Override
+    public Call<Boolean> deleteFile(long fileId) {
+        Request request = new Request.Builder()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("deletefile")
+                        .build())
+                .get()
+                .put(new FormBody.Builder()
+                        .add("fileid", String.valueOf(fileId))
+                        .build())
+                .build();
+        return newCall(request, new ResponseAdapter<Boolean>() {
+            @Override
+            public Boolean adapt(Response response) throws IOException, ApiError {
+                GetFileResponse body = deserializeResponseBody(response, GetFileResponse.class);
+                return body.isSuccessful() && body.getFile() != null;
+            }
+        });
+    }
+
+    @Override
+    public Call<FileLink> getDownloadLink(RemoteFile file, DownloadOptions options) {
+        if (file == null) {
+            throw new IllegalArgumentException("File argument cannot be null.");
+        }
+        return getDownloadLink(file.getFileId(), options);
+    }
+
+    @Override
+    public Call<FileLink> getDownloadLink(long fileId, DownloadOptions options) {
+        if (options == null) {
+            throw new IllegalArgumentException("DownloadOptions parameter cannot be null.");
+        }
+
+        Request request = newDownloadLinkRequest(fileId, options);
+
+        return newCall(request, new ResponseAdapter<FileLink>() {
+            @Override
+            public FileLink adapt(Response response) throws IOException, ApiError {
+                return getAsFileLink(response);
+            }
+        });
+
+    }
+
+    private FileLink getAsFileLink(Response response) throws IOException, ApiError {
+        GetLinkResponse body = getAsApiResponse(response, GetLinkResponse.class);
+        List<URL> downloadUrls = new ArrayList<>(body.getHosts().size());
+        for (String host : body.getHosts()) {
+            downloadUrls.add(new URL("https", host, body.getPath()));
+        }
+
+        return new RealFileLink(RealApiService.this, body.getExpires(), downloadUrls);
+    }
+
+    private Request newDownloadLinkRequest(long fileId, DownloadOptions options) {
+        HttpUrl.Builder urlBuilder = API_BASE_URL.newBuilder().
+                addPathSegment("getfilelink")
+                .addQueryParameter("fileid", String.valueOf(fileId));
+
+        if (options.forceDownload()) {
+            urlBuilder.addQueryParameter("forcedownload", String.valueOf(1));
+        }
+
+        if (options.skipFilename()) {
+            urlBuilder.addQueryParameter("skipfilename", String.valueOf(1));
+        }
+
+        if (options.contentType() != null) {
+            MediaType mediaType = MediaType.parse(options.contentType());
+            if (mediaType == null) {
+                throw new IllegalArgumentException("Invalid or not well-formatted content type DownloadOptions argument");
+            }
+            urlBuilder.addQueryParameter("contenttype", mediaType.toString());
+        }
+
+        return new Request.Builder()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+    }
+
+    @Override
+    public Call<Void> download(FileLink fileLink, DataSink sink) {
+        return download(fileLink, sink, null);
+    }
+
+    @Override
+    public Call<Void> download(FileLink fileLink, final DataSink sink, final ProgressListener listener) {
+        if (fileLink == null) {
+            throw new IllegalArgumentException("FileLink argument cannot be null.");
+        }
+
+        if (!(fileLink instanceof RealFileLink)) {
+            throw new IllegalArgumentException("Invalid FileLink argument.");
+        }
+
+        if (sink == null) {
+            throw new IllegalArgumentException("DataSink argument cannot be null.");
+        }
+
+        Request request = newDownloadRequest(fileLink);
+        return newCall(request, new ResponseAdapter<Void>() {
+            @Override
+            public Void adapt(Response response) throws IOException, ApiError {
+                if (response.code() == 404) {
+                    response.close();
+                    throw new FileNotFoundException("The requested file cannot be found or the file link has expired.");
+                }
+                BufferedSource source = getAsRawBytes(response);
+                if (listener != null) {
+                    source = Okio.buffer(new ProgressCountingSource(
+                            source,
+                            response.body().contentLength(),
+                            listener,
+                            progressCallbackThresholdBytes));
+                }
+
+                sink.readAll(source);
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public Call<BufferedSource> download(RemoteFile file) {
+        DownloadOptions options = DownloadOptions.create()
+                .skipFilename(false)
+                .contentType(file.getContentType())
+                .build();
+        return newCall(newDownloadLinkRequest(file.getFileId(), options), new ResponseAdapter<BufferedSource>() {
+            @Override
+            public BufferedSource adapt(Response response) throws IOException, ApiError {
+                FileLink link = getAsFileLink(response);
+                return newDownloadCall(link);
+            }
+        });
+    }
+
+    @Override
+    public Call<BufferedSource> download(FileLink fileLink) {
+        return newCall(newDownloadRequest(fileLink), new ResponseAdapter<BufferedSource>() {
+            @Override
+            public BufferedSource adapt(Response response) throws IOException, ApiError {
+                return getAsRawBytes(response);
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFile> copyFile(long fileId, long toFolderId) {
+        RequestBody body = new FormBody.Builder()
+                .add("fileid", String.valueOf(fileId))
+                .add("tofolderid", String.valueOf(toFolderId))
+                .add("noover", String.valueOf(1))
+                .build();
+
+        Request request = newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("copyfile")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+    @Override
+    public Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder) {
+        if (file == null) {
+            throw new IllegalArgumentException("file argument cannot be null.");
+        }
+        if (toFolder == null) {
+            throw new IllegalArgumentException("toFolder argument cannot be null.");
+        }
+
+        return copyFile(file.getFileId(), toFolder.getFolderId());
+    }
+
+    @Override
+    public Call<RemoteFile> moveFile(long fileId, long toFolderId) {
+        RequestBody body = new FormBody.Builder()
+                .add("fileid", String.valueOf(fileId))
+                .add("tofolderid", String.valueOf(toFolderId))
+                .build();
+
+        Request request = newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("renamefile")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder) {
+        if (file == null) {
+            throw new IllegalArgumentException("file argument cannot be null.");
+        }
+        if (toFolder == null) {
+            throw new IllegalArgumentException("toFolder argument cannot be null.");
+        }
+
+        return moveFile(file.getFileId(), toFolder.getFolderId());
+    }
+
+    @Override
+    public Call<RemoteFile> renameFile(long fileId, String newFileName) {
+        return newCall(createRenameFileRequest(fileId, newFileName), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFile> renameFile(RemoteFile file, String newFileName) {
+        if (file == null) {
+            throw new IllegalArgumentException("file argument cannot be null.");
+        }
+        if (newFileName == null) {
+            throw new IllegalArgumentException("newFileName argument cannot be null.");
+        }
+        return newCall(createRenameFileRequest(file.getFileId(), newFileName), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    private Request createRenameFileRequest(long folderId, String newFileName) {
+        RequestBody body = new FormBody.Builder()
+                .add("fileid", String.valueOf(folderId))
+                .add("toname", newFileName)
+                .build();
+
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("renamefile")
+                        .build())
+                .post(body)
+                .build();
     }
 
     @Override
@@ -195,7 +495,7 @@ class RealApiService implements ApiService {
 
         return newRequest()
                 .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("deletefolder")
+                        .addPathSegment("deletefolderrecursive")
                         .build())
                 .post(body)
                 .build();
@@ -302,7 +602,14 @@ class RealApiService implements ApiService {
 
     @Override
     public ApiServiceBuilder newBuilder() {
-        throw new UnsupportedOperationException();
+        Authenticator authenticator = null;
+        for (Interceptor interceptor: httpClient.interceptors()){
+            if (interceptor instanceof RealAuthenticator){
+                authenticator = (Authenticator) interceptor;
+                break;
+            }
+        }
+        return new RealApiServiceBuilder(httpClient, callbackExecutor, progressCallbackThresholdBytes, authenticator);
     }
 
     private Request.Builder newRequest() {
@@ -320,6 +627,28 @@ class RealApiService implements ApiService {
                 .build();
     }
 
+
+    @Override
+    public Call<UserInfo> getUserInfo() {
+        Request request = newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("userinfo")
+                        .build())
+                .get().build();
+
+        return newCall(request, new ResponseAdapter<UserInfo>() {
+            @Override
+            public UserInfo adapt(Response response) throws IOException, ApiError {
+                UserInfoResponse body = getAsApiResponse(response, UserInfoResponse.class);
+                return new RealUserInfo(body.getUserId(),
+                        body.getEmail(),
+                        body.isEmailVerified(),
+                        body.getTotalQuota(),
+                        body.getUsedQuota());
+            }
+        });
+    }
+
     private <T> Call<T> newCall(Request request, ResponseAdapter<T> adapter) {
         Call<T> apiCall = new OkHttpCall<>(httpClient.newCall(request), adapter);
         if (callbackExecutor != null) {
@@ -331,6 +660,9 @@ class RealApiService implements ApiService {
 
     private <T extends ApiResponse> T getAsApiResponse(Response response, Class<? extends T> bodyType) throws IOException, ApiError {
         T body = deserializeResponseBody(response, bodyType);
+        if (body == null) {
+            throw new IOException("API returned an empty response body.");
+        }
         if (body.isSuccessful()) {
             return body;
         } else {
@@ -341,8 +673,7 @@ class RealApiService implements ApiService {
     private <T> T deserializeResponseBody(Response response, Class<? extends T> bodyType) throws IOException {
         try {
             if (!response.isSuccessful()) {
-                throw new IOException(String.format(Locale.US,
-                        "API returned \'%d - %s\' HTTP error.", response.code(), response.message()));
+                throw new APIHttpException(response.code(), response.message());
             }
 
             JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(response.body().byteStream())));
@@ -355,6 +686,38 @@ class RealApiService implements ApiService {
             }
         } finally {
             closeQuietly(response);
+        }
+    }
+
+    private Request newDownloadRequest(FileLink link){
+        return new Request.Builder()
+                .url(link.getBestUrl())
+                .get()
+                .build();
+    }
+
+    private BufferedSource newDownloadCall(FileLink fileLink) throws IOException {
+        return newDownloadCall(newDownloadRequest(fileLink));
+    }
+
+    private BufferedSource newDownloadCall(Request request) throws IOException {
+        Response response = httpClient.newCall(request).execute();
+        return getAsRawBytes(response);
+    }
+
+    private BufferedSource getAsRawBytes(Response response) throws FileNotFoundException, APIHttpException {
+        boolean callWasSuccessful = false;
+        try {
+            if (response.isSuccessful()) {
+                callWasSuccessful = true;
+                return response.body().source();
+            } else {
+                throw new APIHttpException(response.code(), response.message());
+            }
+        } finally {
+            if (!callWasSuccessful){
+                closeQuietly(response);
+            }
         }
     }
 }

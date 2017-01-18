@@ -16,17 +16,14 @@
 
 package com.pcloud.sdk.api;
 
-import okio.BufferedSink;
-import okio.ByteString;
-import okio.Okio;
-import okio.Source;
+import okio.*;
 
 import java.io.File;
 import java.io.IOException;
 
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
-public abstract class Data {
+public abstract class DataSource {
 
     /**
      * Provide the length of the data instance content.
@@ -34,7 +31,7 @@ public abstract class Data {
     public abstract long contentLength();
 
     /**
-     * Writes data content to {@link BufferedSink}.
+     * Writes data content to a {@link BufferedSink}.
      *
      * @param sink {@link BufferedSink}
      * @throws IOException
@@ -42,10 +39,10 @@ public abstract class Data {
     public abstract void writeTo(BufferedSink sink) throws IOException;
 
     /**
-     * Creates Data instance from byte[].
+     * Creates Data instance from a byte array.
      */
-    public static Data create(final byte[] data) {
-        return new Data() {
+    public static DataSource create(final byte[] data) {
+        return new DataSource() {
 
             @Override
             public long contentLength() {
@@ -60,10 +57,10 @@ public abstract class Data {
     }
 
     /**
-     * Creates Data instance from ByteString.
+     * Creates a new instance from a {@linkplain ByteString}.
      */
-    public static Data create(final ByteString data) {
-        return new Data() {
+    public static DataSource create(final ByteString data) {
+        return new DataSource() {
 
             @Override
             public long contentLength() {
@@ -78,10 +75,10 @@ public abstract class Data {
     }
 
     /**
-     * Creates Data instance from {@link File}.
+     * Creates a new instance from a {@linkplain File}.
      */
-    public static Data create(final File file) {
-        return new Data() {
+    public static DataSource create(final File file) {
+        return new DataSource() {
 
             @Override
             public long contentLength() {
@@ -90,9 +87,9 @@ public abstract class Data {
 
             @Override
             public void writeTo(BufferedSink sink) throws IOException {
-                Source source = null;
+                BufferedSource source = null;
                 try {
-                    source = Okio.source(file);
+                    source = Okio.buffer(Okio.source(file));
                     sink.writeAll(source);
                 } finally {
                     closeQuietly(source);

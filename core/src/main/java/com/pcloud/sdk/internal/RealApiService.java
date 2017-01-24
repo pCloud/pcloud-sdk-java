@@ -471,7 +471,7 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFolder> deleteFolder(RemoteFolder folder) {
+    public Call<DeletedEntriesInfo> deleteFolder(RemoteFolder folder) {
         if (folder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
         }
@@ -479,11 +479,12 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFolder> deleteFolder(long folderId) {
-        return newCall(createDeleteFolderRequest(folderId), new ResponseAdapter<RemoteFolder>() {
+    public Call<DeletedEntriesInfo> deleteFolder(long folderId) {
+        return newCall(createDeleteFolderRequest(folderId), new ResponseAdapter<DeletedEntriesInfo>() {
             @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            public DeletedEntriesInfo adapt(Response response) throws IOException, ApiError {
+                DeletedEntriesResponse body = getAsApiResponse(response, DeletedEntriesResponse.class);
+                return new RealDeletedEntriesInfo(body.getDeletedFilesNumber(), body.getDeletedFoldersNumber());
             }
         });
     }
@@ -603,8 +604,8 @@ class RealApiService implements ApiService {
     @Override
     public ApiServiceBuilder newBuilder() {
         Authenticator authenticator = null;
-        for (Interceptor interceptor: httpClient.interceptors()){
-            if (interceptor instanceof RealAuthenticator){
+        for (Interceptor interceptor : httpClient.interceptors()) {
+            if (interceptor instanceof RealAuthenticator) {
                 authenticator = (Authenticator) interceptor;
                 break;
             }
@@ -695,7 +696,7 @@ class RealApiService implements ApiService {
         }
     }
 
-    private Request newDownloadRequest(FileLink link){
+    private Request newDownloadRequest(FileLink link) {
         return new Request.Builder()
                 .url(link.getBestUrl())
                 .get()
@@ -721,7 +722,7 @@ class RealApiService implements ApiService {
                 throw new APIHttpException(response.code(), response.message());
             }
         } finally {
-            if (!callWasSuccessful){
+            if (!callWasSuccessful) {
                 closeQuietly(response);
             }
         }

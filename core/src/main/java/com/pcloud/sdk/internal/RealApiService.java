@@ -121,7 +121,7 @@ class RealApiService implements ApiService {
 
             @Override
             public void writeTo(BufferedSink sink) throws IOException {
-                if(listener != null){
+                if (listener != null) {
                     sink = Okio.buffer(new ProgressCountingSink(
                             sink,
                             data.contentLength(),
@@ -186,7 +186,7 @@ class RealApiService implements ApiService {
                         .addPathSegment("deletefile")
                         .build())
                 .get()
-                .put(new FormBody.Builder()
+                .post(new FormBody.Builder()
                         .add("fileid", String.valueOf(fileId))
                         .build())
                 .build();
@@ -350,6 +350,7 @@ class RealApiService implements ApiService {
             }
         });
     }
+
     @Override
     public Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder) {
         if (file == null) {

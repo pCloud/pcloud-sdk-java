@@ -612,6 +612,12 @@ class RealApiService implements ApiService {
         return new RealApiServiceBuilder(httpClient, callbackExecutor, progressCallbackThresholdBytes, authenticator);
     }
 
+    @Override
+    public void shutdown() {
+        this.httpClient.connectionPool().evictAll();
+        this.httpClient.dispatcher().executorService().shutdownNow();
+    }
+
     private Request.Builder newRequest() {
         return new Request.Builder().url(API_BASE_URL);
     }

@@ -237,4 +237,6 @@ public interface ApiService {
      * Returns new ApiServiceBuilder.
      */
     ApiServiceBuilder newBuilder();
+
+    void shutdown();
 }

@@ -77,6 +77,10 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<List<FileEntry>> listFiles(RemoteFolder folder) {
+        if (folder == null) {
+            throw new IllegalArgumentException("Folder argument cannot be null.");
+        }
+
         return newCall(createListFolderRequest(folder.getFolderId()), new ResponseAdapter<List<FileEntry>>() {
             @Override
             public List<FileEntry> adapt(Response response) throws IOException, ApiError {

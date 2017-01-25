@@ -19,9 +19,6 @@ import okhttp3.Response;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Created by Georgi on 24.1.2017 г..
- */
 public class RealApiServiceTest extends ApiServiceTest{
 
     @Override

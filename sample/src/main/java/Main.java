@@ -47,10 +47,8 @@ public class Main {
             System.out.format(" User email: %s | Total quota %s | Used quota %s " , userInfo.getEmail(), userInfo.getTotalQuota(), userInfo.getUsedQuota());
 
 
-        } catch (IOException e) {
+        } catch (IOException | ApiError e) {
             e.printStackTrace();
-        } catch (ApiError apiError) {
-            apiError.printStackTrace();
         }
     }
 

@@ -276,10 +276,6 @@ class RealApiService implements ApiService {
             throw new IllegalArgumentException("FileLink argument cannot be null.");
         }
 
-        if (!(fileLink instanceof RealFileLink)) {
-            throw new IllegalArgumentException("Invalid FileLink argument.");
-        }
-
         if (sink == null) {
             throw new IllegalArgumentException("DataSink argument cannot be null.");
         }
@@ -309,6 +305,10 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<BufferedSource> download(RemoteFile file) {
+        if (file == null) {
+            throw new IllegalArgumentException("RemoteFile argument cannot be null.");
+        }
+
         DownloadOptions options = DownloadOptions.create()
                 .skipFilename(false)
                 .contentType(file.getContentType())
@@ -324,6 +324,10 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<BufferedSource> download(FileLink fileLink) {
+        if (fileLink == null) {
+            throw new IllegalArgumentException("FileLink argument cannot be null.");
+        }
+
         return newCall(newDownloadRequest(fileLink), new ResponseAdapter<BufferedSource>() {
             @Override
             public BufferedSource adapt(Response response) throws IOException, ApiError {
@@ -402,7 +406,23 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<RemoteFile> renameFile(long fileId, String newFileName) {
-        return newCall(createRenameFileRequest(fileId, newFileName), new ResponseAdapter<RemoteFile>() {
+        if (newFileName == null) {
+            throw new IllegalArgumentException("newFileName argument cannot be null.");
+        }
+
+        RequestBody body = new FormBody.Builder()
+                .add("fileid", String.valueOf(fileId))
+                .add("toname", newFileName)
+                .build();
+
+        Request request = newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("renamefile")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFile>() {
             @Override
             public RemoteFile adapt(Response response) throws IOException, ApiError {
                 return getAsApiResponse(response, GetFileResponse.class).getFile();
@@ -415,29 +435,8 @@ class RealApiService implements ApiService {
         if (file == null) {
             throw new IllegalArgumentException("file argument cannot be null.");
         }
-        if (newFileName == null) {
-            throw new IllegalArgumentException("newFileName argument cannot be null.");
-        }
-        return newCall(createRenameFileRequest(file.getFileId(), newFileName), new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFileResponse.class).getFile();
-            }
-        });
-    }
 
-    private Request createRenameFileRequest(long folderId, String newFileName) {
-        RequestBody body = new FormBody.Builder()
-                .add("fileid", String.valueOf(folderId))
-                .add("toname", newFileName)
-                .build();
-
-        return newRequest()
-                .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("renamefile")
-                        .build())
-                .post(body)
-                .build();
+        return renameFile(file.getFileId(), newFileName);
     }
 
     @Override

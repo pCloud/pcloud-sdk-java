@@ -32,7 +32,7 @@ class RealFileLink implements FileLink {
     private Date expirationDate;
     private List<URL> links;
 
-    RealFileLink(RealApiService apiService, Date expirationDate, List<URL> links) {
+    RealFileLink(ApiService apiService, Date expirationDate, List<URL> links) {
         this.apiService = apiService;
         this.expirationDate = expirationDate;
         this.links = Collections.unmodifiableList(links);

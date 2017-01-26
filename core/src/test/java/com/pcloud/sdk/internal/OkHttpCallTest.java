@@ -18,6 +18,7 @@
 package com.pcloud.sdk.internal;
 
 import com.pcloud.sdk.api.ApiError;
+import com.pcloud.sdk.api.Call;
 import com.pcloud.sdk.api.Callback;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -47,6 +48,7 @@ public class OkHttpCallTest {
     private Callback<Object> testCallback;
     private ArgumentCaptor<okhttp3.Callback> callbackArgumentCaptor;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         testRequest = new Request.Builder().url("http://www.google.com").build();
@@ -101,6 +103,7 @@ public class OkHttpCallTest {
         verify(mockOkHttpCall).cancel();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void isExecuted_ReturnsDelegateState() throws Exception {
         boolean expectedValue = true;
@@ -110,6 +113,7 @@ public class OkHttpCallTest {
         assertEquals(actualValue, expectedValue);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void isCancelled_ReturnsDelegateState() throws Exception {
         boolean expectedValue = true;
@@ -183,7 +187,7 @@ public class OkHttpCallTest {
 
     @Test
     public void clone_ReturnsNewObject() throws Exception {
-        OkHttpCall<Object> clonedObject = testCall.clone();
+        Call<Object> clonedObject = testCall.clone();
         assertNotNull(clonedObject);
         assertNotEquals(testCall, clonedObject);
     }

@@ -120,6 +120,12 @@ public class OkHttpCallTest {
     }
 
     @Test
+    public void enqueue_Throws_WithNullArgument() throws Exception {
+        expectedException.expect(IllegalArgumentException.class);
+        testCall.enqueue(null);
+    }
+
+    @Test
     public void enqueue_CallsDelegateMethodWithNonNullArgument() throws Exception {
         testCall.enqueue(testCallback);
         verify(mockOkHttpCall).enqueue(callbackArgumentCaptor.capture());

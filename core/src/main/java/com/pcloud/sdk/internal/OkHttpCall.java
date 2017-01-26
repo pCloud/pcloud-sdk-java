@@ -41,6 +41,10 @@ final class OkHttpCall<T> implements Call<T> {
 
     @Override
     public void enqueue(final Callback<T> callback) {
+        if (callback == null) {
+            throw new IllegalArgumentException("Callback argument cannot be null.");
+        }
+
         rawCall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {

@@ -40,20 +40,18 @@ final class ExecutorCallbackCall<T> implements Call<T> {
 
     @Override
     public void enqueue(final Callback<T> callback) {
-        if (callback == null) throw new NullPointerException("callback == null");
+        if (callback == null) {
+            throw new IllegalArgumentException("Callback argument cannot be null.");
+        }
 
         delegate.enqueue(new Callback<T>() {
 
             @Override
             public void onResponse(Call<T> call, final T response) {
                 callbackExecutor.execute(new Runnable() {
-                    @Override public void run() {
-                        if (delegate.isCanceled()) {
-                            // Emulate OkHttp's behavior of throwing/delivering an IOException on cancellation.
-                            callback.onFailure(ExecutorCallbackCall.this, new IOException("Canceled"));
-                        } else {
-                            callback.onResponse(ExecutorCallbackCall.this, response);
-                        }
+                    @Override
+                    public void run() {
+                        callback.onResponse(ExecutorCallbackCall.this, response);
                     }
                 });
             }
@@ -84,7 +82,15 @@ final class ExecutorCallbackCall<T> implements Call<T> {
     }
 
     @SuppressWarnings("CloneDoesntCallSuperClone") // Performing deep clone.
-    @Override public Call<T> clone() {
-        return new ExecutorCallbackCall<T>(delegate.clone(), callbackExecutor);
+    @Override public ExecutorCallbackCall<T> clone() {
+        return new ExecutorCallbackCall<>(delegate.clone(), callbackExecutor);
+    }
+
+    Call<T> delegate() {
+        return delegate;
+    }
+
+    Executor executor() {
+        return callbackExecutor;
     }
 }

@@ -1,14 +1,13 @@
 package com.pcloud.sdk.api;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public abstract class ApiServiceTest<T extends ApiService> {
 
@@ -17,11 +16,11 @@ public abstract class ApiServiceTest<T extends ApiService> {
 
     private T instance;
 
-    protected void testInstance(T instance){
+    protected void testInstance(T instance) {
         this.instance = instance;
     }
 
-    protected T testInstance(){
+    protected T testInstance() {
         return instance;
     }
 
@@ -313,4 +312,10 @@ public abstract class ApiServiceTest<T extends ApiService> {
         assertNotNull(instance.newBuilder());
     }
 
+    @Test
+    public void newBuilder_ReturnsBuilderForSameType() throws Exception {
+        ApiServiceBuilder builder = testInstance().newBuilder();
+        ApiService newService = builder.create();
+        assertTrue("Returned builder created a different type of ApiService.", newService.getClass() == testInstance().getClass());
+    }
 }

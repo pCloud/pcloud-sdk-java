@@ -35,7 +35,7 @@ public class RealRemoteFolder extends RealFileEntry implements RemoteFolder{
     @SerializedName("contents")
     private List<FileEntry> children;
 
-    private RealRemoteFolder(ApiService apiService) {
+    RealRemoteFolder(ApiService apiService) {
         super(apiService);
     }
 

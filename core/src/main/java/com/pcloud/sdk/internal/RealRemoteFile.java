@@ -43,7 +43,7 @@ class RealRemoteFile extends RealFileEntry implements RemoteFile {
     @SerializedName("hash")
     private String hash;
 
-    private RealRemoteFile(ApiService apiService) {
+    RealRemoteFile(ApiService apiService) {
         super(apiService);
     }
 

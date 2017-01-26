@@ -66,7 +66,9 @@ public interface ApiService {
      * @param folderId The id if the folder you would like to delete
      * @return {@link Call}
      */
-    Call<DeletedEntriesInfo> deleteFolder(long folderId);
+    Call<Boolean> deleteFolder(long folderId);
+
+    Call<Boolean> deleteFolder(long folderId, boolean recursively);
 
     /**
      * Delete specified folder recursively.
@@ -74,8 +76,9 @@ public interface ApiService {
      * @param folder {@link RemoteFolder} you would like to delete. Must not be null.
      * @return {@link Call}
      */
-    Call<DeletedEntriesInfo> deleteFolder(RemoteFolder folder);
+    Call<Boolean> deleteFolder(RemoteFolder folder);
 
+    Call<Boolean> deleteFolder(RemoteFolder folder, boolean recursively);
 
     /**
      * Rename specified folder.

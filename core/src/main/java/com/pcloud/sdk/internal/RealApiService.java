@@ -472,35 +472,43 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<DeletedEntriesInfo> deleteFolder(RemoteFolder folder) {
-        if (folder == null) {
-            throw new IllegalArgumentException("folder argument cannot be null.");
-        }
-        return deleteFolder(folder.getFolderId());
+    public Call<Boolean> deleteFolder(RemoteFolder folder) {
+        return deleteFolder(folder.getFolderId(), false);
     }
 
     @Override
-    public Call<DeletedEntriesInfo> deleteFolder(long folderId) {
-        return newCall(createDeleteFolderRequest(folderId), new ResponseAdapter<DeletedEntriesInfo>() {
-            @Override
-            public DeletedEntriesInfo adapt(Response response) throws IOException, ApiError {
-                DeletedEntriesResponse body = getAsApiResponse(response, DeletedEntriesResponse.class);
-                return new RealDeletedEntriesInfo(body.getDeletedFilesNumber(), body.getDeletedFoldersNumber());
-            }
-        });
+    public Call<Boolean> deleteFolder(RemoteFolder folder, boolean recursively) {
+        if (folder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return deleteFolder(folder.getFolderId(), recursively);
     }
 
-    private Request createDeleteFolderRequest(long folderId) {
+    @Override
+    public Call<Boolean> deleteFolder(long folderId) {
+        return deleteFolder(folderId, false);
+    }
+
+    @Override
+    public Call<Boolean> deleteFolder(long folderId, boolean recursively) {
         RequestBody body = new FormBody.Builder()
                 .add("folderid", String.valueOf(folderId))
                 .build();
 
-        return newRequest()
+        Request request = newRequest()
                 .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("deletefolderrecursive")
+                        .addPathSegment(recursively ? "deletefolderrecursive" : "deletefolder")
                         .build())
                 .post(body)
                 .build();
+
+        return newCall(request, new ResponseAdapter<Boolean>() {
+            @Override
+            public Boolean adapt(Response response) throws IOException, ApiError {
+                getAsApiResponse(response, ApiResponse.class);
+                return true;
+            }
+        });
     }
 
     @Override

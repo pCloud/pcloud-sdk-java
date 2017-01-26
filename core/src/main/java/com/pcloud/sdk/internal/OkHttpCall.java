@@ -28,7 +28,7 @@ final class OkHttpCall<T> implements Call<T> {
     private okhttp3.Call rawCall;
     private ResponseAdapter<T> responseAdapter;
 
-    public OkHttpCall(okhttp3.Call rawCall, ResponseAdapter<T> adapter) {
+    OkHttpCall(okhttp3.Call rawCall, ResponseAdapter<T> adapter) {
         this.rawCall = rawCall;
         this.responseAdapter = adapter;
     }
@@ -44,7 +44,7 @@ final class OkHttpCall<T> implements Call<T> {
         rawCall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
-
+                callback.onFailure(OkHttpCall.this, e);
             }
 
             @Override
@@ -75,7 +75,7 @@ final class OkHttpCall<T> implements Call<T> {
 
     @SuppressWarnings("CloneDoesntCallSuperClone")
     @Override
-    public Call<T> clone() {
+    public OkHttpCall<T> clone() {
         // Class is final, there will be no 'super'.
         return new OkHttpCall<>(rawCall.clone(), responseAdapter);
     }

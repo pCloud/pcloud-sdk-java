@@ -127,46 +127,42 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
 
     @Override
     public ApiService create() {
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
-                .readTimeout(this.readTimeoutMs, TimeUnit.MILLISECONDS)
-                .writeTimeout(this.writeTimeoutMs, TimeUnit.MILLISECONDS)
-                .connectTimeout(this.connectTimeoutMs, TimeUnit.MILLISECONDS)
-                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
-                .addInterceptor(new GloabalParamsRequestInterceptor());
+        return new RealApiService(this);
+    }
 
-        if (dispatcher != null) {
-                httpClientBuilder.dispatcher(dispatcher);
-        }
+    public Cache cache() {
+        return cache;
+    }
 
-        if (connectionPool != null) {
-            httpClientBuilder.connectionPool(connectionPool);
-        }
+    public Executor callbackExecutor() {
+        return callbackExecutor;
+    }
 
-        if (cache != null) {
-            httpClientBuilder.cache(cache);
-        }
+    public ConnectionPool connectionPool() {
+        return connectionPool;
+    }
 
-        httpClientBuilder.authenticator(okhttp3.Authenticator.NONE);
-        if (authenticator != null) {
-            httpClientBuilder.addInterceptor((RealAuthenticator)authenticator);
-        }
+    public Dispatcher dispatcher() {
+        return dispatcher;
+    }
 
+    public int readTimeoutMs() {
+        return readTimeoutMs;
+    }
 
-        RealRemoteFile.InstanceCreator fileCreator = new RealRemoteFile.InstanceCreator();
-        RealRemoteFolder.InstanceCreator folderCrator = new RealRemoteFolder.InstanceCreator();
-        Gson gson = new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation()
-                .registerTypeAdapterFactory(new RealFileEntry.TypeAdapterFactory())
-                .registerTypeAdapter(FileEntry.class, new RealFileEntry.FileEntryDeserializer())
-                .registerTypeAdapter(Date.class, new DateTypeAdapter())
-                .registerTypeAdapter(RealRemoteFile.class, fileCreator)
-                .registerTypeAdapter(RealRemoteFolder.class, folderCrator)
-                .create();
+    public int writeTimeoutMs() {
+        return writeTimeoutMs;
+    }
 
+    public int connectTimeoutMs() {
+        return connectTimeoutMs;
+    }
 
-        RealApiService service = new RealApiService(gson, httpClientBuilder.build(), this.callbackExecutor, progressCallbackThresholdBytes);
-        fileCreator.setApiService(service);
-        folderCrator.setApiService(service);
-        return service;
+    public long progressCallbackThresholdBytes() {
+        return progressCallbackThresholdBytes;
+    }
+
+    public Authenticator authenticator() {
+        return authenticator;
     }
 }

@@ -58,9 +58,8 @@ public class RealRemoteFolder extends RealFileEntry implements RemoteFolder{
 
         private ApiService apiService;
 
-        InstanceCreator setApiService(ApiService apiService) {
+        InstanceCreator(ApiService apiService) {
             this.apiService = apiService;
-            return this;
         }
 
         @Override

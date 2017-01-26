@@ -123,9 +123,8 @@ class RealRemoteFile extends RealFileEntry implements RemoteFile {
 
         private ApiService apiService;
 
-        InstanceCreator setApiService(ApiService apiService) {
+        InstanceCreator(ApiService apiService) {
             this.apiService = apiService;
-            return this;
         }
 
         @Override

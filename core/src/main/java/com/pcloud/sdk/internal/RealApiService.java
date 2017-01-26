@@ -17,6 +17,7 @@
 package com.pcloud.sdk.internal;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import com.pcloud.sdk.api.*;
@@ -29,6 +30,7 @@ import com.pcloud.sdk.internal.networking.GetFileResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
 import com.pcloud.sdk.internal.networking.UploadFilesResponse;
 
+import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
 import okhttp3.HttpUrl;
 import okhttp3.*;
 import okio.BufferedSink;
@@ -40,9 +42,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -58,11 +58,48 @@ class RealApiService implements ApiService {
 
     private static final HttpUrl API_BASE_URL = HttpUrl.parse("https://api.pcloud.com");
 
-    RealApiService(Gson gson, OkHttpClient httpClient, Executor callbackExecutor, long progressCallbackThresholdBytes) {
-        this.gson = gson;
-        this.httpClient = httpClient;
-        this.callbackExecutor = callbackExecutor;
-        this.progressCallbackThresholdBytes = progressCallbackThresholdBytes;
+    RealApiService(){
+        this(new RealApiServiceBuilder());
+    }
+
+    RealApiService(RealApiServiceBuilder builder){
+        Map<String, String> globalParams = new TreeMap<>();
+        globalParams.put("timeformat", String.valueOf("timestamp"));
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
+                .readTimeout(builder.readTimeoutMs(), TimeUnit.MILLISECONDS)
+                .writeTimeout(builder.writeTimeoutMs(), TimeUnit.MILLISECONDS)
+                .connectTimeout(builder.connectTimeoutMs(), TimeUnit.MILLISECONDS)
+                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                .addInterceptor(new GlobalParamsRequestInterceptor(globalParams));
+
+        if (builder.dispatcher() != null) {
+            httpClientBuilder.dispatcher(builder.dispatcher());
+        }
+
+        if (builder.connectionPool() != null) {
+            httpClientBuilder.connectionPool(builder.connectionPool());
+        }
+
+        if (builder.cache() != null) {
+            httpClientBuilder.cache(builder.cache());
+        }
+
+        httpClientBuilder.authenticator(okhttp3.Authenticator.NONE);
+        if (builder.authenticator() != null) {
+            httpClientBuilder.addInterceptor((RealAuthenticator)builder.authenticator());
+        }
+
+        this.httpClient = httpClientBuilder.build();
+        this.callbackExecutor = builder.callbackExecutor();
+        this.progressCallbackThresholdBytes = builder.progressCallbackThresholdBytes();
+        this.gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .registerTypeAdapterFactory(new RealFileEntry.TypeAdapterFactory())
+                .registerTypeAdapter(FileEntry.class, new RealFileEntry.FileEntryDeserializer())
+                .registerTypeAdapter(Date.class, new DateTypeAdapter())
+                .registerTypeAdapter(RealRemoteFile.class, new RealRemoteFile.InstanceCreator(this))
+                .registerTypeAdapter(RealRemoteFolder.class, new RealRemoteFolder.InstanceCreator(this))
+                .create();
     }
 
     @Override
@@ -125,7 +162,7 @@ class RealApiService implements ApiService {
 
             @Override
             public void writeTo(BufferedSink sink) throws IOException {
-                if(listener != null){
+                if (listener != null) {
                     sink = Okio.buffer(new ProgressCountingSink(
                             sink,
                             data.contentLength(),
@@ -358,6 +395,7 @@ class RealApiService implements ApiService {
             }
         });
     }
+
     @Override
     public Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder) {
         if (file == null) {
@@ -604,40 +642,6 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public ApiServiceBuilder newBuilder() {
-        Authenticator authenticator = null;
-        for (Interceptor interceptor: httpClient.interceptors()){
-            if (interceptor instanceof RealAuthenticator){
-                authenticator = (Authenticator) interceptor;
-                break;
-            }
-        }
-        return new RealApiServiceBuilder(httpClient, callbackExecutor, progressCallbackThresholdBytes, authenticator);
-    }
-
-    @Override
-    public void shutdown() {
-        this.httpClient.connectionPool().evictAll();
-        this.httpClient.dispatcher().executorService().shutdownNow();
-    }
-
-    private Request.Builder newRequest() {
-        return new Request.Builder().url(API_BASE_URL);
-    }
-
-    private Request createListFolderRequest(long folderId) {
-        return newRequest()
-                .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("listfolder")
-                        .addQueryParameter("folderid", String.valueOf(folderId))
-                        .addQueryParameter("noshares", String.valueOf(1))
-                        .build())
-                .get()
-                .build();
-    }
-
-
-    @Override
     public Call<UserInfo> getUserInfo() {
         Request request = newRequest()
                 .url(API_BASE_URL.newBuilder()
@@ -656,6 +660,51 @@ class RealApiService implements ApiService {
                         body.getUsedQuota());
             }
         });
+    }
+
+    @Override
+    public RealApiServiceBuilder newBuilder() {
+        Authenticator authenticator = null;
+        for (Interceptor interceptor : httpClient.interceptors()) {
+            if (interceptor instanceof RealAuthenticator) {
+                authenticator = (Authenticator) interceptor;
+                break;
+            }
+        }
+        return new RealApiServiceBuilder(httpClient, callbackExecutor, progressCallbackThresholdBytes, authenticator);
+    }
+
+    @Override
+    public void shutdown() {
+        this.httpClient.connectionPool().evictAll();
+        this.httpClient.dispatcher().executorService().shutdownNow();
+    }
+
+    long progressCallbackThresholdBytes() {
+        return progressCallbackThresholdBytes;
+    }
+
+    OkHttpClient httpClient() {
+        return httpClient;
+    }
+
+    Executor callbackExecutor() {
+        return callbackExecutor;
+    }
+
+    private Request.Builder newRequest() {
+        return new Request.Builder().url(API_BASE_URL);
+    }
+
+    private Request createListFolderRequest(long folderId) {
+        return newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("listfolder")
+                        .addQueryParameter("folderid", String.valueOf(folderId))
+                        .addQueryParameter("noshares", String.valueOf(1))
+                        .build())
+                .get()
+                .build();
     }
 
     private <T> Call<T> newCall(Request request, ResponseAdapter<T> adapter) {
@@ -698,7 +747,7 @@ class RealApiService implements ApiService {
         }
     }
 
-    private Request newDownloadRequest(FileLink link){
+    private Request newDownloadRequest(FileLink link) {
         return new Request.Builder()
                 .url(link.getBestUrl())
                 .get()
@@ -724,7 +773,7 @@ class RealApiService implements ApiService {
                 throw new APIHttpException(response.code(), response.message());
             }
         } finally {
-            if (!callWasSuccessful){
+            if (!callWasSuccessful) {
                 closeQuietly(response);
             }
         }

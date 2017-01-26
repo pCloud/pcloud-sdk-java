@@ -19,10 +19,22 @@ package com.pcloud.sdk.utils;
 
 import com.pcloud.sdk.api.ProgressListener;
 
-public class DummyProgressListener implements ProgressListener {
+public class TestProgressListener implements ProgressListener {
+
+    private long done;
+    private long total;
 
     @Override
     public void onProgress(long done, long total) {
+        this.done = done;
+        this.total = total;
+    }
 
+    public long done() {
+        return done;
+    }
+
+    public long total() {
+        return total;
     }
 }

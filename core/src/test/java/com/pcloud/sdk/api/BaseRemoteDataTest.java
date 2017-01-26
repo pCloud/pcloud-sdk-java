@@ -18,7 +18,7 @@
 package com.pcloud.sdk.api;
 
 import com.pcloud.sdk.utils.DummyDataSink;
-import com.pcloud.sdk.utils.DummyProgressListener;
+import com.pcloud.sdk.utils.TestProgressListener;
 import okio.BufferedSource;
 import org.junit.Test;
 
@@ -79,7 +79,7 @@ public abstract class BaseRemoteDataTest {
 
     @Test
     public void download_WritesToSink_OrThrows2() {
-        ProgressListener listener = new DummyProgressListener();
+        ProgressListener listener = new TestProgressListener();
         try {
             DataSink sink = spy(new DummyDataSink());
             testInstance.download(sink, listener);
@@ -90,7 +90,7 @@ public abstract class BaseRemoteDataTest {
 
     @Test
     public void download_Calls_ProgressListener() {
-        ProgressListener listener = spy(new DummyProgressListener());
+        ProgressListener listener = spy(new TestProgressListener());
         try {
             DataSink sink = spy(new DummyDataSink());
             testInstance.download(sink, listener);

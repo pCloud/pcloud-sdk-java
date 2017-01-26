@@ -36,7 +36,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ApiServiceTest {
+public class ApiServiceIntegrationTest {
 
     private ApiService apiService;
 
@@ -60,7 +60,7 @@ public class ApiServiceTest {
     public void testCreateFolder() throws IOException, ApiError {
         RemoteFolder remoteFolder = createRemoteFolder();
 
-        assertTrue(isEntryExistsInRoot(remoteFolder));
+        assertTrue(entryExistsInRoot(remoteFolder));
     }
 
     @Test
@@ -90,8 +90,8 @@ public class ApiServiceTest {
 
         apiService.moveFolder(remoteFolder1, remoteFolder2).execute();
 
-        assertTrue(isEntryExistsInFolder(remoteFolder1, remoteFolder2.getFolderId()));
-        assertFalse(isEntryExistsInFolder(remoteFolder1, RemoteFolder.ROOT_FOLDER_ID));
+        assertTrue(entryExistsInFolder(remoteFolder1, remoteFolder2.getFolderId()));
+        assertFalse(entryExistsInFolder(remoteFolder1, RemoteFolder.ROOT_FOLDER_ID));
     }
 
     @Test
@@ -101,8 +101,8 @@ public class ApiServiceTest {
 
         apiService.copyFolder(remoteFolder1, remoteFolder2).execute();
 
-        assertTrue(isEntryExistsInFolder(remoteFolder1, remoteFolder2.getFolderId()));
-        assertTrue(isEntryExistsInFolder(remoteFolder1, RemoteFolder.ROOT_FOLDER_ID));
+        assertTrue(entryExistsInFolder(remoteFolder1, remoteFolder2.getFolderId()));
+        assertTrue(entryExistsInFolder(remoteFolder1, RemoteFolder.ROOT_FOLDER_ID));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class ApiServiceTest {
         byte[] fileContents = someName.getBytes();
         RemoteFile remoteFile = apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents)).execute();
 
-        assertTrue(isEntryExistsInRoot(remoteFile));
+        assertTrue(entryExistsInRoot(remoteFile));
         assertEquals(fileContents.length, remoteFile.getSize());
     }
 
@@ -123,7 +123,7 @@ public class ApiServiceTest {
         ProgressListener listener = Mockito.mock(ProgressListener.class);
         RemoteFile remoteFile = apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents), dateModified, listener).execute();
 
-        assertTrue(isEntryExistsInRoot(remoteFile));
+        assertTrue(entryExistsInRoot(remoteFile));
         assertEquals(fileContents.length, remoteFile.getSize());
         assertEquals(dateModified, remoteFile.getCreated());
     }
@@ -135,7 +135,7 @@ public class ApiServiceTest {
         Boolean isDeleted = apiService.deleteFile(remoteFile).execute();
 
         assertTrue(isDeleted);
-        assertFalse(isEntryExistsInRoot(remoteFile));
+        assertFalse(entryExistsInRoot(remoteFile));
     }
 
     @Test
@@ -145,8 +145,8 @@ public class ApiServiceTest {
 
         apiService.moveFile(remoteFile, remoteFolder).execute();
 
-        assertTrue(isEntryExistsInFolder(remoteFile, remoteFolder.getFolderId()));
-        assertFalse(isEntryExistsInFolder(remoteFile, RemoteFolder.ROOT_FOLDER_ID));
+        assertTrue(entryExistsInFolder(remoteFile, remoteFolder.getFolderId()));
+        assertFalse(entryExistsInFolder(remoteFile, RemoteFolder.ROOT_FOLDER_ID));
     }
 
 
@@ -157,8 +157,8 @@ public class ApiServiceTest {
 
         RemoteFile copiedFile = apiService.copyFile(remoteFile, remoteFolder).execute();
 
-        assertTrue(isEntryExistsInFolder(copiedFile, remoteFolder.getFolderId()));
-        assertTrue(isEntryExistsInFolder(remoteFile, RemoteFolder.ROOT_FOLDER_ID));
+        assertTrue(entryExistsInFolder(copiedFile, remoteFolder.getFolderId()));
+        assertTrue(entryExistsInFolder(remoteFile, RemoteFolder.ROOT_FOLDER_ID));
     }
 
 
@@ -211,11 +211,11 @@ public class ApiServiceTest {
         return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents)).execute();
     }
 
-    private boolean isEntryExistsInRoot(FileEntry entry) throws IOException, ApiError {
-        return isEntryExistsInFolder(entry, RemoteFolder.ROOT_FOLDER_ID);
+    private boolean entryExistsInRoot(FileEntry entry) throws IOException, ApiError {
+        return entryExistsInFolder(entry, RemoteFolder.ROOT_FOLDER_ID);
     }
 
-    private boolean isEntryExistsInFolder(FileEntry entry, long parentFolderId) throws IOException, ApiError {
+    private boolean entryExistsInFolder(FileEntry entry, long parentFolderId) throws IOException, ApiError {
         RemoteFolder root = apiService.getFolder(parentFolderId).execute();
         for (FileEntry e : root.getChildren()) {
             if (e.getId().equals(entry.getId()) || e.getName().equals(entry.getName())) {

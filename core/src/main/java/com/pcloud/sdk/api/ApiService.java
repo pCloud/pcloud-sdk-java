@@ -34,6 +34,8 @@ public interface ApiService {
      */
     Call<RemoteFolder> getFolder(long folderId);
 
+    Call<RemoteFolder> getFolder(long folderId, boolean recursively);
+
     /**
      * Lists folder contents.
      *

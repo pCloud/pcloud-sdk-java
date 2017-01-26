@@ -16,7 +16,7 @@
 
 package com.pcloud.sdk.api;
 
-import com.pcloud.sdk.PCloudApi;
+import com.pcloud.sdk.PCloudSdk;
 import com.pcloud.sdk.authentication.Authenticator;
 
 import org.junit.After;
@@ -43,16 +43,21 @@ public class ApiServiceIntegrationTest {
     @Before
     public void setUp() {
         String token = System.getenv("pcloud_tests_token");
-        apiService = PCloudApi.newApiService()
+        apiService = PCloudSdk.newApiService()
                 .authenticator(Authenticator.newOAuthAuthenticator(token))
                 .create();
     }
 
     @Test
     public void testListFolder() throws IOException, ApiError {
-        long id = RemoteFolder.ROOT_FOLDER_ID;
-        RemoteFolder folder = apiService.getFolder(id).execute();
+        RemoteFolder rootFolder = apiService.getFolder(RemoteFolder.ROOT_FOLDER_ID).execute();
+        apiService.listFiles(rootFolder);
+    }
 
+    @Test
+    public void testGetFolder() throws Exception {
+        long id = RemoteFolder.ROOT_FOLDER_ID;
+        RemoteFolder folder = apiService.getFolder(id, true).execute();
         assertEquals(id, folder.getFolderId());
     }
 

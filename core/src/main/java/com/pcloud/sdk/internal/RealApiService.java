@@ -104,7 +104,12 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<RemoteFolder> getFolder(long folderId) {
-        return newCall(createListFolderRequest(folderId), new ResponseAdapter<RemoteFolder>() {
+        return getFolder(folderId, false);
+    }
+
+    @Override
+    public Call<RemoteFolder> getFolder(long folderId, boolean recursively) {
+        return newCall(createListFolderRequest(folderId, recursively), new ResponseAdapter<RemoteFolder>() {
             @Override
             public RemoteFolder adapt(Response response) throws IOException, ApiError {
                 return getAsApiResponse(response, GetFolderResponse.class).getFolder();
@@ -118,7 +123,7 @@ class RealApiService implements ApiService {
             throw new IllegalArgumentException("Folder argument cannot be null.");
         }
 
-        return newCall(createListFolderRequest(folder.getFolderId()), new ResponseAdapter<List<FileEntry>>() {
+        return newCall(createListFolderRequest(folder.getFolderId(), false), new ResponseAdapter<List<FileEntry>>() {
             @Override
             public List<FileEntry> adapt(Response response) throws IOException, ApiError {
                 return getAsApiResponse(response, GetFolderResponse.class).getFolder()
@@ -708,13 +713,17 @@ class RealApiService implements ApiService {
         return new Request.Builder().url(API_BASE_URL);
     }
 
-    private Request createListFolderRequest(long folderId) {
+    private Request createListFolderRequest(long folderId, boolean recursive) {
+        HttpUrl.Builder urlBuilder = API_BASE_URL.newBuilder()
+                .addPathSegment("listfolder")
+                .addQueryParameter("folderid", String.valueOf(folderId))
+                .addQueryParameter("noshares", String.valueOf(1));
+        if (recursive) {
+            urlBuilder.addEncodedQueryParameter("recursive", String.valueOf(1));
+        }
+
         return newRequest()
-                .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("listfolder")
-                        .addQueryParameter("folderid", String.valueOf(folderId))
-                        .addQueryParameter("noshares", String.valueOf(1))
-                        .build())
+                .url(urlBuilder.build())
                 .get()
                 .build();
     }

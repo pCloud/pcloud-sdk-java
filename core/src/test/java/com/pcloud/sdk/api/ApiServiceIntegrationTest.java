@@ -42,7 +42,7 @@ public class ApiServiceIntegrationTest {
 
     @Before
     public void setUp() {
-        String token = System.getenv("pcloud_token");
+        String token = System.getenv("pcloud_tests_token");
         apiService = PCloudApi.newApiService()
                 .authenticator(Authenticator.newOAuthAuthenticator(token))
                 .create();
@@ -66,10 +66,14 @@ public class ApiServiceIntegrationTest {
     @Test
     public void testDeleteFolder() throws IOException, ApiError {
         RemoteFolder remoteFolder = createRemoteFolder();
+        assertTrue(apiService.deleteFolder(remoteFolder).execute());
+    }
 
-        DeletedEntriesInfo deletedEntriesInfo = apiService.deleteFolder(remoteFolder).execute();
-
-        assertEquals(1, deletedEntriesInfo.getDeletedFoldersCount());
+    @Test
+    public void testDeleteFolderRecursively() throws IOException, ApiError {
+        RemoteFolder remoteFolder = createRemoteFolder();
+        createRemoteFolder(remoteFolder.getFolderId());
+        assertTrue(apiService.deleteFolder(remoteFolder, true).execute());
     }
 
     @Test
@@ -201,8 +205,12 @@ public class ApiServiceIntegrationTest {
     }
 
     private RemoteFolder createRemoteFolder() throws IOException, ApiError {
+        return createRemoteFolder(RemoteFolder.ROOT_FOLDER_ID);
+    }
+
+    private RemoteFolder createRemoteFolder(long parentFolderId) throws IOException, ApiError {
         String randomFolderName = UUID.randomUUID().toString();
-        return apiService.createFolder(RemoteFolder.ROOT_FOLDER_ID, randomFolderName).execute();
+        return apiService.createFolder(parentFolderId, randomFolderName).execute();
     }
 
     private RemoteFile createRemoteFile() throws IOException, ApiError {

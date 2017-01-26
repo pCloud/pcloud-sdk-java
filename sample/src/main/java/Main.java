@@ -26,7 +26,7 @@ public class Main {
 
     public static void main(String... args) {
         String token = System.getenv("pcloud_token");
-        ApiService apiService = PCloudSdk.newApiService()
+        ApiService apiService = PCloudSdk.newApiServiceBuilder()
                 .authenticator(Authenticator.newOAuthAuthenticator(token))
                 .create();
         try {

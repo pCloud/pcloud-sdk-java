@@ -43,7 +43,7 @@ public class ApiServiceIntegrationTest {
     @Before
     public void setUp() {
         String token = System.getenv("pcloud_tests_token");
-        apiService = PCloudSdk.newApiService()
+        apiService = PCloudSdk.newApiServiceBuilder()
                 .authenticator(Authenticator.newOAuthAuthenticator(token))
                 .create();
     }

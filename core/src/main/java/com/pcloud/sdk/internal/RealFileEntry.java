@@ -37,7 +37,7 @@ abstract class RealFileEntry implements FileEntry{
     private String id;
 
     @Expose
-    @SerializedName("parentFolderid")
+    @SerializedName("parentfolderid")
     private long parentFolderId;
 
     @Expose

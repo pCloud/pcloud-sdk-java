@@ -57,12 +57,10 @@ class GlobalParamsRequestInterceptor implements Interceptor {
     private static String buildHeaderValue(Map<String, String> parameters) {
         StringBuilder builder = new StringBuilder();
         Iterator<Map.Entry<String, String>> iterator = parameters.entrySet().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Map.Entry<String, String> keyValuePair = iterator.next();
             builder.append(keyValuePair.getKey()).append('=').append(keyValuePair.getValue());
-            if (iterator.hasNext()){
-                builder.append("; ");
-            }
+            builder.append("; ");
         }
 
         builder.append("Domain=api.pcloud.com; Path=/; Secure; HttpOnly");

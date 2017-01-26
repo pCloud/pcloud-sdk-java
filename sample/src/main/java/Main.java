@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import com.pcloud.sdk.PCloudApi;
+import com.pcloud.sdk.PCloudSdk;
 import com.pcloud.sdk.api.*;
 import com.pcloud.sdk.authentication.Authenticator;
 
@@ -26,7 +26,7 @@ public class Main {
 
     public static void main(String... args) {
         String token = System.getenv("pcloud_token");
-        ApiService apiService = PCloudApi.newApiService()
+        ApiService apiService = PCloudSdk.newApiService()
                 .authenticator(Authenticator.newOAuthAuthenticator(token))
                 .create();
         try {

@@ -513,6 +513,9 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<Boolean> deleteFolder(RemoteFolder folder) {
+        if (folder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
         return deleteFolder(folder.getFolderId(), false);
     }
 
@@ -747,7 +750,7 @@ class RealApiService implements ApiService {
             try {
                 return gson.fromJson(reader, bodyType);
             } catch (JsonSyntaxException e) {
-                throw new IOException("Malformed JSON response.");
+                throw new IOException("Malformed JSON response.", e);
             } finally {
                 closeQuietly(reader);
             }

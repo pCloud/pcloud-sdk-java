@@ -72,14 +72,23 @@ public abstract class ApiServiceTest<T extends ApiService> {
 
     @Test
     public void deleteFolder_ReturnsANonNullCall() throws Exception {
-        assertNotNull(instance.deleteFolder(new DummyFolder("bye", 1)));
+        RemoteFolder folder = new DummyFolder("bye", 1);
+        assertNotNull(instance.deleteFolder(folder));
+        assertNotNull(instance.deleteFolder(folder, true));
         assertNotNull(instance.deleteFolder(1));
+        assertNotNull(instance.deleteFolder(1, true));
     }
 
     @Test
     public void deleteFolder_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
         instance.deleteFolder(null);
+    }
+
+    @Test
+    public void deleteFolder_ThrowsOnNullRemoteFolderArgument2() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.deleteFolder(null, false);
     }
 
     @Test

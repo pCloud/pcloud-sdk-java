@@ -67,12 +67,22 @@ public class DummyDownloadingApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFolder> deleteFolder(long folderId) {
+    public Call<Boolean> deleteFolder(long folderId) {
         return null;
     }
 
     @Override
-    public Call<RemoteFolder> deleteFolder(RemoteFolder folder) {
+    public Call<Boolean> deleteFolder(long folderId, boolean recursively) {
+        return null;
+    }
+
+    @Override
+    public Call<Boolean> deleteFolder(RemoteFolder folder) {
+        return null;
+    }
+
+    @Override
+    public Call<Boolean> deleteFolder(RemoteFolder folder, boolean recursively) {
         return null;
     }
 

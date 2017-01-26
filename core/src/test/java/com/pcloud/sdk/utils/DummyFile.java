@@ -15,25 +15,29 @@
  *
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk.utils;
 
-import java.util.Collections;
+import com.pcloud.sdk.api.*;
+import okio.BufferedSource;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
-import java.util.List;
 
-public class DummyFolder implements RemoteFolder {
+public class DummyFile implements RemoteFile {
+
+    private int fileId;
 
     private String name;
-    private long folderId;
 
-    public DummyFolder(String name, long folderId) {
+    public DummyFile(int fileId, String name) {
+        this.fileId = fileId;
         this.name = name;
-        this.folderId = folderId;
     }
 
     @Override
     public String getId() {
-        return "f" + folderId;
+        return "f" + fileId;
     }
 
     @Override
@@ -58,31 +62,71 @@ public class DummyFolder implements RemoteFolder {
 
     @Override
     public boolean isFile() {
-        return false;
-    }
-
-    @Override
-    public boolean isFolder() {
         return true;
     }
 
     @Override
-    public RemoteFolder asFolder() {
-        return this;
+    public boolean isFolder() {
+        return false;
     }
 
     @Override
-    public RemoteFile asFile() {
+    public RemoteFolder asFolder() {
         return null;
     }
 
     @Override
-    public long getFolderId() {
-        return folderId;
+    public RemoteFile asFile() {
+        return this;
     }
 
     @Override
-    public List<FileEntry> getChildren() {
-        return Collections.emptyList();
+    public InputStream byteStream() throws IOException {
+        return null;
+    }
+
+    @Override
+    public BufferedSource source() throws IOException {
+        return null;
+    }
+
+    @Override
+    public void download(DataSink sink, ProgressListener listener) throws IOException {
+
+    }
+
+    @Override
+    public void download(DataSink sink) throws IOException {
+
+    }
+
+    @Override
+    public long getFileId() {
+        return fileId;
+    }
+
+    @Override
+    public String getContentType() {
+        return null;
+    }
+
+    @Override
+    public long getSize() {
+        return 0;
+    }
+
+    @Override
+    public String getHash() {
+        return null;
+    }
+
+    @Override
+    public FileLink getDownloadLink(DownloadOptions options) throws IOException, ApiError {
+        return null;
+    }
+
+    @Override
+    public FileLink getDownloadLink() throws IOException, ApiError {
+        return null;
     }
 }

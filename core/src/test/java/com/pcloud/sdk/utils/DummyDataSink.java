@@ -15,21 +15,17 @@
  *
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk.utils;
 
-import okio.BufferedSink;
+import com.pcloud.sdk.api.DataSink;
+import okio.BufferedSource;
 
 import java.io.IOException;
 
-class DummyDataSource extends DataSource {
+public class DummyDataSink extends DataSink {
 
     @Override
-    public long contentLength() {
-        return 0;
-    }
-
-    @Override
-    public void writeTo(BufferedSink sink) throws IOException {
+    public void readAll(BufferedSource source) throws IOException {
 
     }
 }

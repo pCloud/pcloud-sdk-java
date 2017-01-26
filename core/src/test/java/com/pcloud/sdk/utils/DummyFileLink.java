@@ -15,8 +15,11 @@
  *
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk.utils;
 
+import com.pcloud.sdk.api.DataSink;
+import com.pcloud.sdk.api.FileLink;
+import com.pcloud.sdk.api.ProgressListener;
 import okio.BufferedSource;
 
 import java.io.IOException;
@@ -28,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-class DummyFileLink implements FileLink {
+public class DummyFileLink implements FileLink {
 
     private URL url;
 

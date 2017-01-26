@@ -1,5 +1,6 @@
 package com.pcloud.sdk.api;
 
+import com.pcloud.sdk.utils.*;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;

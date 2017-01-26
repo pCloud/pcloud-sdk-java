@@ -61,21 +61,24 @@ public interface ApiService {
     Call<RemoteFolder> createFolder(RemoteFolder parentFolder, String folderName);
 
     /**
-     * Delete specified folder.
+     * Delete specified folder recursively.
      *
      * @param folderId The id if the folder you would like to delete
      * @return {@link Call}
      */
-    Call<RemoteFolder> deleteFolder(long folderId);
+    Call<Boolean> deleteFolder(long folderId);
+
+    Call<Boolean> deleteFolder(long folderId, boolean recursively);
 
     /**
-     * Delete specified folder.
+     * Delete specified folder recursively.
      *
      * @param folder {@link RemoteFolder} you would like to delete. Must not be null.
      * @return {@link Call}
      */
-    Call<RemoteFolder> deleteFolder(RemoteFolder folder);
+    Call<Boolean> deleteFolder(RemoteFolder folder);
 
+    Call<Boolean> deleteFolder(RemoteFolder folder, boolean recursively);
 
     /**
      * Rename specified folder.

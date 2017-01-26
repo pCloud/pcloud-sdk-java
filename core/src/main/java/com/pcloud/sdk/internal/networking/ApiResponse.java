@@ -19,7 +19,7 @@ package com.pcloud.sdk.internal.networking;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public abstract class ApiResponse {
+public class ApiResponse {
 
     @Expose
     @SerializedName("error")

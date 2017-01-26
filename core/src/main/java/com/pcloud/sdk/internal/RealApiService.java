@@ -227,7 +227,7 @@ class RealApiService implements ApiService {
                         .addPathSegment("deletefile")
                         .build())
                 .get()
-                .put(new FormBody.Builder()
+                .post(new FormBody.Builder()
                         .add("fileid", String.valueOf(fileId))
                         .build())
                 .build();
@@ -512,34 +512,43 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFolder> deleteFolder(RemoteFolder folder) {
-        if (folder == null) {
-            throw new IllegalArgumentException("folder argument cannot be null.");
-        }
-        return deleteFolder(folder.getFolderId());
+    public Call<Boolean> deleteFolder(RemoteFolder folder) {
+        return deleteFolder(folder.getFolderId(), false);
     }
 
     @Override
-    public Call<RemoteFolder> deleteFolder(long folderId) {
-        return newCall(createDeleteFolderRequest(folderId), new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+    public Call<Boolean> deleteFolder(RemoteFolder folder, boolean recursively) {
+        if (folder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return deleteFolder(folder.getFolderId(), recursively);
     }
 
-    private Request createDeleteFolderRequest(long folderId) {
+    @Override
+    public Call<Boolean> deleteFolder(long folderId) {
+        return deleteFolder(folderId, false);
+    }
+
+    @Override
+    public Call<Boolean> deleteFolder(long folderId, boolean recursively) {
         RequestBody body = new FormBody.Builder()
                 .add("folderid", String.valueOf(folderId))
                 .build();
 
-        return newRequest()
+        Request request = newRequest()
                 .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("deletefolderrecursive")
+                        .addPathSegment(recursively ? "deletefolderrecursive" : "deletefolder")
                         .build())
                 .post(body)
                 .build();
+
+        return newCall(request, new ResponseAdapter<Boolean>() {
+            @Override
+            public Boolean adapt(Response response) throws IOException, ApiError {
+                getAsApiResponse(response, ApiResponse.class);
+                return true;
+            }
+        });
     }
 
     @Override

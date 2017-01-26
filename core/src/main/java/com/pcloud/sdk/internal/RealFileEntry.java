@@ -30,7 +30,7 @@ import java.util.Date;
 
 abstract class RealFileEntry implements FileEntry{
 
-    protected ApiService apiService;
+    private ApiService apiService;
 
     @Expose
     @SerializedName("id")
@@ -97,12 +97,16 @@ abstract class RealFileEntry implements FileEntry{
 
     @Override
     public RemoteFolder asFolder() {
-        throw new IllegalStateException("Entry is not a folder");
+        throw new IllegalStateException("This entry is not a folder");
     }
 
     @Override
     public RemoteFile asFile() {
-        throw new IllegalStateException("Entry is not a file");
+        throw new IllegalStateException("This entry is not a file");
+    }
+
+    protected ApiService ownerService(){
+        return apiService;
     }
 
     static class TypeAdapterFactory implements com.google.gson.TypeAdapterFactory {

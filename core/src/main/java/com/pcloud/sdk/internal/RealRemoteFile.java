@@ -69,7 +69,7 @@ class RealRemoteFile extends RealFileEntry implements RemoteFile {
 
     @Override
     public FileLink getDownloadLink(DownloadOptions options) throws IOException, ApiError {
-        return apiService.getDownloadLink(fileId, options).execute();
+        return ownerService().getDownloadLink(fileId, options).execute();
     }
 
     @Override
@@ -94,7 +94,7 @@ class RealRemoteFile extends RealFileEntry implements RemoteFile {
     @Override
     public BufferedSource source() throws IOException {
         try {
-            return apiService.download(this).execute();
+            return ownerService().download(this).execute();
         } catch (ApiError apiError) {
             throw new IOException("API error occurred while trying to download file.", apiError);
         }
@@ -108,7 +108,7 @@ class RealRemoteFile extends RealFileEntry implements RemoteFile {
                 .contentType(getContentType())
                 .build();
         try {
-            apiService.getDownloadLink(this, options).execute().download(sink, listener);
+            ownerService().getDownloadLink(this, options).execute().download(sink, listener);
         } catch (ApiError apiError) {
             throw new IOException("API error occurred while trying to download file.", apiError);
         }

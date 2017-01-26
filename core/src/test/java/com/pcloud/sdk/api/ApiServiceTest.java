@@ -10,18 +10,19 @@ import java.util.Date;
 
 import static org.junit.Assert.assertNotNull;
 
-public abstract class ApiServiceTest {
+public abstract class ApiServiceTest<T extends ApiService> {
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
-    private ApiService instance;
+    private T instance;
 
-    protected abstract ApiService createInstance();
+    protected void testInstance(T instance){
+        this.instance = instance;
+    }
 
-    @Before
-    public void setUp() throws Exception {
-        instance = createInstance();
+    protected T testInstance(){
+        return instance;
     }
 
     @After

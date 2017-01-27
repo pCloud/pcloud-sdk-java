@@ -1,3 +1,8 @@
+import groovy.text.SimpleTemplateEngine
+import groovy.io.FileType
+
+import java.nio.charset.Charset
+
 group 'com.pcloud.sdk'
 version '1.0-SNAPSHOT'
 
@@ -19,3 +24,45 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
 
 }
+
+sourceSets {
+    main {
+        java.srcDir "${buildDir}/generated/src/main/java/"
+    }
+}
+
+task generateSources {
+
+    def inputDir = file("$projectDir/src/main/java-templates")
+    File outputDir = file("$buildDir/generated/src/main/java")
+
+    println("Processing template files in $inputDir.absolutePath")
+
+    inputs.files(project.buildFile)
+    inputs.files(fileTree(inputDir))
+    inputs.files
+    outputs.dir outputDir
+
+    doFirst {
+        outputDir.exists() || outputDir.mkdirs()
+
+        def fileList = []
+        inputDir.eachFileRecurse (FileType.FILES) { file ->
+            fileList << file
+        }
+
+        def binding = ["project": project]
+        def templateEngine = new SimpleTemplateEngine()
+        for (File file : fileList){
+            println("Processing template file $file.absolutePath")
+            def relativeOutputPath = inputDir.toPath().relativize(file.toPath()).toString();
+            println("Relative path of template file $relativeOutputPath")
+            File outputFile = new File(outputDir, relativeOutputPath);
+            println("Writing to $outputFile.absolutePath")
+            outputFile.getParentFile().mkdirs()
+            outputFile.write(templateEngine.createTemplate(file).make(binding).toString(), "UTF-8");
+        }
+    }
+}
+compileJava.dependsOn generateSources
+compileJava.source generateSources.outputs.files, sourceSets.main.java

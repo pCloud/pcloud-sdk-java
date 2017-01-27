@@ -31,6 +31,7 @@ import com.pcloud.sdk.internal.networking.GetFolderResponse;
 import com.pcloud.sdk.internal.networking.UploadFilesResponse;
 
 import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
+import com.pcloud.sdk.internal.networking.serialization.UnmodifiableListTypeFactory;
 import okhttp3.HttpUrl;
 import okhttp3.*;
 import okio.BufferedSink;

@@ -25,6 +25,18 @@ import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
 public abstract class DataSource {
 
+    public static final DataSource EMPTY = new DataSource() {
+        @Override
+        public long contentLength() {
+            return 0;
+        }
+
+        @Override
+        public void writeTo(BufferedSink sink) throws IOException {
+
+        }
+    };
+
     /**
      * Provide the length of the data instance content.
      */

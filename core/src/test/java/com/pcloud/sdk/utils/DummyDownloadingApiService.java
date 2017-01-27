@@ -153,12 +153,12 @@ public class DummyDownloadingApiService implements ApiService {
 
     @Override
     public Call<FileLink> getDownloadLink(RemoteFile file, DownloadOptions options) {
-        return null;
+        return new DummyCall<FileLink>(new DummyDownloadLink());
     }
 
     @Override
     public Call<FileLink> getDownloadLink(long fileid, DownloadOptions options) {
-        return null;
+        return new DummyCall<FileLink>(new DummyDownloadLink());
     }
 
     @Override
@@ -224,6 +224,22 @@ public class DummyDownloadingApiService implements ApiService {
     @Override
     public void shutdown() {
 
+    }
+
+    private class DummyDownloadLink extends DummyFileLink {
+        @Override
+        public void download(DataSink sink) throws IOException {
+            this.download(sink, null);
+        }
+
+        @Override
+        public void download(DataSink sink, ProgressListener listener) throws IOException {
+            try {
+                DummyDownloadingApiService.this.download(this, sink, listener).execute();
+            } catch (ApiError apiError) {
+                throw new IOException(apiError);
+            }
+        }
     }
 
     private class DummyDownloadCall implements Call<Void> {

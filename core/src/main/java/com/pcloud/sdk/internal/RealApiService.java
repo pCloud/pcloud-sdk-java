@@ -66,12 +66,13 @@ class RealApiService implements ApiService {
     RealApiService(RealApiServiceBuilder builder){
         Map<String, String> globalParams = new TreeMap<>();
         globalParams.put("timeformat", String.valueOf("timestamp"));
+        String userAgent = String.format(Locale.US, "pCloud SDK Java %s", Version.NAME);
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .readTimeout(builder.readTimeoutMs(), TimeUnit.MILLISECONDS)
                 .writeTimeout(builder.writeTimeoutMs(), TimeUnit.MILLISECONDS)
                 .connectTimeout(builder.connectTimeoutMs(), TimeUnit.MILLISECONDS)
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
-                .addInterceptor(new GlobalParamsRequestInterceptor(globalParams));
+                .addInterceptor(new GlobalRequestInterceptor(userAgent, globalParams));
 
         if (builder.dispatcher() != null) {
             httpClientBuilder.dispatcher(builder.dispatcher());

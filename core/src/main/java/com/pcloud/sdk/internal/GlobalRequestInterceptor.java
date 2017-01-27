@@ -24,19 +24,22 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-class GlobalParamsRequestInterceptor implements Interceptor {
+class GlobalRequestInterceptor implements Interceptor {
 
-    private String headerValue;
+    private String userAgent;
+    private String cookieValues;
 
-    GlobalParamsRequestInterceptor(Map<String, String> parameters) {
-        this.headerValue = buildHeaderValue(parameters);
+    GlobalRequestInterceptor(String userAgent, Map<String, String> globalParameters) {
+        this.userAgent = userAgent;
+        this.cookieValues = buildCookieValue(globalParameters);
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request newRequest = chain.request()
-                .newBuilder().
-                addHeader("Cookie", headerValue)
+                .newBuilder()
+                .header("User-Agent", userAgent)
+                .addHeader("Cookie", cookieValues)
                 .build();
         return chain.proceed(newRequest);
     }
@@ -45,16 +48,18 @@ class GlobalParamsRequestInterceptor implements Interceptor {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GlobalParamsRequestInterceptor that = (GlobalParamsRequestInterceptor) o;
-        return headerValue != null ? headerValue.equals(that.headerValue) : that.headerValue == null;
+
+        GlobalRequestInterceptor that = (GlobalRequestInterceptor) o;
+        return cookieValues.equals(that.cookieValues);
+
     }
 
     @Override
     public int hashCode() {
-        return headerValue != null ? headerValue.hashCode() : 0;
+        return cookieValues.hashCode();
     }
 
-    private static String buildHeaderValue(Map<String, String> parameters) {
+    private static String buildCookieValue(Map<String, String> parameters) {
         StringBuilder builder = new StringBuilder();
         Iterator<Map.Entry<String, String>> iterator = parameters.entrySet().iterator();
         while (iterator.hasNext()) {

@@ -95,6 +95,7 @@ class RealApiService implements ApiService {
         this.gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .registerTypeAdapterFactory(new RealFileEntry.TypeAdapterFactory())
+                .registerTypeAdapterFactory(new UnmodifiableListTypeFactory())
                 .registerTypeAdapter(FileEntry.class, new RealFileEntry.FileEntryDeserializer())
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
                 .registerTypeAdapter(RealRemoteFile.class, new RealRemoteFile.InstanceCreator(this))

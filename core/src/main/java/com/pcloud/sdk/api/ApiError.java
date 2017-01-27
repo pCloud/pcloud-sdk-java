@@ -18,6 +18,15 @@ package com.pcloud.sdk.api;
 
 import java.util.Locale;
 
+/**
+ * An exception class resembling pCloud API errors.
+ * <p>
+ * <p>
+ * For more information on errors and their meaning, see <a href="https://docs.pcloud.com/errors/index.html"> the errors section</a>
+ * or browse through method-specific pages at the <a href="https://docs.pcloud.com/">API documentation</a>.
+ * <p>
+ * </p>
+ */
 public class ApiError extends Exception {
 
     private int errorCode;
@@ -29,10 +38,20 @@ public class ApiError extends Exception {
         this.errorMessage = errorMessage;
     }
 
+    /**
+     * Returns an error code for the API error.
+     *
+     * @return the error code
+     */
     public int getErrorCode() {
         return errorCode;
     }
 
+    /**
+     * Returns a brief message describing the error.
+     *
+     * @return non-null message
+     */
     public String getErrorMessage() {
         return errorMessage;
     }

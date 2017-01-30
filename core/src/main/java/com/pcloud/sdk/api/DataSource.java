@@ -23,8 +23,29 @@ import java.io.IOException;
 
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
+/**
+ * A source of data.
+ * <p>
+ * An abstraction over the byte stream writing operations,
+ * this class allows for a flexible way to write bytes to a {@link BufferedSink}.
+ * <p>
+ * Generally used for specifying a data source when creating/uploading files.
+ * <li>
+ * The {@link #create(File)} method can be used for reading data from a local file.
+ * <li>
+ * The {@link #create(byte[])} method can be used for reading data from a byte array.
+ * <li>
+ * The {@link #create(ByteString)} method can be used for reading data from Okio's immutable byte arrays.
+ * <li>
+ * For any other cases just extend the class and do your magic in the {@link #writeTo(BufferedSink)} method.
+ */
 public abstract class DataSource {
 
+    /**
+     * An empty {@link DataSource} instance.
+     * <p>
+     * Can be used for creating empty files.
+     */
     public static final DataSource EMPTY = new DataSource() {
         @Override
         public long contentLength() {
@@ -38,12 +59,17 @@ public abstract class DataSource {
     };
 
     /**
-     * Provide the length of the data instance content.
+     * Provide the data source length.
+     * <p>
+     * Override this method to provide the size of the data
+     * to be written, if known in advance, otherwise return -1.
      */
-    public abstract long contentLength();
+    public long contentLength() {
+        return -1;
+    }
 
     /**
-     * Writes data content to a {@link BufferedSink}.
+     * Write the data to a {@link BufferedSink}.
      *
      * @param sink {@link BufferedSink}
      * @throws IOException
@@ -51,7 +77,10 @@ public abstract class DataSource {
     public abstract void writeTo(BufferedSink sink) throws IOException;
 
     /**
-     * Creates Data instance from a byte array.
+     * Create a {@link DataSource} instance that reads from a byte array.
+     *
+     * @param data a byte array. Must not be null.
+     * @return a {@link DataSink} that will read the given byte array.
      */
     public static DataSource create(final byte[] data) {
         return new DataSource() {
@@ -69,7 +98,10 @@ public abstract class DataSource {
     }
 
     /**
-     * Creates a new instance from a {@linkplain ByteString}.
+     * Create a {@link DataSource} instance that reads from a byte array.
+     *
+     * @param data a byte array. Must not be null.
+     * @return a {@link DataSink} that will read the given byte array.
      */
     public static DataSource create(final ByteString data) {
         return new DataSource() {
@@ -87,7 +119,10 @@ public abstract class DataSource {
     }
 
     /**
-     * Creates a new instance from a {@linkplain File}.
+     * Create a {@link DataSource} instance that reads from a byte array.
+     *
+     * @param file a file which will be read. Must not be null.
+     * @return a {@link DataSink} that will read the given file.
      */
     public static DataSource create(final File file) {
         return new DataSource() {

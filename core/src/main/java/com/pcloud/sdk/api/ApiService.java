@@ -26,21 +26,28 @@ import java.util.concurrent.Executor;
 /**
  * The General interface that exposes pCloud API's methods.
  * <p>
- * The class is a factory for {@linkplain Call calls} which can be used to execute certain operations on a pCloud account.
+ * The class is a factory for {@linkplain Call} objects which can be used to execute certain operations on a pCloud account.
  * <h3>
  * The ApiService is designed with reuse in mind, it's best used when created once and shared among code using it,
  * mainly due to used connection and thread pooling.
  * <li>
  * Users should configure and create instances through the {@link ApiServiceBuilder} interface.
- * <li>Builder instances can be created via the {@link PCloudSdk#newApiServiceBuilder()} method
+ * <li>
+ * Builder instances can be created via the {@link PCloudSdk#newApiServiceBuilder()} method
  * or from an existing {@linkplain ApiService} instance through the {@linkplain #newBuilder()} method.
- * <li>Shared instance's configuration can be changed by using the {@linkplain #newBuilder()} method that will return
+ * <li>
+ * Shared instance's configuration can be changed by using the {@linkplain #newBuilder()} method that will return
  * a pre-configured builder.
- * <li>There is no explicit need to call {@linkplain #shutdown()}, any idle threads and connections will automatically get closed once not used anymore.
- * <li>All methods return non-null {@link Call} instances.
- * <li>All methods are thread-safe.
- * <li>All calls resulting in a collection of objects, return unmodifiable {@link java.util.Collection}-derived objects.
- * <h3>Bear in mind that shutting down a {@link ApiService} instance will also affect all instances sharing the underlying resources.
+ * <li>
+ * There is no explicit need to call {@linkplain #shutdown()}, any idle threads and connections will automatically get closed once not used anymore.
+ * <li>
+ * All methods return non-null {@link Call} instances.
+ * <li>
+ * All methods are thread-safe.
+ * <li>
+ * All calls resulting in a collection of objects, return unmodifiable {@link java.util.Collection}-derived objects.</li>
+ * <h3>
+ * Bear in mind that shutting down a {@link ApiService} instance will also affect all instances sharing the underlying resources.
  */
 @SuppressWarnings("unused")
 public interface ApiService {
@@ -507,7 +514,7 @@ public interface ApiService {
      * <p>
      * See the OAuth <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html">documentation page</a> or
      * the notes {@linkplain ApiService here} on how permissions to access accounts are granted.
-     *<p>
+     * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/general/userinfo.html">documentation page</a>.
      *
      * @return {@link Call} resulting in the accounts details
@@ -523,15 +530,15 @@ public interface ApiService {
 
     /**
      * Stop this instance and cleanup resources.
-     *
+     * <p>
      * <li>
-     *     All calls created by this instance will be cancelled..
+     * All calls created by this instance will be cancelled..
      * <li>
-     *     The provided {@link okhttp3.ConnectionPool} will have all connections evicted.
+     * The provided {@link okhttp3.ConnectionPool} will have all connections evicted.
      * <li>
-     *     The {@link okhttp3.Dispatcher} will have it's Executor shutdown.
+     * The {@link okhttp3.Dispatcher} will have it's Executor shutdown.
      * <li>
-     *     If provided, the {@link okhttp3.Cache} instance will closed.
+     * If provided, the {@link okhttp3.Cache} instance will closed.
      */
     void shutdown();
 }

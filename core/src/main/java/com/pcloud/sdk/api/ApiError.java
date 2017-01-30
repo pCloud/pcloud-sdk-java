@@ -50,7 +50,7 @@ public class ApiError extends Exception {
     /**
      * Returns a brief message describing the error.
      *
-     * @return non-null message
+     * @return a non-null String with the error description
      */
     public String getErrorMessage() {
         return errorMessage;

@@ -16,6 +16,13 @@
 
 package com.pcloud.sdk.api;
 
+/**
+ * A listener used for upload/download progress notifications.
+ */
 public interface ProgressListener {
+    /**
+     * @param done  the current amount of bytes transferred
+     * @param total the total amount of bytes to transfer
+     */
     void onProgress(long done, long total);
 }

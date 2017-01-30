@@ -18,6 +18,9 @@ package com.pcloud.sdk.api;
 
 import java.util.Date;
 
+/**
+ * An abstraction over a file entry on a pCloud account's filesystem.
+ */
 public interface FileEntry {
 
     /**
@@ -42,8 +45,8 @@ public interface FileEntry {
 
     /**
      * Returns the parent folder's id for the entry.
-     *
-     * <p>See {@linkplain RemoteFolder#getFolderId()} ()}.</p>
+     * <p>
+     * See {@linkplain RemoteFolder#getFolderId()} ()}.
      */
     long getParentFolderId();
 
@@ -59,8 +62,8 @@ public interface FileEntry {
 
     /**
      * Returns this FileEntry as a {@link RemoteFolder}
-     *
-     * <p>See {@linkplain #isFolder()}.</p>
+     * <p>
+     * See {@linkplain #isFolder()}.
      *
      * @return {@link RemoteFolder}
      * @throws IllegalStateException if the entry is not a folder
@@ -69,8 +72,8 @@ public interface FileEntry {
 
     /**
      * Returns this FileEntry as {@link RemoteFile}
-     *
-     * <p>See {@linkplain #isFile()}.</p>
+     * <p>
+     * See {@linkplain #isFile()}.
      *
      * @return {@link RemoteFile}
      * @throws IllegalStateException if the entry is not a file

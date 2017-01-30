@@ -20,12 +20,24 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * A link to a file entry on a pCloud account's filesystem.
+ */
 public interface FileLink extends RemoteData {
 
+    /**
+     * @return the {@link Date} until the link is valid. Cannot be null.
+     */
     Date getExpirationDate();
 
+    /**
+     * @return a list of {@link URL}s that can be used to access the file contents. Cannot be null or empty.
+     */
     List<URL> getUrls();
 
+    /**
+     * @return a {@link URL} considered to have the best access times. Cannot be null.
+     */
     URL getBestUrl();
 
 }

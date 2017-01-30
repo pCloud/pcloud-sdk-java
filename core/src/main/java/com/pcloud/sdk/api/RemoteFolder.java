@@ -18,8 +18,17 @@ package com.pcloud.sdk.api;
 
 import java.util.List;
 
-public interface RemoteFolder extends FileEntry{
+/**
+ * An abstraction over a file entry for a folder on a pCloud account's filesystem.
+ *
+ * @see FileEntry
+ * @see RemoteFolder
+ */
+public interface RemoteFolder extends FileEntry {
 
+    /**
+     * The root folder id of of a pCloud account's filesystem.
+     */
     int ROOT_FOLDER_ID = 0;
 
     /**
@@ -29,6 +38,8 @@ public interface RemoteFolder extends FileEntry{
 
     /**
      * Returns the folder's children.
+     * <p>
+     * Cannot be null.
      */
     List<FileEntry> getChildren();
 }

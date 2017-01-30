@@ -18,13 +18,28 @@ package com.pcloud.sdk.api;
 
 import java.io.IOException;
 
+/**
+ * An abstraction over a RPC call to pCloud's API servers.
+ * <p>
+ * A {@link Call} object resemebles a future request to execute a method having the following properties:
+ * <li>
+ * Allows for asynchronous execution by the {@link #enqueue(Callback)} method with a {@link Callback} object.
+ * <li>
+ * Allows for synchronous execution on the same thread by calling the {@link #execute()} method.
+ * <li> Can be executed only once, state can be checked via the {@link #isExecuted()} property.
+ * <li> Once created, a {@link Call} instance can be cloned via the {@link #clone()} method and executed again.
+ * <li> Executed calls can be cancelled via the {@link #cancel()} method. It is safe to call {@link #cancel()} multiple times.
+ * <li> Running calls that are being cancelled will result in an {@link IOException} being thrown or reported via {@link Callback#onFailure(Call, Throwable)}.
+ *
+ * @param <T> the type of the returned result
+ */
 public interface Call<T> extends Cloneable {
     /**
      * Synchronously send the request and return its response.
      *
-     * @throws IOException if a problem occurred talking to the server.
+     * @throws IOException      if a problem occurred talking to the server.
      * @throws RuntimeException (and subclasses) if an unexpected error occurs creating the request
-     * or decoding the response.
+     *                          or decoding the response.
      */
     T execute() throws IOException, ApiError;
 
@@ -46,12 +61,13 @@ public interface Call<T> extends Cloneable {
      */
     void cancel();
 
-    /** True if {@link #cancel()} was called. */
+    /**
+     * True if {@link #cancel()} was called.
+     */
     boolean isCanceled();
 
     /**
-     * Create a new, identical call to this one which can be enqueued or executed even if this call
-     * has already been.
+     * Create a new, identical call to this one which can be enqueued or executed again.
      */
     Call<T> clone();
 }

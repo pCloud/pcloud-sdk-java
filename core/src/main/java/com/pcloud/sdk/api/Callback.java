@@ -16,8 +16,25 @@
 
 package com.pcloud.sdk.api;
 
+/**
+ * A Callback listener used together with the {@link Call#enqueue(Callback)} method.
+ *
+ * @param <T> the type parameter
+ */
 public interface Callback<T> {
+    /**
+     * Called on a successful operation
+     *
+     * @param call     the call
+     * @param response a result
+     */
     void onResponse(Call<T> call, T response);
 
+    /**
+     * Called on failed operation
+     *
+     * @param call the call
+     * @param t    the error that caused the failure
+     */
     void onFailure(Call<T> call, Throwable t);
 }

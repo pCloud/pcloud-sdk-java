@@ -171,10 +171,15 @@ class RealApiService implements ApiService {
             @Override
             public void writeTo(BufferedSink sink) throws IOException {
                 if (listener != null) {
+                    ProgressListener realListener = listener;
+                    if (callbackExecutor != null) {
+                        realListener = new ExecutorProgressListener(listener, callbackExecutor);
+                    }
+
                     sink = Okio.buffer(new ProgressCountingSink(
                             sink,
                             data.contentLength(),
-                            listener,
+                            realListener,
                             progressCallbackThresholdBytes));
                 }
                 data.writeTo(sink);
@@ -335,10 +340,15 @@ class RealApiService implements ApiService {
                 }
                 BufferedSource source = getAsRawBytes(response);
                 if (listener != null) {
+                    ProgressListener realListener = listener;
+                    if (callbackExecutor != null) {
+                        realListener = new ExecutorProgressListener(listener, callbackExecutor);
+                    }
+
                     source = Okio.buffer(new ProgressCountingSource(
                             source,
                             response.body().contentLength(),
-                            listener,
+                            realListener,
                             progressCallbackThresholdBytes));
                 }
 

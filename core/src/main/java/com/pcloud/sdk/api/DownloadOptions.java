@@ -108,6 +108,7 @@ public final class DownloadOptions {
      * <p>
      * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a>
      */
+    @SuppressWarnings("WeakerAccess")
     public static class Builder {
 
         private boolean skipFilename;

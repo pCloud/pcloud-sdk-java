@@ -22,7 +22,7 @@ package com.pcloud.sdk.api;
  * <p>
  * See the related API documentation <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html">pages</a>.
  * <p>
- * See the available options in {@link Authenticators} on creating an Authenticator instance.
+ * See the available options in {@link Authenticators} on creating an Authenticator instances.
  *
  * @see Authenticators
  */

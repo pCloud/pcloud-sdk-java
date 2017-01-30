@@ -24,6 +24,7 @@ import java.io.IOException;
  * @see FileEntry
  * @see RemoteFile
  */
+@SuppressWarnings("unused")
 public interface RemoteFile extends FileEntry, RemoteData {
 
     /**

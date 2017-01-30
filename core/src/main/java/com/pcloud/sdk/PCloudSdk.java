@@ -20,6 +20,7 @@ import com.pcloud.sdk.api.ApiServiceBuilder;
 import com.pcloud.sdk.internal.Internal;
 import com.pcloud.sdk.internal.Version;
 
+@SuppressWarnings("unused")
 public final class PCloudSdk {
 
     private PCloudSdk() {

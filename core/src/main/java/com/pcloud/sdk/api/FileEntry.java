@@ -21,6 +21,7 @@ import java.util.Date;
 /**
  * An abstraction over a file entry on a pCloud account's filesystem.
  */
+@SuppressWarnings("unused")
 public interface FileEntry {
 
     /**

@@ -18,13 +18,13 @@ package com.pcloud.sdk.api;
 
 import okio.BufferedSource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * A data container storing a pCloud account's file data.
  */
+@SuppressWarnings("WeakerAccess")
 public interface RemoteData {
     /**
      * Open an {@link InputStream} to the resource.

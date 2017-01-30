@@ -19,6 +19,7 @@ package com.pcloud.sdk.api;
 /**
  * A container for a pCloud account's user data.
  */
+@SuppressWarnings("unused")
 public interface UserInfo {
 
     /**

@@ -27,6 +27,7 @@ import java.util.Locale;
  * <p>
  * </p>
  */
+@SuppressWarnings("unused")
 public class ApiError extends Exception {
 
     private int errorCode;

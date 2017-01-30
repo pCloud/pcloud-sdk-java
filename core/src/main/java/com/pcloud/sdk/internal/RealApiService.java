@@ -330,29 +330,34 @@ class RealApiService implements ApiService {
         }
 
         Request request = newDownloadRequest(fileLink);
+
         return newCall(request, new ResponseAdapter<Void>() {
             @Override
             public Void adapt(Response response) throws IOException, ApiError {
-                if (response.code() == 404) {
-                    response.close();
-                    throw new FileNotFoundException("The requested file cannot be found or the file link has expired.");
-                }
-                BufferedSource source = getAsRawBytes(response);
-                if (listener != null) {
-                    ProgressListener realListener = listener;
-                    if (callbackExecutor != null) {
-                        realListener = new ExecutorProgressListener(listener, callbackExecutor);
+                try {
+                    if (response.code() == 404) {
+                        throw new FileNotFoundException("The requested file cannot be found or the file link has expired.");
                     }
 
-                    source = Okio.buffer(new ProgressCountingSource(
-                            source,
-                            response.body().contentLength(),
-                            realListener,
-                            progressCallbackThresholdBytes));
-                }
+                    BufferedSource source = getAsRawBytes(response);
+                    if (listener != null) {
+                        ProgressListener realListener = listener;
+                        if (callbackExecutor != null) {
+                            realListener = new ExecutorProgressListener(listener, callbackExecutor);
+                        }
 
-                sink.readAll(source);
-                return null;
+                        source = Okio.buffer(new ProgressCountingSource(
+                                source,
+                                response.body().contentLength(),
+                                realListener,
+                                progressCallbackThresholdBytes));
+                    }
+
+                    sink.readAll(source);
+                    return null;
+                } finally {
+                    closeQuietly(response);
+                }
             }
         });
     }

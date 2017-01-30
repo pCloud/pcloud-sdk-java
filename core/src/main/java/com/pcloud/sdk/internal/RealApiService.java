@@ -708,6 +708,7 @@ class RealApiService implements ApiService {
     public void shutdown() {
         this.httpClient.connectionPool().evictAll();
         this.httpClient.dispatcher().executorService().shutdownNow();
+        closeQuietly(this.httpClient.cache());
     }
 
     long progressCallbackThresholdBytes() {

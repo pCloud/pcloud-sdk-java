@@ -17,16 +17,29 @@
 package com.pcloud.sdk.api;
 
 /**
- * DownloadOptions is used to build and encapsulate API call options for generating {@link FileLink}.
+ * DownloadOptions is a immutable container for the allowed options when creating file
+ * links through pCloud's API.
+ * <p>
+ * Instances of the class can be reated either the {@link #create()} method
+ * or by mutating an existing object by calling {@link #newBuilder()}
+ * <p>
+ * The {@link #DEFAULT} instance is pre-configured for the most common usage cases.
  */
 public final class DownloadOptions {
 
     /**
-     * Creates a default configuration of {@link DownloadOptions}.
+     * The default instance of {@link DownloadOptions}.
+     * <p>
+     * <li>
+     * The content-type will be determined from the file extension.
+     * <li>
+     * File name <b>WILL BE</b> included in the link.
+     * <li>
+     * Download will not be forced.
      */
     public static final DownloadOptions DEFAULT = new Builder()
-            .skipFilename(false)
             .forceDownload(false)
+            .skipFilename(false)
             .contentType(null)
             .build();
 
@@ -37,13 +50,13 @@ public final class DownloadOptions {
     /**
      * Creates new default {@link Builder}.
      * <p>
-     * <p> {@link Builder} can be used to customise API call parameters to get {@link FileLink}.
+     * {@link Builder} can be used to customise API call parameters to get {@link FileLink}.
      */
     public static Builder create() {
         return DEFAULT.newBuilder();
     }
 
-    DownloadOptions(boolean skipFilename, boolean forceDownload, String contentType) {
+    private DownloadOptions(boolean skipFilename, boolean forceDownload, String contentType) {
         this.skipFilename = skipFilename;
         this.forceDownload = forceDownload;
         this.contentType = contentType;
@@ -52,8 +65,9 @@ public final class DownloadOptions {
     /**
      * Returns the value of {@code contentType} parameter of the {@link DownloadOptions}.
      * <p>
-     * <p>See {@link Builder#contentType(String)}
-     * <p>For more information, see
+     * See {@link Builder#contentType(String)}
+     * <p>
+     * For more information, see
      * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">here</a></p>
      */
     public String contentType() {
@@ -63,7 +77,7 @@ public final class DownloadOptions {
     /**
      * Returns the value of {@code skipFilename} parameter of the {@link DownloadOptions}.
      * <p>
-     * <p>See {@link Builder#skipFilename(boolean skipFilename)}
+     * See {@link Builder#skipFilename(boolean skipFilename)}
      */
     public boolean skipFilename() {
         return skipFilename;
@@ -72,7 +86,7 @@ public final class DownloadOptions {
     /**
      * Returns the value of {@code forceDownload} parameter of the {@link DownloadOptions}.
      * <p>
-     * <p>See {@link Builder#forceDownload(boolean)}
+     * See {@link Builder#forceDownload(boolean)}
      */
     public boolean forceDownload() {
         return forceDownload;
@@ -81,7 +95,7 @@ public final class DownloadOptions {
     /**
      * Creates {@link Builder} from {@link DownloadOptions}.
      * <p>
-     * <p>If you have already created {@link DownloadOptions} use this method to create  {@link Builder} from it and then change it's parameters.
+     * If you have already created {@link DownloadOptions} use this method to create  {@link Builder} from it and then change it's parameters.
      *
      * @return {@link Builder}
      */
@@ -92,7 +106,7 @@ public final class DownloadOptions {
     /**
      * Use this Builder to set wanted parameters to get {@link FileLink}.
      * <p>
-     * <p>For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a></p>
+     * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a>
      */
     public static class Builder {
 
@@ -112,7 +126,7 @@ public final class DownloadOptions {
         /**
          * Sets {@code skipFilename} option.
          * <p>
-         * <p>If {@code skipFilename} is set to FALSE the name of the file will be included in the generated {@link FileLink}. Otherwise the name will not be included.
+         * If {@code skipFilename} is set to FALSE the name of the file will be included in the generated {@link FileLink}. Otherwise the name will not be included.
          *
          * @return {@link Builder}
          */

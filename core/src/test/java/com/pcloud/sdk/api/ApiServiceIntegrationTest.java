@@ -17,7 +17,6 @@
 package com.pcloud.sdk.api;
 
 import com.pcloud.sdk.PCloudSdk;
-import com.pcloud.sdk.authentication.Authenticator;
 
 import org.junit.After;
 import org.junit.Before;
@@ -44,7 +43,7 @@ public class ApiServiceIntegrationTest {
     public void setUp() {
         String token = System.getenv("pcloud_tests_token");
         apiService = PCloudSdk.newApiServiceBuilder()
-                .authenticator(Authenticator.newOAuthAuthenticator(token))
+                .authenticator(Authenticators.newOAuthAuthenticator(token))
                 .create();
     }
 

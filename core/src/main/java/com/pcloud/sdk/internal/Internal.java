@@ -17,6 +17,7 @@
 package com.pcloud.sdk.internal;
 
 import com.pcloud.sdk.api.ApiServiceBuilder;
+import com.pcloud.sdk.api.Authenticator;
 
 public final class Internal {
 
@@ -26,5 +27,9 @@ public final class Internal {
 
     public static ApiServiceBuilder newBuilder(){
         return new RealApiServiceBuilder();
+    }
+
+    public static Authenticator createOAuthAuthenticator(String accessToken){
+        return new AccessTokenAuthenticator(accessToken);
     }
 }

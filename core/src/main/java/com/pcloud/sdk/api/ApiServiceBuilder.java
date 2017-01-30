@@ -17,7 +17,6 @@
 package com.pcloud.sdk.api;
 
 import com.pcloud.sdk.PCloudSdk;
-import com.pcloud.sdk.authentication.Authenticator;
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;

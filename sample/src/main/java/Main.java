@@ -16,9 +16,9 @@
 
 import com.pcloud.sdk.PCloudSdk;
 import com.pcloud.sdk.api.*;
-import com.pcloud.sdk.authentication.Authenticator;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -27,7 +27,7 @@ public class Main {
     public static void main(String... args) {
         String token = System.getenv("pcloud_token");
         ApiService apiService = PCloudSdk.newApiServiceBuilder()
-                .authenticator(Authenticator.newOAuthAuthenticator(token))
+                .authenticator(Authenticators.newOAuthAuthenticator(token))
                 .create();
         try {
             RemoteFolder folder = apiService.getFolder(RemoteFolder.ROOT_FOLDER_ID, true).execute();

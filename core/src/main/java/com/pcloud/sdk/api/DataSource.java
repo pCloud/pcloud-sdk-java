@@ -46,6 +46,7 @@ public abstract class DataSource {
      * <p>
      * Can be used for creating empty files.
      */
+    @SuppressWarnings("WeakerAccess")
     public static final DataSource EMPTY = new DataSource() {
         @Override
         public long contentLength() {
@@ -72,7 +73,6 @@ public abstract class DataSource {
      * Write the data to a {@link BufferedSink}.
      *
      * @param sink {@link BufferedSink}
-     * @throws IOException
      */
     public abstract void writeTo(BufferedSink sink) throws IOException;
 

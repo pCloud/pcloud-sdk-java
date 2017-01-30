@@ -16,18 +16,10 @@
 
 package com.pcloud.sdk.internal;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.pcloud.sdk.api.*;
-import com.pcloud.sdk.authentication.*;
-import com.pcloud.sdk.authentication.Authenticator;
-import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
+import com.pcloud.sdk.api.Authenticator;
 import okhttp3.*;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.util.Collections;
-import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -105,7 +97,7 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     }
 
     @Override
-    public ApiServiceBuilder authenticator(com.pcloud.sdk.authentication.Authenticator authenticator) {
+    public ApiServiceBuilder authenticator(Authenticator authenticator) {
         this.authenticator = authenticator;
         return this;
     }

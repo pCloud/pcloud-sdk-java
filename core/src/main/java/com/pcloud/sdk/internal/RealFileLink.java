@@ -57,10 +57,18 @@ class RealFileLink implements FileLink {
 
     @Override
     public BufferedSource source() throws IOException {
+        boolean success = false;
+        Call<BufferedSource> call = apiService.download(this);
         try {
-            return apiService.download(this).execute();
+            BufferedSource source = call.execute();
+            success = true;
+            return source;
         } catch (ApiError apiError) {
             throw new IOException("API error occurred while trying to read from download link.", apiError);
+        } finally {
+            if (!success) {
+                call.cancel();
+            }
         }
     }
 

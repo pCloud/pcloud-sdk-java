@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unchecked")
-public class ExecutorCallbackCallTest {
+public class ScheduledCallTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -45,7 +45,7 @@ public class ExecutorCallbackCallTest {
         }
     });
 
-    private ExecutorCallbackCall<Object> testCall;
+    private ScheduledCall<Object> testCall;
     private Call<Object> wrappedCall;
     private Callback<Object> testCallback;
     private ArgumentCaptor<Callback> callbackArgumentCaptor;
@@ -54,7 +54,7 @@ public class ExecutorCallbackCallTest {
     public void setUp() throws Exception {
         wrappedCall = mock(Call.class);
         testCallback = mock(Callback.class);
-        testCall = new ExecutorCallbackCall<>(wrappedCall, testExecutor);
+        testCall = new ScheduledCall<>(wrappedCall, testExecutor);
         callbackArgumentCaptor =  ArgumentCaptor.forClass(Callback.class);
     }
 
@@ -156,13 +156,13 @@ public class ExecutorCallbackCallTest {
 
     @Test
     public void clone_ReturnsObjectWithSameExecutor() throws Exception {
-        ExecutorCallbackCall<Object> clonedObject = testCall.clone();
+        ScheduledCall<Object> clonedObject = testCall.clone();
         assertEquals(testCall.executor(), clonedObject.executor());
     }
 
     @Test
     public void clone__ReturnsObjectWithClonedDelegateCall() throws Exception {
-        ExecutorCallbackCall<Object> clonedObject = testCall.clone();
+        ScheduledCall<Object> clonedObject = testCall.clone();
         verify(wrappedCall).clone();
         assertNotEquals(testCall.delegate(), clonedObject.delegate());
     }

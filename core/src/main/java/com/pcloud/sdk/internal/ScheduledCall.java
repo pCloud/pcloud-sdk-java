@@ -23,12 +23,12 @@ import com.pcloud.sdk.api.Callback;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 
-final class ExecutorCallbackCall<T> implements Call<T> {
+class ScheduledCall<T> implements Call<T> {
 
     private Call<T> delegate;
     private Executor callbackExecutor;
 
-    ExecutorCallbackCall(Call<T> delegate, Executor callbackExecutor) {
+    ScheduledCall(Call<T> delegate, Executor callbackExecutor) {
         this.delegate = delegate;
         this.callbackExecutor = callbackExecutor;
     }
@@ -51,7 +51,7 @@ final class ExecutorCallbackCall<T> implements Call<T> {
                 callbackExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onResponse(ExecutorCallbackCall.this, response);
+                        callback.onResponse(ScheduledCall.this, response);
                     }
                 });
             }
@@ -59,7 +59,7 @@ final class ExecutorCallbackCall<T> implements Call<T> {
             @Override public void onFailure(Call<T> call, final Throwable t) {
                 callbackExecutor.execute(new Runnable() {
                     @Override public void run() {
-                        callback.onFailure(ExecutorCallbackCall.this, t);
+                        callback.onFailure(ScheduledCall.this, t);
                     }
                 });
             }
@@ -82,8 +82,8 @@ final class ExecutorCallbackCall<T> implements Call<T> {
     }
 
     @SuppressWarnings("CloneDoesntCallSuperClone") // Performing deep clone.
-    @Override public ExecutorCallbackCall<T> clone() {
-        return new ExecutorCallbackCall<>(delegate.clone(), callbackExecutor);
+    @Override public ScheduledCall<T> clone() {
+        return new ScheduledCall<>(delegate.clone(), callbackExecutor);
     }
 
     Call<T> delegate() {

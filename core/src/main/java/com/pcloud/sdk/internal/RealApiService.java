@@ -48,7 +48,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
-
 class RealApiService implements ApiService {
 
     private long progressCallbackThresholdBytes;
@@ -58,11 +57,11 @@ class RealApiService implements ApiService {
 
     private static final HttpUrl API_BASE_URL = HttpUrl.parse("https://api.pcloud.com");
 
-    RealApiService(){
+    RealApiService() {
         this(new RealApiServiceBuilder());
     }
 
-    RealApiService(RealApiServiceBuilder builder){
+    RealApiService(RealApiServiceBuilder builder) {
         Map<String, String> globalParams = new TreeMap<>();
         globalParams.put("timeformat", String.valueOf("timestamp"));
         String userAgent = String.format(Locale.US, "pCloud SDK Java %s", Version.NAME);
@@ -87,7 +86,7 @@ class RealApiService implements ApiService {
 
         httpClientBuilder.authenticator(okhttp3.Authenticator.NONE);
         if (builder.authenticator() != null) {
-            httpClientBuilder.addInterceptor((RealAuthenticator)builder.authenticator());
+            httpClientBuilder.addInterceptor((RealAuthenticator) builder.authenticator());
         }
 
         this.httpClient = httpClientBuilder.build();
@@ -749,7 +748,7 @@ class RealApiService implements ApiService {
     private <T> Call<T> newCall(Request request, ResponseAdapter<T> adapter) {
         Call<T> apiCall = new OkHttpCall<>(httpClient.newCall(request), adapter);
         if (callbackExecutor != null) {
-            return new ExecutorCallbackCall<>(apiCall, callbackExecutor);
+            return new ScheduledCall<>(apiCall, callbackExecutor);
         } else {
             return apiCall;
         }
@@ -802,7 +801,7 @@ class RealApiService implements ApiService {
         return getAsRawBytes(response);
     }
 
-    private BufferedSource getAsRawBytes(Response response) throws FileNotFoundException, APIHttpException {
+    private BufferedSource getAsRawBytes(Response response) throws APIHttpException {
         boolean callWasSuccessful = false;
         try {
             if (response.isSuccessful()) {

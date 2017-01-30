@@ -23,6 +23,7 @@ import com.pcloud.sdk.api.Callback;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -160,6 +161,7 @@ public class OkHttpCallTest {
         Response response = new Response.Builder().request(testRequest)
                 .code(500)
                 .protocol(Protocol.HTTP_1_1)
+                .body(mock(ResponseBody.class))
                 .build();
 
         final Exception apiError = new ApiError(5000, "");

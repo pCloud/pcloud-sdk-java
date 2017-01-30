@@ -3,6 +3,7 @@ package com.pcloud.sdk.internal;
 import com.pcloud.sdk.api.ApiServiceBuilder;
 import com.pcloud.sdk.api.ApiServiceTest;
 import okhttp3.OkHttpClient;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,6 +14,13 @@ public class RealApiServiceTest extends ApiServiceTest<RealApiService> {
     @Before
     public void setUp() throws Exception {
         testInstance(new RealApiService());
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        testInstance().shutdown();
     }
 
     @Test

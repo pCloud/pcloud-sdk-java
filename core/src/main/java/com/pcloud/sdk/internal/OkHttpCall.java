@@ -23,6 +23,8 @@ import okhttp3.Response;
 
 import java.io.IOException;
 
+import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
+
 final class OkHttpCall<T> implements Call<T> {
 
     private okhttp3.Call rawCall;
@@ -56,6 +58,7 @@ final class OkHttpCall<T> implements Call<T> {
                 try {
                     callback.onResponse(OkHttpCall.this, adapt(response));
                 } catch (ApiError | IOException e) {
+                    closeQuietly(response);
                     callback.onFailure(OkHttpCall.this, e);
                 }
             }

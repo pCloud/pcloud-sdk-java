@@ -18,11 +18,16 @@ package com.pcloud.sdk;
 
 import com.pcloud.sdk.api.ApiServiceBuilder;
 import com.pcloud.sdk.internal.Internal;
+import com.pcloud.sdk.internal.Version;
 
 public final class PCloudSdk {
 
     private PCloudSdk() {
         // Instances are not allowed.
+    }
+
+    public static String getVersionName(){
+        return Version.NAME;
     }
 
     public static ApiServiceBuilder newApiServiceBuilder(){

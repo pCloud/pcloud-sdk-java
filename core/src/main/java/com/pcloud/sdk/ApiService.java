@@ -53,6 +53,7 @@ import java.util.concurrent.TimeUnit;
  * All calls resulting in a collection of objects, return unmodifiable {@link java.util.Collection}-derived objects.</li>
  * <h3>
  * Bear in mind that shutting down a {@link ApiService} instance will also affect all instances sharing the underlying resources.
+ * </h3>
  */
 @SuppressWarnings("unused")
 public interface ApiService {
@@ -83,7 +84,7 @@ public interface ApiService {
     Call<RemoteFolder> listFolder(long folderId, boolean recursively);
 
     /**
-     * List the specified folder's children.
+     * List a specified folder's children.
      * <p>
      * Loads the metadata about folder's direct children, if any.
      * <p>
@@ -242,6 +243,7 @@ public interface ApiService {
      *
      * @param folderId   The id of the folder you would like to copy
      * @param toFolderId The id of the destination folder
+     * @param overwrite  If set to {@code true}, a file (or folder) with the same name in the destination folder will be overwritten.
      * @return {@link Call} resulting in the copied folder's metadata.
      */
     Call<RemoteFolder> copyFolder(long folderId, long toFolderId, boolean overwrite);
@@ -249,8 +251,9 @@ public interface ApiService {
     /**
      * Copy specified folder.
      *
-     * @param folder   The {@link RemoteFolder} you would like to copy. Must not be null.
-     * @param toFolder The destination {@link RemoteFolder}. Must not be null.
+     * @param folder    The {@link RemoteFolder} you would like to copy. Must not be null.
+     * @param toFolder  The destination {@link RemoteFolder}. Must not be null.
+     * @param overwrite If set to {@code true}, a file (or folder) with the same name in the destination folder will be overwritten.
      * @return {@link Call} resulting in the copied folder's metadata.
      * @throws IllegalArgumentException on a null {@code folder} argument.
      * @throws IllegalArgumentException on a null {@code toFolder} argument.
@@ -446,7 +449,7 @@ public interface ApiService {
     Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener);
 
     /**
-     * Get the bytes of a specified remote file.
+     * Get the content of a specified remote file.
      * <p>
      * This call is a shorthand for obtaining a {@link FileLink} object via
      * {@link #createFileLink(RemoteFile, DownloadOptions)} with {@link DownloadOptions#DEFAULT},
@@ -457,6 +460,7 @@ public interface ApiService {
      * <h3>
      * NOTE: It is the caller's responsibility to close the resulting {@link BufferedSource} object
      * or resource leaks will occur.
+     * </h3>
      *
      * @param file target file. Must not be null.
      * @return {@link Call} which results in a bytes source
@@ -467,7 +471,7 @@ public interface ApiService {
     Call<BufferedSource> download(RemoteFile file);
 
     /**
-     * Get the bytes of a specified file link.
+     * Get the content of a specified file link.
      * <p>
      * Upon success, this call will return a bytes source of the file that
      * the provided {@code fileLink} object was created for.
@@ -477,6 +481,7 @@ public interface ApiService {
      * <h3>
      * NOTE: It is the caller's responsibility to close the resulting {@link BufferedSource} object
      * or resource leaks will occur.
+     * </h3>
      *
      * @param fileLink the file link to be downloaded. Must not be null.
      * @return {@link Call} which results in a bytes source
@@ -645,7 +650,7 @@ public interface ApiService {
     Call<? extends RemoteEntry> move(String id, long toFolderId);
 
     /**
-     * Delete the specified file or folder.
+     * Delete a specified file or folder.
      * <p>
      * The call will delete the file or folder specified by the {@code file} argument to specified {@code toFolder}.
      *
@@ -671,7 +676,7 @@ public interface ApiService {
     Call<Boolean> delete(String id);
 
     /**
-     * Rename the specified file or folder.
+     * Rename a specified file or folder.
      * <p>
      * The call will rename the file or folder specified by the {@code file} argument to specified {@code newFilename}.
      *
@@ -686,7 +691,7 @@ public interface ApiService {
     Call<? extends RemoteEntry> rename(RemoteEntry file, String newFilename);
 
     /**
-     * Rename the specified file or folder.
+     * Rename a specified file or folder.
      * <p>
      * The call will rename the file or folder specified by the {@code file} argument to specified {@code newFilename}.
      *
@@ -701,7 +706,7 @@ public interface ApiService {
     Call<? extends RemoteEntry> rename(String id, String newFilename);
 
     /**
-     * Move the specified file.
+     * Move a specified file.
      * <p>
      * The call will move the file specified by the {@code fileId} argument to the folder specified by the {@code toFolderId}.
      * <p>
@@ -714,7 +719,7 @@ public interface ApiService {
     Call<RemoteFile> moveFile(long fileId, long toFolderId);
 
     /**
-     * Move the specified file.
+     * Move a specified file.
      * <p>
      * Same as calling {@link #moveFile(long, long)} (long, long)}
      * <p>
@@ -744,7 +749,7 @@ public interface ApiService {
     Call<RemoteFile> renameFile(long fileId, String newFilename);
 
     /**
-     * Rename the specified file.
+     * Rename a specified file.
      * <p>
      * Same as calling {@link #renameFile(long, String)}
      * <p>

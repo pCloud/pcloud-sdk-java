@@ -21,14 +21,14 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.pcloud.sdk.ApiService;
-import com.pcloud.sdk.FileEntry;
+import com.pcloud.sdk.RemoteEntry;
 import com.pcloud.sdk.RemoteFile;
 import com.pcloud.sdk.RemoteFolder;
 
 import java.lang.reflect.Type;
 import java.util.Date;
 
-abstract class RealFileEntry implements FileEntry{
+abstract class RealRemoteEntry implements RemoteEntry {
 
     private ApiService apiService;
 
@@ -56,7 +56,7 @@ abstract class RealFileEntry implements FileEntry{
     @SerializedName("isfolder")
     private boolean isFolder;
 
-    protected RealFileEntry(ApiService apiService) {
+    protected RealRemoteEntry(ApiService apiService) {
         this.apiService = apiService;
     }
 
@@ -111,7 +111,7 @@ abstract class RealFileEntry implements FileEntry{
 
     static class TypeAdapterFactory implements com.google.gson.TypeAdapterFactory {
 
-        private static final TypeToken<FileEntry> FILE_ENTRY_TYPE_TOKEN = new TypeToken<FileEntry>(){};
+        private static final TypeToken<RemoteEntry> FILE_ENTRY_TYPE_TOKEN = new TypeToken<RemoteEntry>(){};
         private static final TypeToken<RemoteFile> REMOTE_FILE_TYPE_TOKEN = new TypeToken<RemoteFile>(){};
         private static final TypeToken<RemoteFolder> REMOTE_FOLDER_TYPE_TOKEN = new TypeToken<RemoteFolder>(){};
 
@@ -130,10 +130,10 @@ abstract class RealFileEntry implements FileEntry{
         }
     }
 
-    static class FileEntryDeserializer implements JsonDeserializer<FileEntry> {
+    static class FileEntryDeserializer implements JsonDeserializer<RemoteEntry> {
 
         @Override
-        public FileEntry deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public RemoteEntry deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if(json.getAsJsonObject().get("isfolder").getAsBoolean()){
                 return context.deserialize(json, RealRemoteFolder.class);
             }else{

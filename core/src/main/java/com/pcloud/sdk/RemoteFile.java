@@ -22,11 +22,11 @@ import java.io.IOException;
 /**
  * An abstraction over a file entry for a file on a pCloud account's filesystem.
  *
- * @see FileEntry
+ * @see RemoteEntry
  * @see RemoteFile
  */
 @SuppressWarnings("unused")
-public interface RemoteFile extends FileEntry, RemoteData {
+public interface RemoteFile extends RemoteEntry, RemoteData {
 
     /**
      * Returns the fileId of the RemoteFile.

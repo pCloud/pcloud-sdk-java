@@ -93,9 +93,9 @@ class RealApiService implements ApiService {
         this.progressCallbackThresholdBytes = builder.progressCallbackThresholdBytes();
         this.gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
-                .registerTypeAdapterFactory(new RealFileEntry.TypeAdapterFactory())
+                .registerTypeAdapterFactory(new RealRemoteEntry.TypeAdapterFactory())
                 .registerTypeAdapterFactory(new UnmodifiableListTypeFactory())
-                .registerTypeAdapter(FileEntry.class, new RealFileEntry.FileEntryDeserializer())
+                .registerTypeAdapter(RemoteEntry.class, new RealRemoteEntry.FileEntryDeserializer())
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
                 .registerTypeAdapter(RealRemoteFile.class, new RealRemoteFile.InstanceCreator(this))
                 .registerTypeAdapter(RealRemoteFolder.class, new RealRemoteFolder.InstanceCreator(this))
@@ -118,14 +118,14 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<List<FileEntry>> listFiles(RemoteFolder folder) {
+    public Call<List<RemoteEntry>> listFiles(RemoteFolder folder) {
         if (folder == null) {
             throw new IllegalArgumentException("Folder argument cannot be null.");
         }
 
-        return newCall(createListFolderRequest(folder.getFolderId(), false), new ResponseAdapter<List<FileEntry>>() {
+        return newCall(createListFolderRequest(folder.getFolderId(), false), new ResponseAdapter<List<RemoteEntry>>() {
             @Override
-            public List<FileEntry> adapt(Response response) throws IOException, ApiError {
+            public List<RemoteEntry> adapt(Response response) throws IOException, ApiError {
                 return getAsApiResponse(response, GetFolderResponse.class).getFolder()
                         .getChildren();
             }

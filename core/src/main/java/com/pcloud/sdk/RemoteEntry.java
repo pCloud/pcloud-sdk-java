@@ -23,7 +23,7 @@ import java.util.Date;
  * An abstraction over a file entry on a pCloud account's filesystem.
  */
 @SuppressWarnings("unused")
-public interface FileEntry {
+public interface RemoteEntry {
 
     /**
      * Returns the entry id.
@@ -63,7 +63,7 @@ public interface FileEntry {
     boolean isFolder();
 
     /**
-     * Returns this FileEntry as a {@link RemoteFolder}
+     * Returns this RemoteEntry as a {@link RemoteFolder}
      * <p>
      * See {@linkplain #isFolder()}.
      *
@@ -73,7 +73,7 @@ public interface FileEntry {
     RemoteFolder asFolder();
 
     /**
-     * Returns this FileEntry as {@link RemoteFile}
+     * Returns this RemoteEntry as {@link RemoteFile}
      * <p>
      * See {@linkplain #isFile()}.
      *

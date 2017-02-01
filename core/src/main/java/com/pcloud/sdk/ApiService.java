@@ -93,7 +93,7 @@ public interface ApiService {
      * @return {@link Call} resulting in a non-null list of children. An empty list is returned if folder is empty
      * @throws IllegalArgumentException on a null {@code folder} argument
      */
-    Call<List<FileEntry>> listFiles(RemoteFolder folder);
+    Call<List<RemoteEntry>> listFiles(RemoteFolder folder);
 
     /**
      * Create a new folder.

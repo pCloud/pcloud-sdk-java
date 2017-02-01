@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 
-class RealRemoteFile extends RealFileEntry implements RemoteFile {
+class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
 
     @Expose
     @SerializedName("fileid")

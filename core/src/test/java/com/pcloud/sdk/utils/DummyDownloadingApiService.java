@@ -57,7 +57,7 @@ public class DummyDownloadingApiService implements ApiService {
     }
 
     @Override
-    public Call<List<FileEntry>> listFiles(RemoteFolder folder) {
+    public Call<List<RemoteEntry>> listFiles(RemoteFolder folder) {
         return null;
     }
 

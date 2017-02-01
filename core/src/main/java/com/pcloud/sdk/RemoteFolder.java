@@ -22,10 +22,10 @@ import java.util.List;
 /**
  * An abstraction over a file entry for a folder on a pCloud account's filesystem.
  *
- * @see FileEntry
+ * @see RemoteEntry
  * @see RemoteFolder
  */
-public interface RemoteFolder extends FileEntry {
+public interface RemoteFolder extends RemoteEntry {
 
     /**
      * The id of a pCloud account's filesystem root folder.
@@ -42,5 +42,5 @@ public interface RemoteFolder extends FileEntry {
      * <p>
      * Cannot be null.
      */
-    List<FileEntry> getChildren();
+    List<RemoteEntry> getChildren();
 }

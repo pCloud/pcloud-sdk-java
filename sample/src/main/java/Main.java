@@ -52,12 +52,12 @@ public class Main {
     }
 
     private static void printFolder(RemoteFolder folder) throws IOException, ApiError {
-        for (FileEntry entry : folder.getChildren()) {
+        for (RemoteEntry entry : folder.getChildren()) {
             printFileAttributes(entry);
         }
     }
 
-    private static void printFileAttributes(FileEntry entry) {
+    private static void printFileAttributes(RemoteEntry entry) {
         System.out.format("%s | Created:%s | Modified: %s | size:%s\n", entry.getName(), entry.getCreated(), entry.getLastModified(), entry.isFile() ? String.valueOf(entry.asFile().getSize()) : "-");
     }
 

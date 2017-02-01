@@ -17,7 +17,7 @@
 
 package com.pcloud.sdk.utils;
 
-import com.pcloud.sdk.FileEntry;
+import com.pcloud.sdk.RemoteEntry;
 import com.pcloud.sdk.RemoteFile;
 import com.pcloud.sdk.RemoteFolder;
 
@@ -86,7 +86,7 @@ public class DummyFolder implements RemoteFolder {
     }
 
     @Override
-    public List<FileEntry> getChildren() {
+    public List<RemoteEntry> getChildren() {
         return Collections.emptyList();
     }
 }

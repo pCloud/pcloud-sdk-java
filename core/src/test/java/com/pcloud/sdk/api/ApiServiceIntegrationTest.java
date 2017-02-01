@@ -223,13 +223,13 @@ public class ApiServiceIntegrationTest {
         return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents)).execute();
     }
 
-    private boolean entryExistsInRoot(FileEntry entry) throws IOException, ApiError {
+    private boolean entryExistsInRoot(RemoteEntry entry) throws IOException, ApiError {
         return entryExistsInFolder(entry, RemoteFolder.ROOT_FOLDER_ID);
     }
 
-    private boolean entryExistsInFolder(FileEntry entry, long parentFolderId) throws IOException, ApiError {
+    private boolean entryExistsInFolder(RemoteEntry entry, long parentFolderId) throws IOException, ApiError {
         RemoteFolder root = apiService.getFolder(parentFolderId).execute();
-        for (FileEntry e : root.getChildren()) {
+        for (RemoteEntry e : root.getChildren()) {
             if (e.getId().equals(entry.getId()) || e.getName().equals(entry.getName())) {
                 return true;
             }

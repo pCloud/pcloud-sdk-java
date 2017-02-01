@@ -19,13 +19,13 @@ package com.pcloud.sdk.internal;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.pcloud.sdk.ApiService;
-import com.pcloud.sdk.FileEntry;
+import com.pcloud.sdk.RemoteEntry;
 import com.pcloud.sdk.RemoteFolder;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class RealRemoteFolder extends RealFileEntry implements RemoteFolder{
+public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder{
 
     @Expose
     @SerializedName("folderid")
@@ -33,7 +33,7 @@ public class RealRemoteFolder extends RealFileEntry implements RemoteFolder{
 
     @Expose
     @SerializedName("contents")
-    private List<FileEntry> children;
+    private List<RemoteEntry> children;
 
     RealRemoteFolder(ApiService apiService) {
         super(apiService);
@@ -45,7 +45,7 @@ public class RealRemoteFolder extends RealFileEntry implements RemoteFolder{
     }
 
     @Override
-    public List<FileEntry> getChildren() {
+    public List<RemoteEntry> getChildren() {
         return children;
     }
 

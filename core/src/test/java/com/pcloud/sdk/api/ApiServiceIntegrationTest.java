@@ -49,14 +49,14 @@ public class ApiServiceIntegrationTest {
 
     @Test
     public void testListFolder() throws IOException, ApiError {
-        RemoteFolder rootFolder = apiService.getFolder(RemoteFolder.ROOT_FOLDER_ID).execute();
+        RemoteFolder rootFolder = apiService.listFolder(RemoteFolder.ROOT_FOLDER_ID).execute();
         apiService.listFiles(rootFolder);
     }
 
     @Test
     public void testGetFolder() throws Exception {
         long id = RemoteFolder.ROOT_FOLDER_ID;
-        RemoteFolder folder = apiService.getFolder(id, true).execute();
+        RemoteFolder folder = apiService.listFolder(id, true).execute();
         assertEquals(id, folder.getFolderId());
     }
 
@@ -228,7 +228,7 @@ public class ApiServiceIntegrationTest {
     }
 
     private boolean entryExistsInFolder(RemoteEntry entry, long parentFolderId) throws IOException, ApiError {
-        RemoteFolder root = apiService.getFolder(parentFolderId).execute();
+        RemoteFolder root = apiService.listFolder(parentFolderId).execute();
         for (RemoteEntry e : root.getChildren()) {
             if (e.getId().equals(entry.getId()) || e.getName().equals(entry.getName())) {
                 return true;

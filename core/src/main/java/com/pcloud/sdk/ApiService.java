@@ -60,14 +60,14 @@ public interface ApiService {
     /**
      * Load a specified folder.
      * <p>
-     * Same as calling {@link #getFolder(long, boolean)} )} with {@code recursive} set to false.
+     * Same as calling {@link #listFolder(long, boolean)} )} with {@code recursive} set to false.
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html">documentation page</a>
      *
      * @param folderId {@link RemoteFolder} id
      * @return {@link Call}
      */
-    Call<RemoteFolder> getFolder(long folderId);
+    Call<RemoteFolder> listFolder(long folderId);
 
     /**
      * Load a specified folder.
@@ -77,10 +77,10 @@ public interface ApiService {
      * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html">documentation page</a>.
      *
      * @param folderId    target folder id
-     * @param recursively if true, a full folder tree will be returned,                    otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
+     * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
      * @return {@link Call}
      */
-    Call<RemoteFolder> getFolder(long folderId, boolean recursively);
+    Call<RemoteFolder> listFolder(long folderId, boolean recursively);
 
     /**
      * List the specified folder's children.
@@ -586,8 +586,8 @@ public interface ApiService {
      * For files, see the description for {@link #copyFile(RemoteFile, RemoteFolder)},
      * otherwise see {@link #copyFolder(RemoteFolder, RemoteFolder, boolean)}
      *
-     * @param id             The id of the file or folder to be copied. Must not be null.
-     * @param toFolderId     The {@link RemoteFolder} where the file will be copied. Must not be null.
+     * @param id         The id of the file or folder to be copied. Must not be null.
+     * @param toFolderId The {@link RemoteFolder} where the file will be copied. Must not be null.
      * @return {@link Call} resulting in the metadata of the copied file or folder.
      * @throws IllegalArgumentException on a null {@code id} argument.
      * @see #copyFile(long, long)
@@ -662,7 +662,7 @@ public interface ApiService {
      * <p>
      * The call will delete the file or folder specified by the {@code file} argument to specified {@code toFolder}.
      *
-     * @param id         The id of the file or folder to be deleted. Must not be null.
+     * @param id The id of the file or folder to be deleted. Must not be null.
      * @return {@link Call} resulting in the metadata of the deleted file or folder.
      * @throws IllegalArgumentException on a null {@code file} argument.
      * @see #deleteFile(long)
@@ -690,7 +690,7 @@ public interface ApiService {
      * <p>
      * The call will rename the file or folder specified by the {@code file} argument to specified {@code newFilename}.
      *
-     * @param id         The id of the file or folder to be renamed. Must not be null.
+     * @param id          The id of the file or folder to be renamed. Must not be null.
      * @param newFilename The new name. Must not be null.
      * @return {@link Call} resulting in the renamed file's metadata.
      * @throws IllegalArgumentException on a null {@code file} argument.

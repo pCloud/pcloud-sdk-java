@@ -29,7 +29,7 @@ public class Main {
                 .authenticator(Authenticators.newOAuthAuthenticator(token))
                 .create();
         try {
-            RemoteFolder folder = apiService.getFolder(RemoteFolder.ROOT_FOLDER_ID, true).execute();
+            RemoteFolder folder = apiService.listFolder(RemoteFolder.ROOT_FOLDER_ID, true).execute();
             printFolder(folder);
 
             RemoteFile newFile = uploadData(apiService);

@@ -105,12 +105,12 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFolder> getFolder(long folderId) {
-        return getFolder(folderId, false);
+    public Call<RemoteFolder> listFolder(long folderId) {
+        return listFolder(folderId, false);
     }
 
     @Override
-    public Call<RemoteFolder> getFolder(long folderId, boolean recursively) {
+    public Call<RemoteFolder> listFolder(long folderId, boolean recursively) {
         return newCall(createListFolderRequest(folderId, recursively), new ResponseAdapter<RemoteFolder>() {
             @Override
             public RemoteFolder adapt(Response response) throws IOException, ApiError {

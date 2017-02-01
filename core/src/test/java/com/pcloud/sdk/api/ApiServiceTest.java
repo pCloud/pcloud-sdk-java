@@ -43,7 +43,7 @@ public abstract class ApiServiceTest<T extends ApiService> {
 
     @Test
     public void getFolder_ReturnsANonNullCall() throws Exception {
-        assertNotNull(instance.getFolder(0));
+        assertNotNull(instance.listFolder(0));
     }
 
     @Test

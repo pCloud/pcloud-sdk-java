@@ -61,6 +61,7 @@ public interface RemoteFile extends FileEntry, RemoteData {
      * @return a {@link FileLink} for this file.
      * @throws IOException on a network error
      * @throws ApiError    if error code is returned from pCloud's API
+     * @throws IllegalArgumentException on a null {@code options} argument.
      */
     FileLink getDownloadLink(DownloadOptions options) throws IOException, ApiError;
 

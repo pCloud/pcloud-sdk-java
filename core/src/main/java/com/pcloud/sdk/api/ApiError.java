@@ -19,7 +19,7 @@ package com.pcloud.sdk.api;
 import java.util.Locale;
 
 /**
- * An exception class resembling pCloud API errors.
+ * Signals for pCloud API errors.
  * <p>
  * <p>
  * For more information on errors and their meaning, see <a href="https://docs.pcloud.com/errors/index.html"> the errors section</a>

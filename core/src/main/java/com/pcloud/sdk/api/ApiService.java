@@ -24,16 +24,16 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
- * The General interface that exposes pCloud API's methods.
+ * The general interface that exposes pCloud API's methods.
  * <p>
  * The class is a factory for {@linkplain Call} objects which can be used to execute certain operations on a pCloud account.
  * <h3>
  * The ApiService is designed with reuse in mind, it's best used when created once and shared among code using it,
- * mainly due to used connection and thread pooling.
+ * mainly due to used connection and thread pooling.</h3>
  * <li>
  * Users should configure and create instances through the {@link ApiServiceBuilder} interface.
  * <li>
- * Builder instances can be created via the {@link PCloudSdk#newApiServiceBuilder()} method
+ * ApiServiceBuilder instances can be created via the {@link PCloudSdk#newApiServiceBuilder()} method
  * or from an existing {@linkplain ApiService} instance through the {@linkplain #newBuilder()} method.
  * <li>
  * Shared instance's configuration can be changed by using the {@linkplain #newBuilder()} method that will return
@@ -84,8 +84,9 @@ public interface ApiService {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html">documentation page</a>.
      *
-     * @param folder The {@link RemoteFolder} to list. Must not be null.
-     * @return {@link Call} resulting in a non-null list of children. An empty list is returned if folder is empty.
+     * @param folder The {@link RemoteFolder} to list. Must not be null
+     * @return {@link Call} resulting in a non-null list of children. An empty list is returned if folder is empty
+     * @throws IllegalArgumentException on a null {@code folder} argument
      */
     Call<List<FileEntry>> listFiles(RemoteFolder folder);
 
@@ -97,6 +98,7 @@ public interface ApiService {
      * @param parentFolderId The id of the parent folder for the newly created folder
      * @param folderName     The new folder name
      * @return {@link Call} resulting in the metadata for the new folder
+     * @throws IllegalArgumentException on a null {@code folderName} argument.
      */
     Call<RemoteFolder> createFolder(long parentFolderId, String folderName);
 
@@ -108,6 +110,8 @@ public interface ApiService {
      * @param parentFolder The parent {@link RemoteFolder} for the newly created folder. Must not be null.
      * @param folderName   The new folder name
      * @return {@link Call}
+     * @throws IllegalArgumentException on a null {@code parentFolder} argument.
+     * @throws IllegalArgumentException on a null {@code folderName} argument.
      */
     Call<RemoteFolder> createFolder(RemoteFolder parentFolder, String folderName);
 
@@ -137,6 +141,7 @@ public interface ApiService {
      *
      * @param folder The {@link RemoteFolder} you would like to delete. Must not be null.
      * @return the call
+     * @throws IllegalArgumentException on a null {@code folder} argument.
      * @see #deleteFolder(long) #deleteFolder(long)
      */
     Call<Boolean> deleteFolder(RemoteFolder folder);
@@ -147,6 +152,7 @@ public interface ApiService {
      * @param folder      The {@link RemoteFolder} you would like to delete. Must not be null.
      * @param recursively the recursively
      * @return the call
+     * @throws IllegalArgumentException on a null {@code folder} argument.
      * @see #deleteFolder(long, boolean) #deleteFolder(long, boolean)
      */
     Call<Boolean> deleteFolder(RemoteFolder folder, boolean recursively);
@@ -161,6 +167,7 @@ public interface ApiService {
      * @param folderId      The id of the folder you would like to rename
      * @param newFolderName The new folder name
      * @return {@link Call} resulting in the renamed folder's metadata.
+     * @throws IllegalArgumentException on a null {@code newFolderName} argument.
      */
     Call<RemoteFolder> renameFolder(long folderId, String newFolderName);
 
@@ -174,6 +181,8 @@ public interface ApiService {
      * @param folder        The {@link RemoteFolder} you would like to rename. Must not be null.
      * @param newFolderName The new folder name. Must not be null.
      * @return {@link Call} resulting in the renamed folder's metadata.
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code newFolderName} argument.
      * @see #renameFolder(long, String) #renameFolder(long, String)
      */
     Call<RemoteFolder> renameFolder(RemoteFolder folder, String newFolderName);
@@ -194,6 +203,8 @@ public interface ApiService {
      * @param folder   The {@link RemoteFolder} you would like to move. Must not be null.
      * @param toFolder The new parent {@link RemoteFolder}. Must not be null.
      * @return {@link Call} resulting in the moved folder's metadata.
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
      * @see #moveFolder(long, long) #moveFolder(long, long)
      */
     Call<RemoteFolder> moveFolder(RemoteFolder folder, RemoteFolder toFolder);
@@ -214,6 +225,8 @@ public interface ApiService {
      * @param folder   The {@link RemoteFolder} you would like to copy. Must not be null.
      * @param toFolder The destination {@link RemoteFolder}. Must not be null.
      * @return {@link Call} resulting in the copied folder's metadata.
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
      * @see #copyFolder(long, long) #copyFolder(long, long)
      */
     Call<RemoteFolder> copyFolder(RemoteFolder folder, RemoteFolder toFolder);
@@ -227,6 +240,9 @@ public interface ApiService {
      * @param filename The file name. Must not be null.
      * @param data     {@link DataSource} object providing the file content. Must not be null.
      * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
      * @see #createFile(long, String, DataSource, Date, ProgressListener) #createFile(long, String, DataSource, Date, ProgressListener)
      */
     Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data);
@@ -242,6 +258,9 @@ public interface ApiService {
      * @param modifiedDate The last modification date to be used. If set to null, the upload date will be used instead.
      * @param listener     The listener to be used to notify about upload progress. If null, no progress will be reported.
      * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
      * @see #createFile(long, String, DataSource, Date, ProgressListener) #createFile(long, String, DataSource, Date, ProgressListener)
      * @see DataSource
      * @see ProgressListener
@@ -257,6 +276,8 @@ public interface ApiService {
      * @param filename The file name. Must not be null.
      * @param data     {@link DataSource} object providing the file content. Must not be null.
      * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
      * @see #createFile(long, String, DataSource, Date, ProgressListener) #createFile(long, String, DataSource, Date, ProgressListener)
      */
     Call<RemoteFile> createFile(long folderId, String filename, DataSource data);
@@ -282,6 +303,8 @@ public interface ApiService {
      * @param modifiedDate The last modification date to be used. If set to null, the upload date will be used instead.
      * @param listener     The listener to be used to notify about upload progress. If null, no progress will be reported.
      * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
      * @see DataSource
      * @see ProgressListener
      */
@@ -295,6 +318,7 @@ public interface ApiService {
      *
      * @param file target file. Must not be null.
      * @return {@link Call} resulting in true if operation was successful, false otherwise.
+     * @throws IllegalArgumentException on a null {@code file} argument.
      * @see #deleteFile(long)
      * @see RemoteFile
      */
@@ -324,6 +348,8 @@ public interface ApiService {
      * @param file    target file. Must not be null.
      * @param options to be used for the link generation. Must not be null.
      * @return {@link Call} resulting in a {@link FileLink}
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code options} argument.
      * @see DownloadOptions
      * @see FileLink
      */
@@ -341,6 +367,7 @@ public interface ApiService {
      * @param fileId  the file
      * @param options the options
      * @return {@link Call} resulting in a {@link FileLink}
+     * @throws IllegalArgumentException on a null {@code options} argument.
      * @see DownloadOptions
      * @see FileLink
      */
@@ -354,6 +381,8 @@ public interface ApiService {
      * @param fileLink the file link to be downloaded. Must not be null.
      * @param sink     the sink that will receive the data. Must not be null.
      * @return a void {@link Call} which will return on success, or report an error otherwise.
+     * @throws IllegalArgumentException on a null {@code fileLink} argument.
+     * @throws IllegalArgumentException on a null {@code sink} argument.
      * @see DataSink
      * @see ProgressListener
      * @see FileLink
@@ -381,6 +410,8 @@ public interface ApiService {
      * @param sink     the sink that will receive the data. Must not be null.
      * @param listener an optional listener that will get notified on progress. If null, no progress will be reported.
      * @return a void {@link Call} which will return on success, or report an error otherwise.
+     * @throws IllegalArgumentException on a null {@code fileLink} argument.
+     * @throws IllegalArgumentException on a null {@code sink} argument.
      * @see DataSink
      * @see ProgressListener
      * @see FileLink
@@ -402,6 +433,7 @@ public interface ApiService {
      *
      * @param file target file. Must not be null.
      * @return {@link Call} which results in a bytes source
+     * @throws IllegalArgumentException on a null {@code file} argument.
      * @see #getDownloadLink(long, DownloadOptions)
      * @see #download(FileLink)
      */
@@ -421,6 +453,7 @@ public interface ApiService {
      *
      * @param fileLink the file link to be downloaded. Must not be null.
      * @return {@link Call} which results in a bytes source
+     * @throws IllegalArgumentException on a null {@code fileLink} argument.
      */
     Call<BufferedSource> download(FileLink fileLink);
 
@@ -447,6 +480,8 @@ public interface ApiService {
      * @param file     The {@link RemoteFile} to be copied. Must not be null.
      * @param toFolder The {@link RemoteFolder} where the file will be copied. Must not be null.
      * @return {@link Call} resulting in the metadata of the copied file
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
      * @see #copyFile(long, long)
      */
     Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder);
@@ -474,6 +509,8 @@ public interface ApiService {
      * @param file     The {@link RemoteFile} to be moved. Must not be null.
      * @param toFolder The {@link RemoteFolder} where the file will be moved. Must not be null.
      * @return {@link Call} resulting in the metadata of the moved file
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
      * @see #moveFile(long, long) (long, long)
      */
     Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder);
@@ -486,10 +523,11 @@ public interface ApiService {
      * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules & restrictions.
      *
      * @param fileId      The id of the folder you would like to rename
-     * @param newFileName The new folder name. Must not be null.
+     * @param newFilename The new folder name. Must not be null.
      * @return {@link Call} resulting in the renamed file's metadata.
+     * @throws IllegalArgumentException on a null {@code newFilename} argument.
      */
-    Call<RemoteFile> renameFile(long fileId, String newFileName);
+    Call<RemoteFile> renameFile(long fileId, String newFilename);
 
     /**
      * Rename the specified file.
@@ -501,11 +539,13 @@ public interface ApiService {
      * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules & restrictions.
      *
      * @param file        The {@link RemoteFile} to be renamed. Must not be null.
-     * @param newFileName The new folder name. Must not be null.
+     * @param newFilename The new folder name. Must not be null.
      * @return {@link Call} resulting in the renamed file's metadata.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code newFilename} argument.
      * @see #renameFile(long, String)
      */
-    Call<RemoteFile> renameFile(RemoteFile file, String newFileName);
+    Call<RemoteFile> renameFile(RemoteFile file, String newFilename);
 
     /**
      * Get {@link UserInfo} for the current account.
@@ -541,4 +581,5 @@ public interface ApiService {
      * If provided, the {@link okhttp3.Cache} instance will closed.
      */
     void shutdown();
+
 }

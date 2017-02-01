@@ -17,9 +17,10 @@
 package com.pcloud.sdk.api;
 
 /**
- * A Callback listener used together with the {@link Call#enqueue(Callback)} method.
+ * A Callback listener used when making asynchronous calls to the pCloud API.
  *
  * @param <T> the type parameter
+ * @see Call#enqueue(Callback)
  */
 public interface Callback<T> {
     /**

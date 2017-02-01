@@ -37,15 +37,16 @@ public interface Call<T> extends Cloneable {
     /**
      * Synchronously send the request and return its response.
      *
-     * @throws IOException      if a problem occurred talking to the server.
-     * @throws RuntimeException (and subclasses) if an unexpected error occurs creating the request
-     *                          or decoding the response.
+     * @throws IOException if a problem occurred talking to the server.
+     * @throws ApiError    returning any reported problems by the pCloud API.
      */
     T execute() throws IOException, ApiError;
 
     /**
      * Asynchronously send the request and notify {@code callback} of its response or if an error
      * occurred talking to the server, creating the request, or processing the response.
+     *
+     * @throws IllegalArgumentException on a null {@code callback} argument.
      */
     void enqueue(Callback<T> callback);
 

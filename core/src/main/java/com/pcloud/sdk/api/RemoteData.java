@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * A data container storing a pCloud account's file data.
+ * A data container storing a pCloud account's file entry data.
  */
 @SuppressWarnings("WeakerAccess")
 public interface RemoteData {
@@ -69,6 +69,7 @@ public interface RemoteData {
      * @param sink     a {@link DataSink} instance where data will be downloaded. Must not be null.
      * @param listener The listener to be used to notify about upload progress. If null, no progress will be reported.
      * @throws IOException on a network, IO or API error.
+     * @throws IllegalArgumentException on a null {@code sink} argument.
      */
     void download(DataSink sink, ProgressListener listener) throws IOException;
 
@@ -80,6 +81,7 @@ public interface RemoteData {
      * @param sink     a {@link DataSink} instance where data will be downloaded. Must not be null.
      * @throws IOException on a network, IO or API error.
      * @see #download(DataSink, ProgressListener)
+     * @throws IllegalArgumentException on a null {@code sink} argument.
      */
     void download(DataSink sink) throws IOException;
 }

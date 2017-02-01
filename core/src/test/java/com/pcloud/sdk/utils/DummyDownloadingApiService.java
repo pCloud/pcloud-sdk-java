@@ -202,12 +202,12 @@ public class DummyDownloadingApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFile> renameFile(long fileId, String newFileName) {
+    public Call<RemoteFile> renameFile(long fileId, String newFilename) {
         return null;
     }
 
     @Override
-    public Call<RemoteFile> renameFile(RemoteFile file, String newFileName) {
+    public Call<RemoteFile> renameFile(RemoteFile file, String newFilename) {
         return null;
     }
 

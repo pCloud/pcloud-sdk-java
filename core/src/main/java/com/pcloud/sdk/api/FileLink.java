@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * A link to a file entry on a pCloud account's filesystem.
+ * A link to the contents of a file entry on a pCloud account's filesystem.
  */
 public interface FileLink extends RemoteData {
 

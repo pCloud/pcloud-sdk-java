@@ -17,11 +17,14 @@
 package com.pcloud.sdk.api;
 
 /**
- * DownloadOptions is a immutable container for the allowed options when creating file
- * links through pCloud's API.
+ * A container for the possible options when creating file links.
  * <p>
- * Instances of the class can be reated either the {@link #create()} method
- * or by mutating an existing object by calling {@link #newBuilder()}
+ * DownloadOptions is a immutable container for the allowed options when creating file
+ * links through {@link ApiService#getDownloadLink(RemoteFile, DownloadOptions)},
+ * {@link ApiService#getDownloadLink(long, DownloadOptions)} or {@link RemoteFile#getDownloadLink()}.
+ * <p>
+ * Instances of the class can be created either the {@link #create()} method
+ * or by mutating an existing object by calling {@link #newBuilder()}.
  * <p>
  * The {@link #DEFAULT} instance is pre-configured for the most common usage cases.
  */
@@ -104,9 +107,12 @@ public final class DownloadOptions {
     }
 
     /**
-     * Use this Builder to set wanted parameters to get {@link FileLink}.
+     * A builder for configuring and creating new {@link DownloadOptions} instances.
      * <p>
      * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a>
+     *
+     * @see DownloadOptions#newBuilder()
+     * @see DownloadOptions#create()
      */
     @SuppressWarnings("WeakerAccess")
     public static class Builder {

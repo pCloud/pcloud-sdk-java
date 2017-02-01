@@ -81,8 +81,13 @@ public abstract class DataSource {
      *
      * @param data a byte array. Must not be null.
      * @return a {@link DataSink} that will read the given byte array.
+     * @throws IllegalArgumentException on a null {@code data} argument.
      */
     public static DataSource create(final byte[] data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Data argument cannot be null.");
+        }
+
         return new DataSource() {
 
             @Override
@@ -102,8 +107,13 @@ public abstract class DataSource {
      *
      * @param data a byte array. Must not be null.
      * @return a {@link DataSink} that will read the given byte array.
+     * @throws IllegalArgumentException on a null {@code data} argument.
      */
     public static DataSource create(final ByteString data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Data argument cannot be null.");
+        }
+
         return new DataSource() {
 
             @Override
@@ -123,8 +133,13 @@ public abstract class DataSource {
      *
      * @param file a file which will be read. Must not be null.
      * @return a {@link DataSink} that will read the given file.
+     * @throws IllegalArgumentException on a null {@code file} argument.
      */
     public static DataSource create(final File file) {
+        if (file == null) {
+            throw new IllegalArgumentException("File argument cannot be null.");
+        }
+
         return new DataSource() {
 
             @Override

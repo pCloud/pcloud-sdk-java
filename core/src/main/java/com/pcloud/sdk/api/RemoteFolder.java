@@ -27,7 +27,7 @@ import java.util.List;
 public interface RemoteFolder extends FileEntry {
 
     /**
-     * The root folder id of of a pCloud account's filesystem.
+     * The id of a pCloud account's filesystem root folder.
      */
     int ROOT_FOLDER_ID = 0;
 

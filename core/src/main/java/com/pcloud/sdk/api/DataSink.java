@@ -27,7 +27,7 @@ import java.io.IOException;
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
 /**
- * A place to write bytes.
+ * A consumer of data.
  * <p>
  * An abstraction over the byte stream reading operations, this class allows for a flexible way to read bytes from a {@link BufferedSource}.
  * <li>
@@ -52,8 +52,14 @@ public abstract class DataSink {
      *
      * @param file a file where the data will be written. Must not be null.
      * @return a {@link DataSink} that will write to the given file.
+     *
+     * @throws IllegalArgumentException on a null {@code file} argument.
      */
     public static DataSink create(final File file) {
+        if (file == null) {
+            throw new IllegalArgumentException("File argument cannot be null.");
+        }
+
         return new DataSink() {
             @Override
             public void readAll(BufferedSource source) throws IOException {

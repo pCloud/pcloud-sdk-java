@@ -464,14 +464,14 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFile> renameFile(long fileId, String newFileName) {
-        if (newFileName == null) {
+    public Call<RemoteFile> renameFile(long fileId, String newFilename) {
+        if (newFilename == null) {
             throw new IllegalArgumentException("newFileName argument cannot be null.");
         }
 
         RequestBody body = new FormBody.Builder()
                 .add("fileid", String.valueOf(fileId))
-                .add("toname", newFileName)
+                .add("toname", newFilename)
                 .build();
 
         Request request = newRequest()
@@ -490,12 +490,12 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<RemoteFile> renameFile(RemoteFile file, String newFileName) {
+    public Call<RemoteFile> renameFile(RemoteFile file, String newFilename) {
         if (file == null) {
             throw new IllegalArgumentException("file argument cannot be null.");
         }
 
-        return renameFile(file.getFileId(), newFileName);
+        return renameFile(file.getFileId(), newFilename);
     }
 
     @Override

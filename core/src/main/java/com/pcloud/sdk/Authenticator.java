@@ -15,7 +15,7 @@
  *
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk;
 
 /**
  * An interface for authenticating an application when using pCloud's SDK.

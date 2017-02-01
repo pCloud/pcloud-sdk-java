@@ -17,9 +17,9 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.api.ApiError;
-import com.pcloud.sdk.api.Call;
-import com.pcloud.sdk.api.Callback;
+import com.pcloud.sdk.ApiError;
+import com.pcloud.sdk.Call;
+import com.pcloud.sdk.Callback;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;

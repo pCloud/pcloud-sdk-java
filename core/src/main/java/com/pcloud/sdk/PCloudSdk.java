@@ -16,7 +16,6 @@
 
 package com.pcloud.sdk;
 
-import com.pcloud.sdk.api.ApiService;
 import com.pcloud.sdk.internal.Internal;
 import com.pcloud.sdk.internal.Version;
 

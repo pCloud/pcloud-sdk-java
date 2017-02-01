@@ -18,7 +18,7 @@ package com.pcloud.sdk.internal.networking;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.pcloud.sdk.api.RemoteFolder;
+import com.pcloud.sdk.RemoteFolder;
 
 public class GetFolderResponse extends ApiResponse {
 

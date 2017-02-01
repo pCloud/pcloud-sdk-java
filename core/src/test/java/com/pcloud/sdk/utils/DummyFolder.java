@@ -17,9 +17,9 @@
 
 package com.pcloud.sdk.utils;
 
-import com.pcloud.sdk.api.FileEntry;
-import com.pcloud.sdk.api.RemoteFile;
-import com.pcloud.sdk.api.RemoteFolder;
+import com.pcloud.sdk.FileEntry;
+import com.pcloud.sdk.RemoteFile;
+import com.pcloud.sdk.RemoteFolder;
 
 import java.util.Collections;
 import java.util.Date;

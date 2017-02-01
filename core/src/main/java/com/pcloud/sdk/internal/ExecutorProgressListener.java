@@ -17,7 +17,7 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.api.ProgressListener;
+import com.pcloud.sdk.ProgressListener;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;

@@ -16,7 +16,7 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.api.ProgressListener;
+import com.pcloud.sdk.ProgressListener;
 import okio.Buffer;
 import okio.ForwardingSink;
 import okio.Sink;

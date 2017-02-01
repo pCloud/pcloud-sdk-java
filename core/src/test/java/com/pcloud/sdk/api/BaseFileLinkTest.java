@@ -17,6 +17,8 @@
 
 package com.pcloud.sdk.api;
 
+import com.pcloud.sdk.FileLink;
+import com.pcloud.sdk.RemoteData;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

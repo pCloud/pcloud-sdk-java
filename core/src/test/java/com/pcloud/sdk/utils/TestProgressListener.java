@@ -17,7 +17,7 @@
 
 package com.pcloud.sdk.utils;
 
-import com.pcloud.sdk.api.ProgressListener;
+import com.pcloud.sdk.ProgressListener;
 
 public class TestProgressListener implements ProgressListener {
 

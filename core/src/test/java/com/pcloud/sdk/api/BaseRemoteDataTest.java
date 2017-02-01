@@ -17,6 +17,9 @@
 
 package com.pcloud.sdk.api;
 
+import com.pcloud.sdk.DataSink;
+import com.pcloud.sdk.ProgressListener;
+import com.pcloud.sdk.RemoteData;
 import com.pcloud.sdk.utils.DummyDataSink;
 import com.pcloud.sdk.utils.TestProgressListener;
 import okio.BufferedSource;

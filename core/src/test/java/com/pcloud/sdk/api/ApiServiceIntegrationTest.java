@@ -16,7 +16,7 @@
 
 package com.pcloud.sdk.api;
 
-import com.pcloud.sdk.PCloudSdk;
+import com.pcloud.sdk.*;
 
 import org.junit.After;
 import org.junit.Before;

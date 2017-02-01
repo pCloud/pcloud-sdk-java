@@ -17,7 +17,7 @@
 
 package com.pcloud.sdk.utils;
 
-import com.pcloud.sdk.api.DataSource;
+import com.pcloud.sdk.DataSource;
 import okio.BufferedSink;
 
 import java.io.IOException;

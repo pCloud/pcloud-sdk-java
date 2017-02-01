@@ -17,9 +17,9 @@
 
 package com.pcloud.sdk.utils;
 
-import com.pcloud.sdk.api.ApiError;
-import com.pcloud.sdk.api.Call;
-import com.pcloud.sdk.api.Callback;
+import com.pcloud.sdk.ApiError;
+import com.pcloud.sdk.Call;
+import com.pcloud.sdk.Callback;
 
 import java.io.IOException;
 

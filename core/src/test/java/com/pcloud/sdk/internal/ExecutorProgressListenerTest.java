@@ -17,7 +17,7 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.api.ProgressListener;
+import com.pcloud.sdk.ProgressListener;
 import org.junit.Before;
 import org.junit.Test;
 

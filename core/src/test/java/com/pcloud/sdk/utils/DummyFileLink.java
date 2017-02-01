@@ -17,9 +17,9 @@
 
 package com.pcloud.sdk.utils;
 
-import com.pcloud.sdk.api.DataSink;
-import com.pcloud.sdk.api.FileLink;
-import com.pcloud.sdk.api.ProgressListener;
+import com.pcloud.sdk.DataSink;
+import com.pcloud.sdk.FileLink;
+import com.pcloud.sdk.ProgressListener;
 import okio.BufferedSource;
 
 import java.io.IOException;

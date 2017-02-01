@@ -18,9 +18,9 @@ package com.pcloud.sdk.internal;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.pcloud.sdk.api.ApiService;
-import com.pcloud.sdk.api.FileEntry;
-import com.pcloud.sdk.api.RemoteFolder;
+import com.pcloud.sdk.ApiService;
+import com.pcloud.sdk.FileEntry;
+import com.pcloud.sdk.RemoteFolder;
 
 import java.lang.reflect.Type;
 import java.util.List;

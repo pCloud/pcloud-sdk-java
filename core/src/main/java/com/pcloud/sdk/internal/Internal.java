@@ -16,8 +16,8 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.api.ApiService;
-import com.pcloud.sdk.api.Authenticator;
+import com.pcloud.sdk.ApiService;
+import com.pcloud.sdk.Authenticator;
 
 public final class Internal {
 

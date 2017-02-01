@@ -18,7 +18,7 @@ package com.pcloud.sdk.internal;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.pcloud.sdk.api.*;
+import com.pcloud.sdk.*;
 import okio.BufferedSource;
 
 import java.io.IOException;

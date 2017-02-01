@@ -16,7 +16,7 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.api.ApiError;
+import com.pcloud.sdk.ApiError;
 import okhttp3.Response;
 
 import java.io.IOException;

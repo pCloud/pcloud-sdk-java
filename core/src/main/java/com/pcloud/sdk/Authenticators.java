@@ -15,7 +15,7 @@
  *
  */
 
-package com.pcloud.sdk.api;
+package com.pcloud.sdk;
 
 import com.pcloud.sdk.internal.Internal;
 

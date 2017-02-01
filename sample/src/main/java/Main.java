@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import com.pcloud.sdk.PCloudSdk;
-import com.pcloud.sdk.api.*;
+import com.pcloud.sdk.*;
 
 import java.io.File;
 import java.io.IOException;

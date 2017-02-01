@@ -13,6 +13,7 @@ public class RealApiServiceTest extends ApiServiceTest<RealApiService> {
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         testInstance(new RealApiService());
     }
 

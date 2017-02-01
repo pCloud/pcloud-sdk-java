@@ -237,6 +237,28 @@ public interface ApiService {
     Call<RemoteFolder> copyFolder(RemoteFolder folder, RemoteFolder toFolder);
 
     /**
+     * Copy specified folder.
+     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html">documentation page</a>.</p>
+     *
+     * @param folderId   The id of the folder you would like to copy
+     * @param toFolderId The id of the destination folder
+     * @return {@link Call} resulting in the copied folder's metadata.
+     */
+    Call<RemoteFolder> copyFolder(long folderId, long toFolderId, boolean overwrite);
+
+    /**
+     * Copy specified folder.
+     *
+     * @param folder   The {@link RemoteFolder} you would like to copy. Must not be null.
+     * @param toFolder The destination {@link RemoteFolder}. Must not be null.
+     * @return {@link Call} resulting in the copied folder's metadata.
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @see #copyFolder(long, long) #copyFolder(long, long)
+     */
+    Call<RemoteFolder> copyFolder(RemoteFolder folder, RemoteFolder toFolder, boolean overwrite);
+
+    /**
      * Create a new file.
      * <p>
      * Same as calling {@link #createFile(RemoteFolder, String, DataSource, Date, ProgressListener)} with null {@code modifiedDate} and {@code listener} arguments.
@@ -463,11 +485,9 @@ public interface ApiService {
     Call<BufferedSource> download(FileLink fileLink);
 
     /**
-     * Copy the specified file.
+     * Copy a specified file.
      * <p>
-     * The call will copy the file specified by the {@code fileId} argument to the folder specified by the {@code toFolderId}.
-     * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html">documentation page</a>.
+     * Same as calling {@link #copyFile(long, long, boolean)} with {@code overwrite} set to {@code false}.
      *
      * @param fileId     The file id of the file to be copied.
      * @param toFolderId The folder id of the folder where the file will be copied.
@@ -476,9 +496,23 @@ public interface ApiService {
     Call<RemoteFile> copyFile(long fileId, long toFolderId);
 
     /**
-     * Copy the specified file.
+     * Copy a specified file.
      * <p>
-     * Same as calling {@link #copyFile(long, long)}
+     * The call will copy the file specified by the {@code fileId} argument to the folder specified by the {@code toFolderId} argument.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html">documentation page</a>.
+     *
+     * @param fileId     The file id of the file to be copied.
+     * @param toFolderId The folder id of the folder where the file will be copied.
+     * @param overwrite  If set to {@code true}, a file with the same name in the destination folder will be overwritten
+     * @return {@link Call} resulting in the metadata of the copied file
+     */
+    Call<RemoteFile> copyFile(long fileId, long toFolderId, boolean overwrite);
+
+    /**
+     * Copy a specified file.
+     * <p>
+     * Same as calling {@link #copyFile(long, long, boolean)} with {@code overwrite} set to {@code false}.
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html">documentation page</a>.
      *
@@ -487,9 +521,184 @@ public interface ApiService {
      * @return {@link Call} resulting in the metadata of the copied file
      * @throws IllegalArgumentException on a null {@code file} argument.
      * @throws IllegalArgumentException on a null {@code toFolder} argument.
-     * @see #copyFile(long, long)
+     * @see #copyFile(long, long, boolean)
      */
     Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder);
+
+    /**
+     * Copy a specified file.
+     * <p>
+     * Same as calling {@link #copyFile(long, long, boolean)}
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html">documentation page</a>.
+     *
+     * @param file      The {@link RemoteFile} to be copied. Must not be null.
+     * @param toFolder  The {@link RemoteFolder} where the file will be copied. Must not be null.
+     * @param overwrite If set to {@code true}, a file with the same name in the destination folder will be overwritten
+     * @return {@link Call} resulting in the metadata of the copied file
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @see #copyFile(long, long, boolean)
+     */
+    Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder, boolean overwrite);
+
+    /**
+     * Copy a specified file or folder.
+     * <p>
+     * The call will copy the file or folder specified by the {@code file} argument to specified {@code toFolder}.
+     *
+     * @param file     The {@link RemoteEntry} to be copied. Must not be null.
+     * @param toFolder The {@link RemoteFolder} where the file will be copied. Must not be null.
+     * @return {@link Call} resulting in the metadata of the copied file or folder.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @see #copyFile(RemoteFile, RemoteFolder, boolean)
+     * @see #copyFolder(RemoteFolder, RemoteFolder)
+     */
+    Call<? extends RemoteEntry> copy(RemoteEntry file, RemoteFolder toFolder);
+
+    /**
+     * Copy a specified file or folder.
+     * <p>
+     * The call will copy the file or folder specified by the {@code file} argument to specified {@code toFolder}.
+     * <p>
+     * The behavior of the {@code overwriteFiles} parameter depends on the type of the {@code file} being passed.
+     * For files, see the description for {@link #copyFile(RemoteFile, RemoteFolder)},
+     * otherwise see {@link #copyFolder(RemoteFolder, RemoteFolder, boolean)}
+     *
+     * @param file           The {@link RemoteEntry} to be copied. Must not be null.
+     * @param toFolder       The {@link RemoteFolder} where the file will be copied. Must not be null.
+     * @param overwriteFiles If set to {@code true}, a file (or folder) with the same name in the destination folder will be overwritten.
+     * @return {@link Call} resulting in the metadata of the copied file or folder.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @see #copyFile(RemoteFile, RemoteFolder, boolean)
+     * @see #copyFolder(RemoteFolder, RemoteFolder)
+     */
+    Call<? extends RemoteEntry> copy(RemoteEntry file, RemoteFolder toFolder, boolean overwriteFiles);
+
+    /**
+     * Copy a specified file or folder.
+     * <p>
+     * The call will copy the file or folder specified by the {@code id} argument to the specified folder with{@code toFolderId}.
+     * <p>
+     * The behavior of the {@code overwriteFiles} parameter depends on the type of the file specified by {@code id}.
+     * For files, see the description for {@link #copyFile(RemoteFile, RemoteFolder)},
+     * otherwise see {@link #copyFolder(RemoteFolder, RemoteFolder, boolean)}
+     *
+     * @param id             The id of the file or folder to be copied. Must not be null.
+     * @param toFolderId     The {@link RemoteFolder} where the file will be copied. Must not be null.
+     * @return {@link Call} resulting in the metadata of the copied file or folder.
+     * @throws IllegalArgumentException on a null {@code id} argument.
+     * @see #copyFile(long, long)
+     * @see #copyFolder(long, long)
+     */
+    Call<? extends RemoteEntry> copy(String id, long toFolderId);
+
+    /**
+     * Copy a specified file or folder.
+     * <p>
+     * The call will copy the file or folder specified by the {@code id} argument to the specified folder with{@code toFolderId}.
+     * <p>
+     * The behavior of the {@code overwriteFiles} parameter depends on the type of the file specified by {@code id}.
+     * For files, see the description for {@link #copyFile(RemoteFile, RemoteFolder)},
+     * otherwise see {@link #copyFolder(RemoteFolder, RemoteFolder, boolean)}
+     *
+     * @param id             The id of the file or folder to be copied. Must not be null.
+     * @param toFolderId     The {@link RemoteFolder} where the file will be copied. Must not be null.
+     * @param overwriteFiles If set to {@code true}, a file (or folder) with the same name in the destination folder will be overwritten.
+     * @return {@link Call} resulting in the metadata of the copied file or folder.
+     * @throws IllegalArgumentException on a null {@code id} argument.
+     * @see #copyFile(long, long, boolean)
+     * @see #copyFolder(long, long, boolean)
+     */
+    Call<? extends RemoteEntry> copy(String id, long toFolderId, boolean overwriteFiles);
+
+    /**
+     * Move a specified file or folder.
+     * <p>
+     * The call will move the file or folder specified by the {@code file} argument to specified {@code toFolder}.
+     *
+     * @param file     The {@link RemoteEntry} to be moved. Must not be null.
+     * @param toFolder The {@link RemoteFolder} where the file will be moved. Must not be null.
+     * @return {@link Call} resulting in the metadata of the moved file or folder.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @see #moveFile(RemoteFile, RemoteFolder)
+     * @see #moveFolder(RemoteFolder, RemoteFolder)
+     */
+    Call<? extends RemoteEntry> move(RemoteEntry file, RemoteFolder toFolder);
+
+    /**
+     * Move a specified file or folder.
+     * <p>
+     * The call will move the file or folder specified by the {@code file} argument to specified {@code toFolder}.
+     *
+     * @param id         The id of the file or folder to be moved. Must not be null.
+     * @param toFolderId The {@link RemoteFolder} where the file will be moved. Must not be null.
+     * @return {@link Call} resulting in the metadata of the moved file or folder.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @see #moveFile(long, long)
+     * @see #moveFolder(long, long)
+     */
+    Call<? extends RemoteEntry> move(String id, long toFolderId);
+
+    /**
+     * Delete the specified file or folder.
+     * <p>
+     * The call will delete the file or folder specified by the {@code file} argument to specified {@code toFolder}.
+     *
+     * @param file The {@link RemoteEntry} to be deleted. Must not be null.
+     * @return {@link Call} resulting in the metadata of the deleted file or folder.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @see #deleteFile(RemoteFile)
+     * @see #deleteFolder(RemoteFolder)
+     */
+    Call<Boolean> delete(RemoteEntry file);
+
+    /**
+     * Delete a specified file or folder.
+     * <p>
+     * The call will delete the file or folder specified by the {@code file} argument to specified {@code toFolder}.
+     *
+     * @param id         The id of the file or folder to be deleted. Must not be null.
+     * @return {@link Call} resulting in the metadata of the deleted file or folder.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @see #deleteFile(long)
+     * @see #deleteFolder(long)
+     */
+    Call<Boolean> delete(String id);
+
+    /**
+     * Rename the specified file or folder.
+     * <p>
+     * The call will rename the file or folder specified by the {@code file} argument to specified {@code newFilename}.
+     *
+     * @param file        The {@link RemoteEntry} to be renamed. Must not be null.
+     * @param newFilename The new name. Must not be null.
+     * @return {@link Call} resulting in the renamed file's metadata.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code newFilename} argument.
+     * @see #renameFile(RemoteFile, String)
+     * @see #renameFolder(RemoteFolder, String)
+     */
+    Call<? extends RemoteEntry> rename(RemoteEntry file, String newFilename);
+
+    /**
+     * Rename the specified file or folder.
+     * <p>
+     * The call will rename the file or folder specified by the {@code file} argument to specified {@code newFilename}.
+     *
+     * @param id         The id of the file or folder to be renamed. Must not be null.
+     * @param newFilename The new name. Must not be null.
+     * @return {@link Call} resulting in the renamed file's metadata.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code newFilename} argument.
+     * @see #renameFile(long, String)
+     * @see #renameFolder(long, String)
+     */
+    Call<? extends RemoteEntry> rename(String id, String newFilename);
 
     /**
      * Move the specified file.

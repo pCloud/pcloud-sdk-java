@@ -3,6 +3,7 @@ package com.pcloud.sdk.api;
 import com.pcloud.sdk.*;
 import com.pcloud.sdk.utils.*;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -12,6 +13,9 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 public abstract class ApiServiceTest<T extends ApiService> {
+
+    private RemoteFile file;
+    private RemoteFolder folder;
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -24,6 +28,12 @@ public abstract class ApiServiceTest<T extends ApiService> {
 
     protected T testInstance() {
         return instance;
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        file = new DummyFile(1, "name");
+        folder = new DummyFolder("name", 1);
     }
 
     @After
@@ -94,7 +104,7 @@ public abstract class ApiServiceTest<T extends ApiService> {
 
     @Test
     public void renameFolder_ReturnsANonNullCall() throws Exception {
-        assertNotNull(instance.renameFolder(new DummyFolder("name", 1), "someName"));
+        assertNotNull(instance.renameFolder(folder, "someName"));
         assertNotNull(instance.renameFolder(1, "someName"));
     }
 
@@ -113,7 +123,7 @@ public abstract class ApiServiceTest<T extends ApiService> {
     @Test
     public void renameFolder_ThrowsOnNullFolderName2() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.renameFolder(new DummyFolder("name", 1), null);
+        instance.renameFolder(folder, null);
     }
 
     @Test
@@ -328,5 +338,126 @@ public abstract class ApiServiceTest<T extends ApiService> {
         ApiService.Builder builder = testInstance().newBuilder();
         ApiService newService = builder.create();
         assertTrue("Returned builder created a different type of ApiService.", newService.getClass() == testInstance().getClass());
+    }
+
+    @Test
+    public void rename_ReturnsANonNullCall() throws Exception {
+        assertNotNull(instance.rename(file, "newName"));
+        assertNotNull(instance.rename(new DummyFile(1, "aname").getId(), "newName"));
+    }
+
+    @Test
+    public void rename_ThrowsOnNullFileArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.rename((RemoteEntry) null, "newName");
+    }
+
+    @Test
+    public void rename_ThrowsOnNullIdArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.rename((String) null, "newName");
+    }
+
+    @Test
+    public void rename_ThrowsOnNullFilenameArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.rename(file, null);
+    }
+
+    @Test
+    public void rename_ThrowsOnNullFilenameArgument2() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.rename(file.getId(), null);
+    }
+
+    @Test
+    public void move_ReturnsANonNullCall() throws Exception {
+        assertNotNull(instance.move(file, folder));
+        assertNotNull(instance.move(new DummyFile(1, "aname").getId(), new DummyFolder("aname", 1).getFolderId()));
+    }
+
+    @Test
+    public void move_ThrowsOnNullFileArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.move(null, folder);
+    }
+
+    @Test
+    public void move_ThrowsOnNullIdArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.move(null, folder.getFolderId());
+    }
+
+    @Test
+    public void move_ThrowsOnNullFilenameArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.move(file, null);
+    }
+
+    @Test
+    public void delete_ReturnsANonNullCall() throws Exception {
+        assertNotNull(instance.delete(file));
+        assertNotNull(instance.delete(new DummyFile(1, "aname").getId()));
+    }
+
+    @Test
+    public void delete_ThrowsOnNullFileArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.delete((RemoteEntry)null);
+    }
+
+    @Test
+    public void delete_ThrowsOnNullIdArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.delete((String) null);
+    }
+
+
+
+
+
+
+    @Test
+    public void copy_ReturnsANonNullCall() throws Exception {
+        assertNotNull(instance.copy(file, folder));
+        assertNotNull(instance.copy(file, folder, false));
+        assertNotNull(instance.copy(file.getId(), folder.getFolderId()));
+        assertNotNull(instance.copy(file.getId(), folder.getFolderId(), false));
+    }
+
+    @Test
+    public void copy_ThrowsOnNullFileArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.copy(null, folder);
+    }
+
+    @Test
+    public void copy_ThrowsOnNullFileArgument2() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.copy(null, folder, false);
+    }
+
+    @Test
+    public void copy_ThrowsOnNullIdArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.copy(null, folder.getFolderId());
+    }
+
+    @Test
+    public void copy_ThrowsOnNullIdArgument2() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.copy(null, folder.getFolderId(), false);
+    }
+
+    @Test
+    public void copy_ThrowsOnNullFolderArgument3() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.copy(file, null);
+    }
+
+    @Test
+    public void copy_ThrowsOnNullFolderArgument4() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.copy(file, null, false);
     }
 }

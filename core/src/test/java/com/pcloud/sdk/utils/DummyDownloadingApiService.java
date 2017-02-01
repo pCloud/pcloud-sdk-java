@@ -122,6 +122,16 @@ public class DummyDownloadingApiService implements ApiService {
     }
 
     @Override
+    public Call<RemoteFolder> copyFolder(long folderId, long toFolderId, boolean overwrite) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFolder> copyFolder(RemoteFolder folder, RemoteFolder toFolder, boolean overwrite) {
+        return null;
+    }
+
+    @Override
     public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data) {
         return null;
     }
@@ -187,7 +197,67 @@ public class DummyDownloadingApiService implements ApiService {
     }
 
     @Override
+    public Call<RemoteFile> copyFile(long fileId, long toFolderId, boolean overwrite) {
+        return null;
+    }
+
+    @Override
     public Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder, boolean overwrite) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteEntry> copy(RemoteEntry file, RemoteFolder toFolder) {
+        return null;
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> copy(RemoteEntry file, RemoteFolder toFolder, boolean overwriteFiles) {
+        return null;
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> copy(String id, long toFolderId) {
+        return null;
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> copy(String id, long toFolderId, boolean overwriteFiles) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteEntry> move(RemoteEntry file, RemoteFolder toFolder) {
+        return null;
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> move(String id, long toFolderId) {
+        return null;
+    }
+
+    @Override
+    public Call<Boolean> delete(RemoteEntry file) {
+        return null;
+    }
+
+    @Override
+    public Call<Boolean> delete(String id) {
+        return null;
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> rename(RemoteEntry file, String newFilename) {
+        return null;
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> rename(String id, String newFilename) {
         return null;
     }
 

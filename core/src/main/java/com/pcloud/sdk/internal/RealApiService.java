@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import com.pcloud.sdk.*;
+import com.pcloud.sdk.Authenticator;
 import com.pcloud.sdk.Call;
 import com.pcloud.sdk.internal.networking.*;
 import com.pcloud.sdk.internal.networking.ApiResponse;
@@ -45,6 +46,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
+import static com.pcloud.sdk.internal.FileIdUtils.*;
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
 class RealApiService implements ApiService {
@@ -395,17 +397,24 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<RemoteFile> copyFile(long fileId, long toFolderId) {
-        RequestBody body = new FormBody.Builder()
+        return copyFile(fileId, toFolderId, false);
+    }
+
+    @Override
+    public Call<RemoteFile> copyFile(long fileId, long toFolderId, boolean overwrite) {
+        FormBody.Builder builder = new FormBody.Builder()
                 .add("fileid", String.valueOf(fileId))
-                .add("tofolderid", String.valueOf(toFolderId))
-                .add("noover", String.valueOf(1))
-                .build();
+                .add("tofolderid", String.valueOf(toFolderId));
+
+        if (!overwrite) {
+            builder.add("noover", String.valueOf(1));
+        }
 
         Request request = newRequest()
                 .url(API_BASE_URL.newBuilder()
                         .addPathSegment("copyfile")
                         .build())
-                .post(body)
+                .post(builder.build())
                 .build();
 
         return newCall(request, new ResponseAdapter<RemoteFile>() {
@@ -418,6 +427,11 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder) {
+        return copyFile(file, toFolder, false);
+    }
+
+    @Override
+    public Call<RemoteFile> copyFile(RemoteFile file, RemoteFolder toFolder, boolean overwrite) {
         if (file == null) {
             throw new IllegalArgumentException("file argument cannot be null.");
         }
@@ -425,7 +439,110 @@ class RealApiService implements ApiService {
             throw new IllegalArgumentException("toFolder argument cannot be null.");
         }
 
-        return copyFile(file.getFileId(), toFolder.getFolderId());
+        return copyFile(file.getFileId(), toFolder.getFolderId(), overwrite);
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> copy(RemoteEntry file, RemoteFolder toFolder) {
+        return copy(file, toFolder, false);
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> copy(RemoteEntry file, RemoteFolder toFolder, boolean overwriteFiles) {
+        if (file == null) {
+            throw new IllegalArgumentException("RemoteEntry argument cannot be null.");
+        }
+        if (toFolder == null) {
+            throw new IllegalArgumentException("RemoteFolder argument cannot be null.");
+        }
+        final long toFolderId = toFolder.getFolderId();
+        return file.isFolder() ?
+                copyFolder(file.asFolder().getFolderId(), toFolderId, overwriteFiles) :
+                copyFile(file.asFile().getFileId(), toFolderId, overwriteFiles);
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> copy(String id, long toFolderId) {
+        return copy(id, toFolderId, false);
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> copy(String id, long toFolderId, boolean overwriteFiles) {
+        if (id == null) {
+            throw new IllegalArgumentException("File identifier argument cannot be null.");
+        }
+        return isFile(id) ?
+                copyFile(toFileId(id), toFolderId, overwriteFiles) :
+                copyFile(toFolderId(id), toFolderId, overwriteFiles);
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> move(RemoteEntry file, RemoteFolder toFolder) {
+        if (file == null) {
+            throw new IllegalArgumentException("RemoteEntry argument cannot be null.");
+        }
+        if (toFolder == null) {
+            throw new IllegalArgumentException("RemoteFolder argument cannot be null.");
+        }
+
+        final long toFolderId = toFolder.getFolderId();
+        return file.isFolder() ?
+                moveFolder(file.asFolder().getFolderId(), toFolderId) :
+                moveFile(file.asFile().getFileId(), toFolderId);
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> move(String id, long toFolderId) {
+        if (id == null) {
+            throw new IllegalArgumentException("File identifier argument cannot be null.");
+        }
+        return isFile(id) ?
+                moveFile(toFileId(id), toFolderId) :
+                moveFolder(toFolderId(id), toFolderId);
+    }
+
+    @Override
+    public Call<Boolean> delete(RemoteEntry file) {
+        if (file == null) {
+            throw new IllegalArgumentException("RemoteEntry argument cannot be null.");
+        }
+        return file.isFolder() ?
+                deleteFolder(file.asFolder().getFolderId()) :
+                deleteFile(file.asFile().getFileId());
+    }
+
+    @Override
+    public Call<Boolean> delete(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("File identifier argument cannot be null.");
+        }
+        return isFile(id) ?
+                deleteFile(toFileId(id)) :
+                deleteFile(toFolderId(id));
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> rename(RemoteEntry file, String newFilename) {
+        if (file == null) {
+            throw new IllegalArgumentException("RemoteEntry argument cannot be null.");
+        }
+        if (newFilename == null) {
+            throw new IllegalArgumentException("New filename argument cannot be null.");
+        }
+
+        return (file.isFolder() ?
+                renameFolder(file.asFolder().getFolderId(), newFilename) :
+                renameFile(file.asFile().getFileId(), newFilename));
+    }
+
+    @Override
+    public Call<? extends RemoteEntry> rename(String id, String newFilename) {
+        if (id == null) {
+            throw new IllegalArgumentException("File identifier argument cannot be null.");
+        }
+        return isFile(id) ?
+                renameFile(toFileId(id), newFilename) :
+                renameFolder(toFolderId(id), newFilename);
     }
 
     @Override
@@ -619,26 +736,24 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<RemoteFolder> moveFolder(long folderId, long toFolderId) {
-        return newCall(createMoveFolderRequest(folderId, toFolderId), new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
-    }
-
-    private Request createMoveFolderRequest(long folderId, long toFolderId) {
         RequestBody body = new FormBody.Builder()
                 .add("folderid", String.valueOf(folderId))
                 .add("tofolderid", String.valueOf(toFolderId))
                 .build();
 
-        return newRequest()
+        Request request = newRequest()
                 .url(API_BASE_URL.newBuilder()
                         .addPathSegment("renamefolder")
                         .build())
                 .post(body)
                 .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
     }
 
     @Override
@@ -646,31 +761,46 @@ class RealApiService implements ApiService {
         if (folder == null || toFolder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
         }
-        return copyFolder(folder.getFolderId(), toFolder.getFolderId());
+        return copyFolder(folder.getFolderId(), toFolder.getFolderId(), false);
+    }
+
+    @Override
+    public Call<RemoteFolder> copyFolder(RemoteFolder folder, RemoteFolder toFolder, boolean overwrite) {
+        if (folder == null || toFolder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return copyFolder(folder.getFolderId(), toFolder.getFolderId(), overwrite);
     }
 
     @Override
     public Call<RemoteFolder> copyFolder(long folderId, long toFolderId) {
-        return newCall(createCopyFolderRequest(folderId, toFolderId), new ResponseAdapter<RemoteFolder>() {
+        return copyFolder(folderId, toFolderId, false);
+    }
+
+    @Override
+    public Call<RemoteFolder> copyFolder(long folderId, long toFolderId, boolean overwrite) {
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("folderid", String.valueOf(folderId))
+                .add("tofolderid", String.valueOf(toFolderId));
+
+        if (!overwrite) {
+            builder.add("noover", String.valueOf(1));
+            builder.add("skipexisting", String.valueOf(1));
+        }
+
+        Request request = newRequest()
+                .url(API_BASE_URL.newBuilder()
+                        .addPathSegment("copyfolder")
+                        .build())
+                .post(builder.build())
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFolder>() {
             @Override
             public RemoteFolder adapt(Response response) throws IOException, ApiError {
                 return getAsApiResponse(response, GetFolderResponse.class).getFolder();
             }
         });
-    }
-
-    private Request createCopyFolderRequest(long folderId, long toFolderId) {
-        RequestBody body = new FormBody.Builder()
-                .add("folderid", String.valueOf(folderId))
-                .add("tofolderid", String.valueOf(toFolderId))
-                .build();
-
-        return newRequest()
-                .url(API_BASE_URL.newBuilder()
-                        .addPathSegment("copyfolder")
-                        .build())
-                .post(body)
-                .build();
     }
 
     @Override

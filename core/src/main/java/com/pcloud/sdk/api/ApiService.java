@@ -17,11 +17,16 @@
 package com.pcloud.sdk.api;
 
 import com.pcloud.sdk.PCloudSdk;
+import okhttp3.Cache;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
+import okhttp3.OkHttpClient;
 import okio.BufferedSource;
 
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The general interface that exposes pCloud API's methods.
@@ -31,9 +36,9 @@ import java.util.concurrent.Executor;
  * The ApiService is designed with reuse in mind, it's best used when created once and shared among code using it,
  * mainly due to used connection and thread pooling.</h3>
  * <li>
- * Users should configure and create instances through the {@link ApiServiceBuilder} interface.
+ * Users should configure and create instances through the {@link Builder} interface.
  * <li>
- * ApiServiceBuilder instances can be created via the {@link PCloudSdk#newApiServiceBuilder()} method
+ * Builder instances can be created via the {@link PCloudSdk#newApiServiceBuilder()} method
  * or from an existing {@linkplain ApiService} instance through the {@linkplain #newBuilder()} method.
  * <li>
  * Shared instance's configuration can be changed by using the {@linkplain #newBuilder()} method that will return
@@ -291,7 +296,7 @@ public interface ApiService {
      * <p>
      * The provided {@link DataSource} object will be used to populate the file's contents.
      * <p>
-     * If a {@link ProgressListener} is provided, it will be notified on every {@code n} bytes uploaded, as set per {@link ApiServiceBuilder#progressCallbackThreshold(int)}
+     * If a {@link ProgressListener} is provided, it will be notified on every {@code n} bytes uploaded, as set per {@link Builder#progressCallbackThreshold(int)}
      * <p>
      * To create an empty file, call the method with a {@link DataSource#EMPTY} argument.
      * <p>
@@ -397,10 +402,10 @@ public interface ApiService {
      * about the progress via a provided {@link ProgressListener}. The content bytes will be
      * delivered though the {@link DataSink} object.
      * <p>
-     * See {@link ApiServiceBuilder#progressCallbackThreshold(int)} for details on
+     * See {@link Builder#progressCallbackThreshold(int)} for details on
      * how to control the progress notifications rate.
      * <p>
-     * If set via {@link ApiServiceBuilder#callbackExecutor(Executor)}, the progress listener's
+     * If set via {@link Builder#callbackExecutor(Executor)}, the progress listener's
      * methods will be scheduled on the provided Executor.
      * <p>
      * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html"> documentation page</a>
@@ -564,9 +569,9 @@ public interface ApiService {
     /**
      * Create a new shared {@link ApiService} instance.
      *
-     * @return a {@link ApiServiceBuilder} sharing the same configuration as this instance.
+     * @return a {@link Builder} sharing the same configuration as this instance.
      */
-    ApiServiceBuilder newBuilder();
+    Builder newBuilder();
 
     /**
      * Stop this instance and cleanup resources.
@@ -582,4 +587,120 @@ public interface ApiService {
      */
     void shutdown();
 
+    /**
+     * A builder for configuring an creating new {@link ApiService} instances.
+     *
+     * @see ApiService
+     * @see ApiService#newBuilder()
+     * @see PCloudSdk#newApiServiceBuilder()
+     */
+    @SuppressWarnings("unused")
+    interface Builder {
+        /**
+         * Sets the response cache to be used to read and write cached responses.
+         *
+         * @see Cache
+         */
+        Builder cache(Cache cache);
+
+        /**
+         * Sets the connectionPool used to recycle HTTP and HTTPS connections.
+         * <p>
+         * If unset, a new connection pool with a default configuration will be used.
+         *
+         * @see ConnectionPool
+         */
+        Builder connectionPool(ConnectionPool connectionPool);
+
+        /**
+         * Sets the {@link Dispatcher} used to set policy and execute asynchronous requests.
+         * <p>
+         * Must not be null.
+         * <p>
+         * If unset, a new dispatcher with a default configuration will be used.
+         *
+         * @see Dispatcher
+         */
+
+        Builder dispatcher(Dispatcher dispatcher);
+
+        /**
+         * Use an existing {@link OkHttpClient} instance and share the {@link Dispatcher},
+         * {@link ConnectionPool} and {@link Cache}
+         * <p>
+         * Must not be null.
+         * <p>
+         * Previous calls to {@link #dispatcher(Dispatcher)}, {@link #connectionPool(ConnectionPool)},
+         * {@link Cache} will be overriden by this call.
+         *
+         * @see OkHttpClient
+         */
+        Builder withClient(OkHttpClient client);
+
+        /**
+         * Sets the default read timeout for new connections.
+         * <p>
+         * A value of 0 means no timeout, otherwise values must be between 1 and
+         * {@link Integer#MAX_VALUE} when converted to milliseconds.
+         */
+        Builder readTimeout(long timeout, TimeUnit timeUnit);
+
+        /**
+         * Sets the default write timeout for new connections.
+         * <p>
+         * A value of 0 means no timeout, otherwise values must be between 1 and
+         * {@link Integer#MAX_VALUE} when converted to milliseconds.
+         */
+        Builder writeTimeout(long timeout, TimeUnit timeUnit);
+
+        /**
+         * Sets the default connect timeout for new connections.
+         * <p>
+         * A value of 0 means no timeout, otherwise values must be between 1 and
+         * {@link Integer#MAX_VALUE} when converted to milliseconds.
+         */
+        Builder connectTimeout(long timeout, TimeUnit timeUnit);
+
+        /**
+         * Sets an {@link Authenticator}.
+         * <p>
+         * Must not be null.
+         *
+         * @see Authenticator
+         */
+        Builder authenticator(Authenticator authenticator);
+
+        /**
+         * Set an executor to be used when invoking {@link Callback} instances.
+         *
+         * @see Executor
+         */
+        Builder callbackExecutor(Executor callbackExecutor);
+
+        /**
+         * Define a progress notifications threshold
+         * <p>
+         * If set, a supplied {@link ProgressListener} instance will be invoked
+         * on no less than {@code bytes} of transferred data.
+         * <p>
+         * Can be used to control thread congestion caused by the invocations
+         * of the progress listener.
+         *
+         * @param bytes the minimal amounts of bytes to be transferred before
+         *              notifying about a transfer progress
+         * @see ProgressListener
+         * @see ApiService#createFile(long, String, DataSource, Date, ProgressListener)
+         * @see ApiService#download(FileLink, DataSink, ProgressListener)
+         * @see RemoteData#download(DataSink, ProgressListener)
+         */
+        Builder progressCallbackThreshold(int bytes);
+
+        /**
+         * Create a new {@link ApiService} from the provided configuration.
+         *
+         * @return a non-null {@link ApiService} object
+         * @see ApiService
+         */
+        ApiService create();
+    }
 }

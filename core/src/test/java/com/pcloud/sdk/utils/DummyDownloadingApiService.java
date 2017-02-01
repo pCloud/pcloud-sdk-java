@@ -217,7 +217,7 @@ public class DummyDownloadingApiService implements ApiService {
     }
 
     @Override
-    public ApiServiceBuilder newBuilder() {
+    public Builder newBuilder() {
         return null;
     }
 

@@ -16,7 +16,7 @@
 
 package com.pcloud.sdk;
 
-import com.pcloud.sdk.api.ApiServiceBuilder;
+import com.pcloud.sdk.api.ApiService;
 import com.pcloud.sdk.internal.Internal;
 import com.pcloud.sdk.internal.Version;
 
@@ -31,7 +31,7 @@ public final class PCloudSdk {
         return Version.NAME;
     }
 
-    public static ApiServiceBuilder newApiServiceBuilder(){
+    public static ApiService.Builder newApiServiceBuilder(){
         return Internal.newBuilder();
     }
 }

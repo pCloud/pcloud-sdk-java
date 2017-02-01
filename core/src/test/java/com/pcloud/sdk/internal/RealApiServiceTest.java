@@ -1,6 +1,6 @@
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.api.ApiServiceBuilder;
+import com.pcloud.sdk.api.ApiService;
 import com.pcloud.sdk.api.ApiServiceTest;
 import okhttp3.OkHttpClient;
 import org.junit.After;
@@ -25,7 +25,7 @@ public class RealApiServiceTest extends ApiServiceTest<RealApiService> {
 
     @Test
     public void newBuilder_ReturnsBuilderWithSameConfiguration() throws Exception {
-        ApiServiceBuilder builder = testInstance().newBuilder();
+        ApiService.Builder builder = testInstance().newBuilder();
         RealApiService newService = (RealApiService) builder.create();
 
         assertEquals(testInstance().callbackExecutor(), newService.callbackExecutor());

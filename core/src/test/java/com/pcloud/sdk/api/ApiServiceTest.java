@@ -324,7 +324,7 @@ public abstract class ApiServiceTest<T extends ApiService> {
 
     @Test
     public void newBuilder_ReturnsBuilderForSameType() throws Exception {
-        ApiServiceBuilder builder = testInstance().newBuilder();
+        ApiService.Builder builder = testInstance().newBuilder();
         ApiService newService = builder.create();
         assertTrue("Returned builder created a different type of ApiService.", newService.getClass() == testInstance().getClass());
     }

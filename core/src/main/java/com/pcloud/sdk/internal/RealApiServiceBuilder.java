@@ -23,7 +23,7 @@ import okhttp3.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
-class RealApiServiceBuilder implements ApiServiceBuilder {
+class RealApiServiceBuilder implements ApiService.Builder {
 
     private Cache cache;
     private Executor callbackExecutor;
@@ -51,25 +51,25 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     }
 
     @Override
-    public ApiServiceBuilder cache(Cache cache) {
+    public ApiService.Builder cache(Cache cache) {
         this.cache = cache;
         return this;
     }
 
     @Override
-    public ApiServiceBuilder connectionPool(ConnectionPool connectionPool) {
+    public ApiService.Builder connectionPool(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
         return this;
     }
 
     @Override
-    public ApiServiceBuilder dispatcher(Dispatcher dispatcher) {
+    public ApiService.Builder dispatcher(Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
         return this;
     }
 
     @Override
-    public ApiServiceBuilder withClient(OkHttpClient client) {
+    public ApiService.Builder withClient(OkHttpClient client) {
         return cache(client.cache())
                 .connectionPool(client.connectionPool())
                 .dispatcher(client.dispatcher())
@@ -79,37 +79,37 @@ class RealApiServiceBuilder implements ApiServiceBuilder {
     }
 
     @Override
-    public ApiServiceBuilder readTimeout(long timeout, TimeUnit timeUnit) {
+    public ApiService.Builder readTimeout(long timeout, TimeUnit timeUnit) {
         this.readTimeoutMs = (int) timeUnit.toMillis(timeout);
         return this;
     }
 
     @Override
-    public ApiServiceBuilder writeTimeout(long timeout, TimeUnit timeUnit) {
+    public ApiService.Builder writeTimeout(long timeout, TimeUnit timeUnit) {
         this.writeTimeoutMs = (int) timeUnit.toMillis(timeout);
         return this;
     }
 
     @Override
-    public ApiServiceBuilder connectTimeout(long timeout, TimeUnit timeUnit) {
+    public ApiService.Builder connectTimeout(long timeout, TimeUnit timeUnit) {
         this.connectTimeoutMs = (int) timeUnit.toMillis(timeout);
         return this;
     }
 
     @Override
-    public ApiServiceBuilder authenticator(Authenticator authenticator) {
+    public ApiService.Builder authenticator(Authenticator authenticator) {
         this.authenticator = authenticator;
         return this;
     }
 
     @Override
-    public ApiServiceBuilder callbackExecutor(Executor callbackExecutor) {
+    public ApiService.Builder callbackExecutor(Executor callbackExecutor) {
         this.callbackExecutor = callbackExecutor;
         return this;
     }
 
     @Override
-    public ApiServiceBuilder progressCallbackThreshold(int bytes) {
+    public ApiService.Builder progressCallbackThreshold(int bytes) {
         if (bytes < 0) {
             throw new IllegalArgumentException("Threshold parameter must a positive number.");
         }

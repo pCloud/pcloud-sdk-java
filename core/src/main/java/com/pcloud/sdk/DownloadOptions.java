@@ -21,8 +21,8 @@ package com.pcloud.sdk;
  * A container for the possible options when creating file links.
  * <p>
  * DownloadOptions is a immutable container for the allowed options when creating file
- * links through {@link ApiService#getDownloadLink(RemoteFile, DownloadOptions)},
- * {@link ApiService#getDownloadLink(long, DownloadOptions)} or {@link RemoteFile#getDownloadLink()}.
+ * links through {@link ApiService#createFileLink(RemoteFile, DownloadOptions)},
+ * {@link ApiService#createFileLink(long, DownloadOptions)} or {@link RemoteFile#createFileLink()}.
  * <p>
  * Instances of the class can be created either the {@link #create()} method
  * or by mutating an existing object by calling {@link #newBuilder()}.

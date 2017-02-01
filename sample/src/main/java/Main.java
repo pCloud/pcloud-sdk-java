@@ -35,11 +35,11 @@ public class Main {
             RemoteFile newFile = uploadData(apiService);
             printFileAttributes(newFile);
 
-            FileLink downloadLink = apiService.getDownloadLink(newFile, DownloadOptions.DEFAULT).execute();
+            FileLink downloadLink = apiService.createFileLink(newFile, DownloadOptions.DEFAULT).execute();
             System.out.print(downloadLink.getBestUrl());
 
             RemoteFile bigFile = uploadFile(apiService, new File("some file path"));
-            System.out.println(bigFile.getDownloadLink());
+            System.out.println(bigFile.createFileLink());
             downloadFile(bigFile, new File("some directory path"));
 
             UserInfo userInfo = apiService.getUserInfo().execute();

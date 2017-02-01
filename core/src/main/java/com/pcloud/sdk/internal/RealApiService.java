@@ -251,15 +251,15 @@ class RealApiService implements ApiService {
     }
 
     @Override
-    public Call<FileLink> getDownloadLink(RemoteFile file, DownloadOptions options) {
+    public Call<FileLink> createFileLink(RemoteFile file, DownloadOptions options) {
         if (file == null) {
             throw new IllegalArgumentException("File argument cannot be null.");
         }
-        return getDownloadLink(file.getFileId(), options);
+        return createFileLink(file.getFileId(), options);
     }
 
     @Override
-    public Call<FileLink> getDownloadLink(long fileId, DownloadOptions options) {
+    public Call<FileLink> createFileLink(long fileId, DownloadOptions options) {
         if (options == null) {
             throw new IllegalArgumentException("DownloadOptions parameter cannot be null.");
         }

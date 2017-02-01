@@ -152,12 +152,12 @@ public class DummyDownloadingApiService implements ApiService {
     }
 
     @Override
-    public Call<FileLink> getDownloadLink(RemoteFile file, DownloadOptions options) {
+    public Call<FileLink> createFileLink(RemoteFile file, DownloadOptions options) {
         return new DummyCall<FileLink>(new DummyDownloadLink());
     }
 
     @Override
-    public Call<FileLink> getDownloadLink(long fileid, DownloadOptions options) {
+    public Call<FileLink> createFileLink(long fileid, DownloadOptions options) {
         return new DummyCall<FileLink>(new DummyDownloadLink());
     }
 

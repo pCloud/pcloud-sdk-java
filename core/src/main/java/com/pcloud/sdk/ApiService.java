@@ -358,7 +358,7 @@ public interface ApiService {
      * @see DownloadOptions
      * @see FileLink
      */
-    Call<FileLink> getDownloadLink(RemoteFile file, DownloadOptions options);
+    Call<FileLink> createFileLink(RemoteFile file, DownloadOptions options);
 
     /**
      * Create a download link for a file
@@ -376,7 +376,7 @@ public interface ApiService {
      * @see DownloadOptions
      * @see FileLink
      */
-    Call<FileLink> getDownloadLink(long fileId, DownloadOptions options);
+    Call<FileLink> createFileLink(long fileId, DownloadOptions options);
 
     /**
      * Download a {@link FileLink} to a specified destination.
@@ -427,7 +427,7 @@ public interface ApiService {
      * Get the bytes of a specified remote file.
      * <p>
      * This call is a shorthand for obtaining a {@link FileLink} object via
-     * {@link #getDownloadLink(RemoteFile, DownloadOptions)} with {@link DownloadOptions#DEFAULT},
+     * {@link #createFileLink(RemoteFile, DownloadOptions)} with {@link DownloadOptions#DEFAULT},
      * then using it with the {@link #download(FileLink)} method.
      * <p>
      * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html"> documentation page</a>
@@ -439,7 +439,7 @@ public interface ApiService {
      * @param file target file. Must not be null.
      * @return {@link Call} which results in a bytes source
      * @throws IllegalArgumentException on a null {@code file} argument.
-     * @see #getDownloadLink(long, DownloadOptions)
+     * @see #createFileLink(long, DownloadOptions)
      * @see #download(FileLink)
      */
     Call<BufferedSource> download(RemoteFile file);

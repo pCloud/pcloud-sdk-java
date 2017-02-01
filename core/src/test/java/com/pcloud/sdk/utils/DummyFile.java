@@ -121,12 +121,12 @@ public class DummyFile implements RemoteFile {
     }
 
     @Override
-    public FileLink getDownloadLink(DownloadOptions options) throws IOException, ApiError {
+    public FileLink createFileLink(DownloadOptions options) throws IOException, ApiError {
         return null;
     }
 
     @Override
-    public FileLink getDownloadLink() throws IOException, ApiError {
+    public FileLink createFileLink() throws IOException, ApiError {
         return null;
     }
 }

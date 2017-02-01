@@ -193,7 +193,7 @@ public class ApiServiceIntegrationTest {
                 .contentType(remoteFile.getContentType())
                 .build();
 
-        FileLink fileLink = apiService.getDownloadLink(remoteFile, options).execute();
+        FileLink fileLink = apiService.createFileLink(remoteFile, options).execute();
         BufferedSource source = apiService.download(fileLink).execute();
         assertTrue(Arrays.equals(fileContents, source.readByteArray()));
     }

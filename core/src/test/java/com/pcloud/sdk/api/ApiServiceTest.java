@@ -194,26 +194,26 @@ public abstract class ApiServiceTest<T extends ApiService> {
 
     @Test
     public void getDownloadLink_ReturnsANonNullCall() throws Exception {
-        assertNotNull(instance.getDownloadLink(1, DownloadOptions.DEFAULT));
-        assertNotNull(instance.getDownloadLink(new DummyFile(1, "somename"), DownloadOptions.DEFAULT));
+        assertNotNull(instance.createFileLink(1, DownloadOptions.DEFAULT));
+        assertNotNull(instance.createFileLink(new DummyFile(1, "somename"), DownloadOptions.DEFAULT));
     }
 
     @Test
     public void getDownloadLink_ThrowsOnNullRemoteFileArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.getDownloadLink(null, DownloadOptions.DEFAULT);
+        instance.createFileLink(null, DownloadOptions.DEFAULT);
     }
 
     @Test
     public void getDownloadLink_ThrowsOnNullDownloadOptionsArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.getDownloadLink(1, null);
+        instance.createFileLink(1, null);
     }
 
     @Test
     public void getDownloadLink_ThrowsOnNullDownloadOptionsArgument2() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.getDownloadLink(new DummyFile(1, "somename"), null);
+        instance.createFileLink(new DummyFile(1, "somename"), null);
     }
 
     @Test

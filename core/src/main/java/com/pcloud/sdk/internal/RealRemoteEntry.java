@@ -20,11 +20,9 @@ import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import com.pcloud.sdk.ApiService;
-import com.pcloud.sdk.RemoteEntry;
-import com.pcloud.sdk.RemoteFile;
-import com.pcloud.sdk.RemoteFolder;
+import com.pcloud.sdk.*;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
 
@@ -103,6 +101,15 @@ abstract class RealRemoteEntry implements RemoteEntry {
     @Override
     public RemoteFile asFile() {
         throw new IllegalStateException("This entry is not a file");
+    }
+
+    @Override
+    public boolean delete() throws IOException {
+        try {
+            return apiService.delete(this).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
     }
 
     protected ApiService ownerService(){

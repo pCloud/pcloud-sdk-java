@@ -81,6 +81,31 @@ public class DummyFile implements RemoteFile {
     }
 
     @Override
+    public RemoteEntry copy(RemoteFolder toFolder) throws IOException {
+        return null;
+    }
+
+    @Override
+    public RemoteEntry copy(RemoteFolder toFolder, boolean overwrite) throws IOException {
+        return null;
+    }
+
+    @Override
+    public RemoteEntry move(RemoteFolder toFolder) throws IOException {
+        return null;
+    }
+
+    @Override
+    public RemoteEntry rename(String newFilename) throws IOException {
+        return null;
+    }
+
+    @Override
+    public boolean delete() throws IOException {
+        return false;
+    }
+
+    @Override
     public InputStream byteStream() throws IOException {
         return null;
     }

@@ -23,7 +23,7 @@ import java.io.IOException;
  * An abstraction over a file entry for a file on a pCloud account's filesystem.
  *
  * @see RemoteEntry
- * @see RemoteFile
+ * @see RemoteFolder
  */
 @SuppressWarnings("unused")
 public interface RemoteFile extends RemoteEntry, RemoteData {

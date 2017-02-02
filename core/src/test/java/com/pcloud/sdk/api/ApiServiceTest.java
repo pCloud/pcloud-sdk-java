@@ -47,17 +47,6 @@ public abstract class ApiServiceTest<T extends ApiService> {
     }
 
     @Test
-    public void listFiles_ReturnsANonNullCall() throws Exception {
-        assertNotNull(instance.listFiles(new DummyFolder("folder", 1234)));
-    }
-
-    @Test
-    public void listFiles_ThrowsOnNullRemoteFolderArgument() throws Exception {
-        exceptionRule.expect(IllegalArgumentException.class);
-        instance.listFiles(null);
-    }
-
-    @Test
     public void createFolder_ReturnsANonNullCall() throws Exception {
         assertNotNull(instance.createFolder(new DummyFolder("folder", 1234), "new"));
         assertNotNull(instance.createFolder(1234, "new"));

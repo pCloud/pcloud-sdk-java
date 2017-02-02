@@ -49,8 +49,7 @@ public class ApiServiceIntegrationTest {
 
     @Test
     public void testListFolder() throws IOException, ApiError {
-        RemoteFolder rootFolder = apiService.listFolder(RemoteFolder.ROOT_FOLDER_ID).execute();
-        apiService.listFiles(rootFolder);
+        apiService.listFolder(RemoteFolder.ROOT_FOLDER_ID).execute();
     }
 
     @Test

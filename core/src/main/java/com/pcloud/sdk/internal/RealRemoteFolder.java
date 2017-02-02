@@ -18,14 +18,13 @@ package com.pcloud.sdk.internal;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.pcloud.sdk.ApiService;
-import com.pcloud.sdk.RemoteEntry;
-import com.pcloud.sdk.RemoteFolder;
+import com.pcloud.sdk.*;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder{
+public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
 
     @Expose
     @SerializedName("folderid")
@@ -50,8 +49,67 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder{
     }
 
     @Override
+    public RemoteFolder reload() throws IOException {
+        return reload(false);
+    }
+
+    @Override
+    public RemoteFolder reload(boolean recursively) throws IOException {
+        try {
+            return ownerService().listFolder(getFolderId(), recursively).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
+    }
+
+    @Override
+    public boolean delete(boolean recursively) throws IOException {
+        try {
+            return ownerService().deleteFolder(this, recursively).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
+    }
+
+    @Override
     public final RealRemoteFolder asFolder() {
         return this;
+    }
+
+    @Override
+    public RemoteFolder copy(RemoteFolder toFolder) throws IOException {
+        try {
+            return ownerService().copyFolder(this, toFolder).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
+    }
+
+    @Override
+    public RemoteFolder copy(RemoteFolder toFolder, boolean overwrite) throws IOException {
+        try {
+            return ownerService().copyFolder(this, toFolder, overwrite).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
+    }
+
+    @Override
+    public RemoteFolder move(RemoteFolder toFolder) throws IOException {
+        try {
+            return ownerService().moveFolder(this, toFolder).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
+    }
+
+    @Override
+    public RemoteFolder rename(String newFilename) throws IOException {
+        try {
+            return ownerService().renameFolder(this, newFilename).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
     }
 
     static class InstanceCreator implements com.google.gson.InstanceCreator<RealRemoteFolder> {

@@ -17,10 +17,13 @@
 
 package com.pcloud.sdk;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
  * An abstraction over a file entry on a pCloud account's filesystem.
+ * @see RemoteFile
+ * @see RemoteFolder
  */
 @SuppressWarnings("unused")
 public interface RemoteEntry {
@@ -79,4 +82,63 @@ public interface RemoteEntry {
      * @throws IllegalStateException if the entry is not a file
      */
     RemoteFile asFile();
+
+    /**
+     * Copy this file to a specified folder.
+     *
+     * @param toFolder The {@link RemoteFolder} where the file will be copied. Must not be null.
+     * @return the copied file.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @throws IOException              on a network or API error.
+     * @see ApiService#copy(RemoteEntry, RemoteFolder)
+     */
+    RemoteEntry copy(RemoteFolder toFolder) throws IOException;
+
+    /**
+     * Copy this file to a specified folder.
+     * <p>
+     * The behavior of the {@code overwriteFiles} parameter depends on the type of the {@code file} being passed.
+     * For files, see the description {@linkplain ApiService#copyFile(RemoteFile, RemoteFolder) here},
+     * otherwise see {@linkplain ApiService#copyFolder(RemoteFolder, RemoteFolder, boolean) here}.
+     *
+     * @param toFolder  The {@link RemoteFolder} where the file will be copied. Must not be null.
+     * @param overwrite If set to {@code true}, a file with the same name in the destination folder will be overwritten
+     * @return the copied file.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @throws IOException              on a network or API error.
+     * @see ApiService#copy(RemoteEntry, RemoteFolder, boolean)
+     */
+    RemoteEntry copy(RemoteFolder toFolder, boolean overwrite) throws IOException;
+
+    /**
+     * Move this file to a specified folder.
+     *
+     * @param toFolder The {@link RemoteFolder} where the file will be moved. Must not be null.
+     * @return the copied file.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @throws IOException              on a network or API error.
+     * @see ApiService#move(RemoteEntry, RemoteFolder)
+     */
+    RemoteEntry move(RemoteFolder toFolder) throws IOException;
+
+    /**
+     * Rename this file.
+     *
+     * @param newFilename The new name. Must not be null.
+     * @return the renamed file.
+     * @throws IllegalArgumentException on a null {@code newFilename} argument.
+     * @throws IOException              on a network or API error.
+     * @see ApiService#rename(RemoteEntry, String)
+     */
+    RemoteEntry rename(String newFilename) throws IOException;
+
+    /**
+     * Delete this file.
+     *
+     * @return {@code true} if deleted, {@code false} otherwise.
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IOException              on a network or API error.
+     * @see ApiService#delete(RemoteEntry)
+     */
+    boolean delete() throws IOException;
 }

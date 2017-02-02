@@ -87,6 +87,38 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     }
 
     @Override
+    public RemoteFile copy(RemoteFolder toFolder) throws IOException {
+        return copy(toFolder, false);
+    }
+
+    @Override
+    public RemoteFile copy(RemoteFolder toFolder, boolean overwrite) throws IOException {
+        try {
+            return ownerService().copyFile(this, toFolder, overwrite).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
+    }
+
+    @Override
+    public RemoteFile move(RemoteFolder toFolder) throws IOException {
+        try {
+            return ownerService().moveFile(this, toFolder).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
+    }
+
+    @Override
+    public RemoteFile rename(String newFilename) throws IOException {
+        try {
+            return ownerService().renameFile(this, newFilename).execute();
+        } catch (ApiError apiError) {
+            throw new IOException(apiError);
+        }
+    }
+
+    @Override
     public InputStream byteStream() throws IOException {
         return source().inputStream();
     }
@@ -101,7 +133,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
             return source;
         } catch (ApiError apiError) {
             throw new IOException("API error occurred while trying to download file.", apiError);
-        }finally {
+        } finally {
             if (!success) {
                 call.cancel();
             }

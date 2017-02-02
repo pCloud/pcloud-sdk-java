@@ -73,22 +73,9 @@ public interface ApiService {
      *
      * @param folderId    target folder id
      * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
-     * @return {@link Call}
+     * @return {@link Call} resulting in a {@link RemoteFolder} instance holding the metadata for the requested fodler id.
      */
     Call<RemoteFolder> listFolder(long folderId, boolean recursively);
-
-    /**
-     * List a specified folder's children.
-     * <p>
-     * Loads the metadata about folder's direct children, if any.
-     * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html">documentation page</a>.
-     *
-     * @param folder The {@link RemoteFolder} to list. Must not be null
-     * @return {@link Call} resulting in a non-null list of children. An empty list is returned if folder is empty
-     * @throws IllegalArgumentException on a null {@code folder} argument
-     */
-    Call<List<RemoteEntry>> listFiles(RemoteFolder folder);
 
     /**
      * Create a new folder.
@@ -131,7 +118,8 @@ public interface ApiService {
      * <a href="https://docs.pcloud.com/methods/folder/deletefolder.html">here</a></p> and <a href="https://docs.pcloud.com/methods/folder/deletefolderrecursive.html">here</a>.
      *
      * @param folderId    The id if the folder you would like to delete
-     * @param recursively If set to true, all child files will also be deleted.                    If set to false, the operation will fail on any non-empty folder
+     * @param recursively If set to {@code true} all child files will also be deleted.
+     *                    <p>If set to {@code false}, the operation will fail on any non-empty folder
      * @return {@link Call} resulting in true if the operation is successful, or false otherwise
      */
     Call<Boolean> deleteFolder(long folderId, boolean recursively);
@@ -150,8 +138,9 @@ public interface ApiService {
      * Delete a specified folder recursively.
      *
      * @param folder      The {@link RemoteFolder} you would like to delete. Must not be null.
-     * @param recursively the recursively
-     * @return the call
+     * @param recursively If set to {@code true} all child files will also be deleted.
+     *                    <p>If set to {@code false}, the operation will fail on any non-empty folder
+     * @return {@link Call} resulting in true if the operation is successful, or false otherwise
      * @throws IllegalArgumentException on a null {@code folder} argument.
      * @see #deleteFolder(long, boolean) #deleteFolder(long, boolean)
      */
@@ -562,8 +551,8 @@ public interface ApiService {
      * The call will copy the file or folder specified by the {@code file} argument to specified {@code toFolder}.
      * <p>
      * The behavior of the {@code overwriteFiles} parameter depends on the type of the {@code file} being passed.
-     * For files, see the description for {@link #copyFile(RemoteFile, RemoteFolder)},
-     * otherwise see {@link #copyFolder(RemoteFolder, RemoteFolder, boolean)}
+     * For files, see the description {@linkplain ApiService#copyFile(RemoteFile, RemoteFolder) here},
+     * otherwise see {@linkplain ApiService#copyFolder(RemoteFolder, RemoteFolder, boolean) here}.
      *
      * @param file           The {@link RemoteEntry} to be copied. Must not be null.
      * @param toFolder       The {@link RemoteFolder} where the file will be copied. Must not be null.
@@ -599,9 +588,9 @@ public interface ApiService {
      * <p>
      * The call will copy the file or folder specified by the {@code id} argument to the specified folder with{@code toFolderId}.
      * <p>
-     * The behavior of the {@code overwriteFiles} parameter depends on the type of the file specified by {@code id}.
-     * For files, see the description for {@link #copyFile(RemoteFile, RemoteFolder)},
-     * otherwise see {@link #copyFolder(RemoteFolder, RemoteFolder, boolean)}
+     * The behavior of the {@code overwriteFiles} parameter depends on the type of the {@code file} being passed.
+     * For files, see the description {@linkplain ApiService#copyFile(RemoteFile, RemoteFolder) here},
+     * otherwise see {@linkplain ApiService#copyFolder(RemoteFolder, RemoteFolder, boolean) here}.
      *
      * @param id             The id of the file or folder to be copied. Must not be null.
      * @param toFolderId     The {@link RemoteFolder} where the file will be copied. Must not be null.
@@ -649,7 +638,7 @@ public interface ApiService {
      * The call will delete the file or folder specified by the {@code file} argument to specified {@code toFolder}.
      *
      * @param file The {@link RemoteEntry} to be deleted. Must not be null.
-     * @return {@link Call} resulting in the metadata of the deleted file or folder.
+     * @return {@link Call} resulting in {@code true} if the file was deleted, {@code false} otherwise.
      * @throws IllegalArgumentException on a null {@code file} argument.
      * @see #deleteFile(RemoteFile)
      * @see #deleteFolder(RemoteFolder)
@@ -662,7 +651,7 @@ public interface ApiService {
      * The call will delete the file or folder specified by the {@code file} argument to specified {@code toFolder}.
      *
      * @param id The id of the file or folder to be deleted. Must not be null.
-     * @return {@link Call} resulting in the metadata of the deleted file or folder.
+     * @return {@link Call} resulting in {@code true} if the file was deleted, {@code false} otherwise.
      * @throws IllegalArgumentException on a null {@code file} argument.
      * @see #deleteFile(long)
      * @see #deleteFolder(long)

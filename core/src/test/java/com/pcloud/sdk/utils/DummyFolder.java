@@ -21,6 +21,7 @@ import com.pcloud.sdk.RemoteEntry;
 import com.pcloud.sdk.RemoteFile;
 import com.pcloud.sdk.RemoteFolder;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -81,6 +82,31 @@ public class DummyFolder implements RemoteFolder {
     }
 
     @Override
+    public RemoteEntry copy(RemoteFolder toFolder) throws IOException {
+        return null;
+    }
+
+    @Override
+    public RemoteEntry copy(RemoteFolder toFolder, boolean overwrite) throws IOException {
+        return null;
+    }
+
+    @Override
+    public RemoteEntry move(RemoteFolder toFolder) throws IOException {
+        return null;
+    }
+
+    @Override
+    public RemoteEntry rename(String newFilename) throws IOException {
+        return null;
+    }
+
+    @Override
+    public boolean delete() throws IOException {
+        return false;
+    }
+
+    @Override
     public long getFolderId() {
         return folderId;
     }
@@ -88,5 +114,20 @@ public class DummyFolder implements RemoteFolder {
     @Override
     public List<RemoteEntry> getChildren() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public RemoteFolder reload() throws IOException {
+        return null;
+    }
+
+    @Override
+    public RemoteFolder reload(boolean recursively) throws IOException {
+        return null;
+    }
+
+    @Override
+    public boolean delete(boolean recursively) throws IOException {
+        return false;
     }
 }

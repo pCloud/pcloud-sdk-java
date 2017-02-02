@@ -17,14 +17,16 @@
 
 package com.pcloud.sdk;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
  * An abstraction over a file entry for a folder on a pCloud account's filesystem.
  *
  * @see RemoteEntry
- * @see RemoteFolder
+ * @see RemoteFile
  */
+@SuppressWarnings("unused")
 public interface RemoteFolder extends RemoteEntry {
 
     /**
@@ -41,4 +43,37 @@ public interface RemoteFolder extends RemoteEntry {
      * @return the folder's children. Cannot be null.
      */
     List<RemoteEntry> getChildren();
+
+    /**
+     * Reload this folder.
+     * <p>
+     * Same as calling {@link #reload(boolean)} with {@code recursively} argument set to {@code false}.
+     *
+     * @return a new, updated {@link RemoteFolder} instance
+     * @throws IOException on a network or API error.
+     * @see ApiService#listFolder(long)
+     */
+    RemoteFolder reload() throws IOException;
+
+    /**
+     * Reload this folder.
+     *
+     * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
+     * @return a new, updated {@link RemoteFolder} instance
+     * @throws IOException on a network or API error.
+     * @see ApiService#listFolder(long, boolean)
+     */
+    RemoteFolder reload(boolean recursively) throws IOException;
+
+    /**
+     * Delete this folder.
+     *
+     * @param recursively If set to {@code true} all child files will also be deleted.
+     *                    <p>If set to {@code false}, the operation will fail on any non-empty folder
+     * @return {@code true} if the operation is successful, {@code false} otherwise
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IOException              on a network or API error.
+     * @see ApiService#deleteFolder(RemoteFolder, boolean)
+     */
+    boolean delete(boolean recursively) throws IOException;
 }

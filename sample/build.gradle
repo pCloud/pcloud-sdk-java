@@ -7,9 +7,10 @@ sourceCompatibility = 1.7
 
 repositories {
     mavenCentral()
+    maven { url "https://dl.bintray.com/pcloud/pcloud-sdk/" }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile project(':core')
+    compile 'com.pcloud.sdk:java-core:1.0.0'
 }

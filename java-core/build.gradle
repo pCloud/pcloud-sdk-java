@@ -1,9 +1,6 @@
 import groovy.text.SimpleTemplateEngine
 import groovy.io.FileType
 
-group 'com.pcloud.sdk'
-version '1.0-SNAPSHOT'
-
 apply plugin: 'java'
 
 sourceCompatibility = 1.7
@@ -67,7 +64,7 @@ compileJava.source generateSources.outputs.files, sourceSets.main.java
 
 ext {
     bintrayPackage = 'java-core'
-    artifact = 'java-core'
+    artifactId = 'java-core'
 }
 
 apply from: '../bintray.gradle'

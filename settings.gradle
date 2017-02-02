@@ -1,5 +1,5 @@
 include ':android'
 rootProject.name = 'main'
-include 'core'
+include 'java-core'
 include 'sample'
 

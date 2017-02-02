@@ -1,41 +1,43 @@
 apply plugin: 'com.github.dcendents.android-maven'
 apply from: rootProject.file('publishing.gradle')
 
-group = rootProject.ext.groupId
+group = project.getPublishProperty('groupId')
+
+def packagingType = project.hasProperty("android") ? 'aar' : 'jar'
 
 install {
     repositories.mavenInstaller {
         // This generates POM.xml with proper parameters
         pom {
+            //noinspection GroovyAssignabilityCheck
             project {
-                packaging 'aar'
-                groupId rootProject.ext.groupId
-                artifactId artifact
+                packaging packagingType
+                groupId getPublishProperty('groupId')
+                artifactId getPublishProperty('artifactId')
 
                 // Add your description here
-                name rootProject.ext.libraryName
-                description rootProject.ext.description
-                url rootProject.ext.siteUrl
+                name project.getPublishProperty('libraryName')
+                description project.getPublishProperty('description')
+                url project.getPublishProperty('siteUrl')
 
                 // Set your license
                 licenses {
                     license {
-                        name rootProject.ext.licenseName
-                        url rootProject.ext.licenseUrl
+                        name project.getPublishProperty('licenseName')
+                        url project.getPublishProperty('licenseUrl')
                     }
                 }
                 developers {
                     developer {
-                        id rootProject.ext.developerId
-                        name rootProject.ext.developerName
-                        email rootProject.ext.developerEmail
+                        id project.getPublishProperty('developerId')
+                        name project.getPublishProperty('developerName')
+                        email project.getPublishProperty('developerEmail')
                     }
                 }
                 scm {
-                    connection rootProject.ext.vcsUrl
-                    developerConnection rootProject.ext.vcsUrl
-                    url rootProject.ext.siteUrl
-
+                    connection project.getPublishProperty('vcsUrl')
+                    developerConnection project.getPublishProperty('vcsUrl')
+                    url project.getPublishProperty('siteUrl')
                 }
             }
         }

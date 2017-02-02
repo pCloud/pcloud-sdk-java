@@ -1,8 +1,6 @@
 import groovy.text.SimpleTemplateEngine
 import groovy.io.FileType
 
-import java.nio.charset.Charset
-
 group 'com.pcloud.sdk'
 version '1.0-SNAPSHOT'
 
@@ -66,3 +64,11 @@ task generateSources {
 }
 compileJava.dependsOn generateSources
 compileJava.source generateSources.outputs.files, sourceSets.main.java
+
+ext {
+    bintrayPackage = 'java-core'
+    artifact = 'java-core'
+}
+
+apply from: '../bintray.gradle'
+apply from: '../maven-pom.gradle'

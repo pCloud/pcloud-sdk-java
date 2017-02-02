@@ -1,0 +1,43 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply from: rootProject.file('publishing.gradle')
+
+group = rootProject.ext.groupId
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                groupId rootProject.ext.groupId
+                artifactId artifact
+
+                // Add your description here
+                name rootProject.ext.libraryName
+                description rootProject.ext.description
+                url rootProject.ext.siteUrl
+
+                // Set your license
+                licenses {
+                    license {
+                        name rootProject.ext.licenseName
+                        url rootProject.ext.licenseUrl
+                    }
+                }
+                developers {
+                    developer {
+                        id rootProject.ext.developerId
+                        name rootProject.ext.developerName
+                        email rootProject.ext.developerEmail
+                    }
+                }
+                scm {
+                    connection rootProject.ext.vcsUrl
+                    developerConnection rootProject.ext.vcsUrl
+                    url rootProject.ext.siteUrl
+
+                }
+            }
+        }
+    }
+}

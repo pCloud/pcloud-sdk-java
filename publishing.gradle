@@ -1,0 +1,30 @@
+ext {
+    isCi = "true".equals(System.getenv('CI'))
+
+    versionName = "1.0.0"
+    versionCode = 1;
+    libraryName = "pcloud-sdk"
+    groupId = "com.pcloud.sdk"
+    description = "The official pCloud Java SDK for integration with the pCloud API"
+    siteUrl = 'https://github.com/pCloud/pcloud-sdk-java'
+    vcsUrl = 'https://github.com/pCloud/pcloud-sdk-java'
+
+    developerId = 'android-pcloud'
+    developerName = 'pCloud AG'
+    developerEmail = 'android@pcloud.com'
+
+    licenseName = 'The Apache License v2.0'
+    licenseUrl = 'https://github.com/pCloud/pcloud-sdk-java/LICENSE'
+    allLicenses = ["Apache-2.0"]
+}
+
+ext.getPublishProperty = { String valueName ->
+    String value = null
+    if (project.ext.has(valueName)) {
+        value = project.ext.get(valueName)
+    } else if (rootProject.ext.has(valueName)) {
+        value = rootProject.ext.get(valueName)
+    }
+
+    return value
+}

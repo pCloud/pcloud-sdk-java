@@ -1,20 +1,19 @@
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.ApiService;
+import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.api.ApiServiceTest;
-import okhttp3.OkHttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class RealApiServiceTest extends ApiServiceTest<RealApiService> {
+public class RealApiClientTest extends ApiServiceTest<RealApiClient> {
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        testInstance(new RealApiService());
+        testInstance(new RealApiClient());
     }
 
     @Override
@@ -26,8 +25,8 @@ public class RealApiServiceTest extends ApiServiceTest<RealApiService> {
 
     @Test
     public void newBuilder_ReturnsBuilderWithSameConfiguration() throws Exception {
-        ApiService.Builder builder = testInstance().newBuilder();
-        RealApiService newService = (RealApiService) builder.create();
+        ApiClient.Builder builder = testInstance().newBuilder();
+        RealApiClient newService = (RealApiClient) builder.create();
 
         assertEquals(testInstance().callbackExecutor(), newService.callbackExecutor());
         assertEquals(testInstance().progressCallbackThreshold(), newService.progressCallbackThreshold());

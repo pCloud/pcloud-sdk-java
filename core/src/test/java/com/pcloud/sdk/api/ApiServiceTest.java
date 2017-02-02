@@ -12,7 +12,7 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
-public abstract class ApiServiceTest<T extends ApiService> {
+public abstract class ApiServiceTest<T extends ApiClient> {
 
     private RemoteFile file;
     private RemoteFolder folder;
@@ -324,9 +324,9 @@ public abstract class ApiServiceTest<T extends ApiService> {
 
     @Test
     public void newBuilder_ReturnsBuilderForSameType() throws Exception {
-        ApiService.Builder builder = testInstance().newBuilder();
-        ApiService newService = builder.create();
-        assertTrue("Returned builder created a different type of ApiService.", newService.getClass() == testInstance().getClass());
+        ApiClient.Builder builder = testInstance().newBuilder();
+        ApiClient newService = builder.create();
+        assertTrue("Returned builder created a different type of ApiClient.", newService.getClass() == testInstance().getClass());
     }
 
     @Test

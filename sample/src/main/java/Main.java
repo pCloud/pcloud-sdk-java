@@ -25,24 +25,24 @@ public class Main {
 
     public static void main(String... args) {
         String token = System.getenv("pcloud_token");
-        ApiService apiService = PCloudSdk.newApiServiceBuilder()
+        ApiClient apiClient = PCloudSdk.newClientBuilder()
                 .authenticator(Authenticators.newOAuthAuthenticator(token))
                 .create();
         try {
-            RemoteFolder folder = apiService.listFolder(RemoteFolder.ROOT_FOLDER_ID, true).execute();
+            RemoteFolder folder = apiClient.listFolder(RemoteFolder.ROOT_FOLDER_ID, true).execute();
             printFolder(folder);
 
-            RemoteFile newFile = uploadData(apiService);
+            RemoteFile newFile = uploadData(apiClient);
             printFileAttributes(newFile);
 
-            FileLink downloadLink = apiService.createFileLink(newFile, DownloadOptions.DEFAULT).execute();
+            FileLink downloadLink = apiClient.createFileLink(newFile, DownloadOptions.DEFAULT).execute();
             System.out.print(downloadLink.bestUrl());
 
-            RemoteFile bigFile = uploadFile(apiService, new File("some file path"));
+            RemoteFile bigFile = uploadFile(apiClient, new File("some file path"));
             System.out.println(bigFile.createFileLink());
             downloadFile(bigFile, new File("some directory path"));
 
-            UserInfo userInfo = apiService.getUserInfo().execute();
+            UserInfo userInfo = apiClient.getUserInfo().execute();
             System.out.format(" User email: %s | Total quota %s | Used quota %s " , userInfo.email(), userInfo.totalQuota(), userInfo.usedQuota());
 
 
@@ -61,15 +61,15 @@ public class Main {
         System.out.format("%s | Created:%s | Modified: %s | size:%s\n", entry.name(), entry.created(), entry.lastModified(), entry.isFile() ? String.valueOf(entry.asFile().size()) : "-");
     }
 
-    private static RemoteFile uploadData(ApiService apiService) throws IOException, ApiError {
+    private static RemoteFile uploadData(ApiClient apiClient) throws IOException, ApiError {
         String someName = UUID.randomUUID().toString();
         byte[] fileContents = someName.getBytes();
-        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents)).execute();
+        return apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents)).execute();
     }
 
-    private static RemoteFile uploadFile(ApiService apiService, File file) throws IOException, ApiError {
+    private static RemoteFile uploadFile(ApiClient apiClient, File file) throws IOException, ApiError {
 
-        return apiService.createFile(RemoteFolder.ROOT_FOLDER_ID, file.getName(), DataSource.create(file), new Date(file.lastModified()), new ProgressListener() {
+        return apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, file.getName(), DataSource.create(file), new Date(file.lastModified()), new ProgressListener() {
             public void onProgress(long done, long total) {
                 System.out.format("\rUploading... %.1f\n", ((double) done / (double) total) * 100d);
             }

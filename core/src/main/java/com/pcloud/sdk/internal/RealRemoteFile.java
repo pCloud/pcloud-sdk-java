@@ -43,8 +43,8 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     @SerializedName("hash")
     private String hash;
 
-    RealRemoteFile(ApiService apiService) {
-        super(apiService);
+    RealRemoteFile(ApiClient apiClient) {
+        super(apiClient);
     }
 
     @Override
@@ -69,7 +69,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
 
     @Override
     public FileLink createFileLink(DownloadOptions options) throws IOException, ApiError {
-        return ownerService().createFileLink(fileId, options).execute();
+        return ownerClient().createFileLink(fileId, options).execute();
     }
 
     @Override
@@ -94,7 +94,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     @Override
     public RemoteFile copy(RemoteFolder toFolder, boolean overwrite) throws IOException {
         try {
-            return ownerService().copyFile(this, toFolder, overwrite).execute();
+            return ownerClient().copyFile(this, toFolder, overwrite).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
@@ -103,7 +103,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     @Override
     public RemoteFile move(RemoteFolder toFolder) throws IOException {
         try {
-            return ownerService().moveFile(this, toFolder).execute();
+            return ownerClient().moveFile(this, toFolder).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
@@ -112,7 +112,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     @Override
     public RemoteFile rename(String newFilename) throws IOException {
         try {
-            return ownerService().renameFile(this, newFilename).execute();
+            return ownerClient().renameFile(this, newFilename).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
@@ -126,7 +126,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     @Override
     public BufferedSource source() throws IOException {
         boolean success = false;
-        Call<BufferedSource> call = ownerService().download(this);
+        Call<BufferedSource> call = ownerClient().download(this);
         try {
             BufferedSource source = call.execute();
             success = true;
@@ -148,7 +148,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
                 .contentType(contentType())
                 .build();
         try {
-            ownerService().createFileLink(this, options).execute().download(sink, listener);
+            ownerClient().createFileLink(this, options).execute().download(sink, listener);
         } catch (ApiError apiError) {
             throw new IOException("API error occurred while trying to download file.", apiError);
         }
@@ -161,15 +161,15 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
 
     static class InstanceCreator implements com.google.gson.InstanceCreator<RealRemoteFile> {
 
-        private ApiService apiService;
+        private ApiClient apiClient;
 
-        InstanceCreator(ApiService apiService) {
-            this.apiService = apiService;
+        InstanceCreator(ApiClient apiClient) {
+            this.apiClient = apiClient;
         }
 
         @Override
         public RealRemoteFile createInstance(Type type) {
-            return new RealRemoteFile(apiService);
+            return new RealRemoteFile(apiClient);
         }
     }
 }

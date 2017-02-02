@@ -16,7 +16,7 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.ApiService;
+import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.Authenticator;
 
 public final class Internal {
@@ -25,7 +25,7 @@ public final class Internal {
         // Instances are not allowed.
     }
 
-    public static ApiService.Builder newBuilder(){
+    public static ApiClient.Builder newBuilder(){
         return new RealApiServiceBuilder();
     }
 

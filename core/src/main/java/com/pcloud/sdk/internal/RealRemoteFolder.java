@@ -34,8 +34,8 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     @SerializedName("contents")
     private List<RemoteEntry> children;
 
-    RealRemoteFolder(ApiService apiService) {
-        super(apiService);
+    RealRemoteFolder(ApiClient apiClient) {
+        super(apiClient);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     @Override
     public RemoteFolder reload(boolean recursively) throws IOException {
         try {
-            return ownerService().listFolder(folderId(), recursively).execute();
+            return ownerClient().listFolder(folderId(), recursively).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
@@ -65,7 +65,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     @Override
     public boolean delete(boolean recursively) throws IOException {
         try {
-            return ownerService().deleteFolder(this, recursively).execute();
+            return ownerClient().deleteFolder(this, recursively).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
@@ -79,7 +79,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     @Override
     public RemoteFolder copy(RemoteFolder toFolder) throws IOException {
         try {
-            return ownerService().copyFolder(this, toFolder).execute();
+            return ownerClient().copyFolder(this, toFolder).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
@@ -88,7 +88,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     @Override
     public RemoteFolder copy(RemoteFolder toFolder, boolean overwrite) throws IOException {
         try {
-            return ownerService().copyFolder(this, toFolder, overwrite).execute();
+            return ownerClient().copyFolder(this, toFolder, overwrite).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
@@ -97,7 +97,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     @Override
     public RemoteFolder move(RemoteFolder toFolder) throws IOException {
         try {
-            return ownerService().moveFolder(this, toFolder).execute();
+            return ownerClient().moveFolder(this, toFolder).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
@@ -106,7 +106,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     @Override
     public RemoteFolder rename(String newFilename) throws IOException {
         try {
-            return ownerService().renameFolder(this, newFilename).execute();
+            return ownerClient().renameFolder(this, newFilename).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
@@ -114,15 +114,15 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
 
     static class InstanceCreator implements com.google.gson.InstanceCreator<RealRemoteFolder> {
 
-        private ApiService apiService;
+        private ApiClient apiClient;
 
-        InstanceCreator(ApiService apiService) {
-            this.apiService = apiService;
+        InstanceCreator(ApiClient apiClient) {
+            this.apiClient = apiClient;
         }
 
         @Override
         public RealRemoteFolder createInstance(Type type) {
-            return new RealRemoteFolder(apiService);
+            return new RealRemoteFolder(apiClient);
         }
     }
 }

@@ -28,12 +28,12 @@ import java.util.List;
 
 class RealFileLink implements FileLink {
 
-    private ApiService apiService;
+    private ApiClient apiClient;
     private Date expirationDate;
     private List<URL> links;
 
-    RealFileLink(ApiService apiService, Date expirationDate, List<URL> links) {
-        this.apiService = apiService;
+    RealFileLink(ApiClient apiClient, Date expirationDate, List<URL> links) {
+        this.apiClient = apiClient;
         this.expirationDate = expirationDate;
         this.links = Collections.unmodifiableList(links);
     }
@@ -58,7 +58,7 @@ class RealFileLink implements FileLink {
     @Override
     public BufferedSource source() throws IOException {
         boolean success = false;
-        Call<BufferedSource> call = apiService.download(this);
+        Call<BufferedSource> call = apiClient.download(this);
         try {
             BufferedSource source = call.execute();
             success = true;
@@ -75,7 +75,7 @@ class RealFileLink implements FileLink {
     @Override
     public void download(DataSink sink, ProgressListener listener) throws IOException {
         try {
-            apiService.download(this, sink, listener).execute();
+            apiClient.download(this, sink, listener).execute();
         } catch (ApiError apiError) {
             throw new IOException("API error occurred while trying to download link.", apiError);
         }

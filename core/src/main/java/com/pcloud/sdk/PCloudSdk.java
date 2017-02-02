@@ -34,9 +34,9 @@ public final class PCloudSdk {
     }
 
     /**
-     * @return a new {@link com.pcloud.sdk.ApiService.Builder} instance.
+     * @return a new {@link ApiClient.Builder} instance.
      */
-    public static ApiService.Builder newApiServiceBuilder(){
+    public static ApiClient.Builder newClientBuilder(){
         return Internal.newBuilder();
     }
 }

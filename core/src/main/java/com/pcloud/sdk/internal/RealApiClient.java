@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 import static com.pcloud.sdk.internal.FileIdUtils.*;
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
-class RealApiService implements ApiService {
+class RealApiClient implements ApiClient {
 
     private long progressCallbackThresholdBytes;
     private Authenticator authenticator;
@@ -59,11 +59,11 @@ class RealApiService implements ApiService {
 
     private static final HttpUrl API_BASE_URL = HttpUrl.parse("https://api.pcloud.com");
 
-    RealApiService() {
+    RealApiClient() {
         this(new RealApiServiceBuilder());
     }
 
-    RealApiService(RealApiServiceBuilder builder) {
+    RealApiClient(RealApiServiceBuilder builder) {
         Map<String, String> globalParams = new TreeMap<>();
         globalParams.put("timeformat", String.valueOf("timestamp"));
         String userAgent = String.format(Locale.US, "pCloud SDK Java %s", Version.NAME);
@@ -271,7 +271,7 @@ class RealApiService implements ApiService {
             downloadUrls.add(new URL("https", host, body.getPath()));
         }
 
-        return new RealFileLink(RealApiService.this, body.getExpires(), downloadUrls);
+        return new RealFileLink(RealApiClient.this, body.getExpires(), downloadUrls);
     }
 
     private Request newDownloadLinkRequest(long fileId, DownloadOptions options) {

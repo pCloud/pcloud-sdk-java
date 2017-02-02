@@ -31,12 +31,12 @@ import java.util.concurrent.TimeUnit;
  * The general interface that exposes pCloud API's methods.
  * <p>
  * The class is a factory for {@linkplain Call} objects which can be used to execute certain operations on a pCloud account.
- * <h3> The ApiService is designed with reuse in mind, it's best used when created once and shared among code using it,
+ * <h3> The ApiClient is designed with reuse in mind, it's best used when created once and shared among code using it,
  * mainly due to used connection and thread pooling.</h3>
  * <ul>
  * <li>Users should configure and create instances through the {@link Builder} interface.</li>
- * <li>Builder instances can be created via the {@link PCloudSdk#newApiServiceBuilder()} method
- * or from an existing {@linkplain ApiService} instance through the {@linkplain #newBuilder()} method.</li>
+ * <li>Builder instances can be created via the {@link PCloudSdk#newClientBuilder()} method
+ * or from an existing {@linkplain ApiClient} instance through the {@linkplain #newBuilder()} method.</li>
  * <li>Shared instance's configuration can be changed by using the {@linkplain #newBuilder()} method that will return
  * a pre-configured builder.</li>
  * <li>There is no explicit need to call {@linkplain #shutdown()}, any idle threads and connections will automatically get closed once not used anymore.</li>
@@ -45,11 +45,11 @@ import java.util.concurrent.TimeUnit;
  * <li>All calls resulting in a collection of objects, return unmodifiable {@link java.util.Collection}-derived objects.</li>
  * </ul>
  * <h3>
- * Bear in mind that shutting down a {@link ApiService} instance will also affect all instances sharing the underlying resources.
+ * Bear in mind that shutting down a {@link ApiClient} instance will also affect all instances sharing the underlying resources.
  * </h3>
  */
 @SuppressWarnings("unused")
-public interface ApiService {
+public interface ApiClient {
 
     /**
      * Load a specified folder.
@@ -550,8 +550,8 @@ public interface ApiService {
      * The call will copy the file or folder specified by the {@code file} argument to specified {@code toFolder}.
      * <p>
      * The behavior of the {@code overwriteFiles} parameter depends on the type of the {@code file} being passed.
-     * For files, see the description {@linkplain ApiService#copyFile(RemoteFile, RemoteFolder) here},
-     * otherwise see {@linkplain ApiService#copyFolder(RemoteFolder, RemoteFolder, boolean) here}.
+     * For files, see the description {@linkplain ApiClient#copyFile(RemoteFile, RemoteFolder) here},
+     * otherwise see {@linkplain ApiClient#copyFolder(RemoteFolder, RemoteFolder, boolean) here}.
      *
      * @param file           The {@link RemoteEntry} to be copied. Must not be null.
      * @param toFolder       The {@link RemoteFolder} where the file will be copied. Must not be null.
@@ -588,8 +588,8 @@ public interface ApiService {
      * The call will copy the file or folder specified by the {@code id} argument to the specified folder with{@code toFolderId}.
      * <p>
      * The behavior of the {@code overwriteFiles} parameter depends on the type of the {@code file} being passed.
-     * For files, see the description {@linkplain ApiService#copyFile(RemoteFile, RemoteFolder) here},
-     * otherwise see {@linkplain ApiService#copyFolder(RemoteFolder, RemoteFolder, boolean) here}.
+     * For files, see the description {@linkplain ApiClient#copyFile(RemoteFile, RemoteFolder) here},
+     * otherwise see {@linkplain ApiClient#copyFolder(RemoteFolder, RemoteFolder, boolean) here}.
      *
      * @param id             The id of the file or folder to be copied. Must not be null.
      * @param toFolderId     The {@link RemoteFolder} where the file will be copied. Must not be null.
@@ -754,7 +754,7 @@ public interface ApiService {
      * The call will return the user details of the current account that has granted access to the current SDK application.
      * <p>
      * See the OAuth <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html">documentation page</a> or
-     * the notes {@linkplain ApiService here} on how permissions to access accounts are granted.
+     * the notes {@linkplain ApiClient here} on how permissions to access accounts are granted.
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/general/userinfo.html">documentation page</a>.
      *
@@ -763,7 +763,7 @@ public interface ApiService {
     Call<UserInfo> getUserInfo();
 
     /**
-     * Create a new shared {@link ApiService} instance.
+     * Create a new shared {@link ApiClient} instance.
      *
      * @return a {@link Builder} sharing the same configuration as this instance.
      */
@@ -835,11 +835,11 @@ public interface ApiService {
     void shutdown();
 
     /**
-     * A builder for configuring an creating new {@link ApiService} instances.
+     * A builder for configuring an creating new {@link ApiClient} instances.
      *
-     * @see ApiService
-     * @see ApiService#newBuilder()
-     * @see PCloudSdk#newApiServiceBuilder()
+     * @see ApiClient
+     * @see ApiClient#newBuilder()
+     * @see PCloudSdk#newClientBuilder()
      */
     @SuppressWarnings("unused")
     interface Builder {
@@ -935,18 +935,18 @@ public interface ApiService {
          *              notifying about a transfer progress
          * @return the same {@link Builder} instance
          * @see ProgressListener
-         * @see ApiService#createFile(long, String, DataSource, Date, ProgressListener)
-         * @see ApiService#download(FileLink, DataSink, ProgressListener)
+         * @see ApiClient#createFile(long, String, DataSource, Date, ProgressListener)
+         * @see ApiClient#download(FileLink, DataSink, ProgressListener)
          * @see RemoteData#download(DataSink, ProgressListener)
          */
         Builder progressCallbackThreshold(long bytes);
 
         /**
-         * Create a new {@link ApiService} from the provided configuration.
+         * Create a new {@link ApiClient} from the provided configuration.
          *
-         * @return a new non-null {@link ApiService} object
-         * @see ApiService
+         * @return a new non-null {@link ApiClient} object
+         * @see ApiClient
          */
-        ApiService create();
+        ApiClient create();
     }
 }

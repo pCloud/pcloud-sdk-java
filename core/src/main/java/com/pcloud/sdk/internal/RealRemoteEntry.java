@@ -28,7 +28,7 @@ import java.util.Date;
 
 abstract class RealRemoteEntry implements RemoteEntry {
 
-    private ApiService apiService;
+    private ApiClient apiClient;
 
     @Expose
     @SerializedName("id")
@@ -54,8 +54,8 @@ abstract class RealRemoteEntry implements RemoteEntry {
     @SerializedName("isfolder")
     private boolean isFolder;
 
-    protected RealRemoteEntry(ApiService apiService) {
-        this.apiService = apiService;
+    protected RealRemoteEntry(ApiClient apiClient) {
+        this.apiClient = apiClient;
     }
 
     @Override
@@ -106,14 +106,14 @@ abstract class RealRemoteEntry implements RemoteEntry {
     @Override
     public boolean delete() throws IOException {
         try {
-            return apiService.delete(this).execute();
+            return apiClient.delete(this).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
     }
 
-    protected ApiService ownerService(){
-        return apiService;
+    protected ApiClient ownerClient(){
+        return apiClient;
     }
 
     static class TypeAdapterFactory implements com.google.gson.TypeAdapterFactory {

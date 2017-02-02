@@ -51,7 +51,7 @@ public interface RemoteFolder extends RemoteEntry {
      *
      * @return a new, updated {@link RemoteFolder} instance
      * @throws IOException on a network or API error.
-     * @see ApiService#listFolder(long)
+     * @see ApiClient#listFolder(long)
      */
     RemoteFolder reload() throws IOException;
 
@@ -61,7 +61,7 @@ public interface RemoteFolder extends RemoteEntry {
      * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
      * @return a new, updated {@link RemoteFolder} instance
      * @throws IOException on a network or API error.
-     * @see ApiService#listFolder(long, boolean)
+     * @see ApiClient#listFolder(long, boolean)
      */
     RemoteFolder reload(boolean recursively) throws IOException;
 
@@ -73,7 +73,7 @@ public interface RemoteFolder extends RemoteEntry {
      * @return {@code true} if the operation is successful, {@code false} otherwise
      * @throws IllegalArgumentException on a null {@code file} argument.
      * @throws IOException              on a network or API error.
-     * @see ApiService#deleteFolder(RemoteFolder, boolean)
+     * @see ApiClient#deleteFolder(RemoteFolder, boolean)
      */
     boolean delete(boolean recursively) throws IOException;
 }

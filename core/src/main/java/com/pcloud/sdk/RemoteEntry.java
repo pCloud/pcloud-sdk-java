@@ -90,7 +90,7 @@ public interface RemoteEntry {
      * @return the copied file.
      * @throws IllegalArgumentException on a null {@code toFolder} argument.
      * @throws IOException              on a network or API error.
-     * @see ApiService#copy(RemoteEntry, RemoteFolder)
+     * @see ApiClient#copy(RemoteEntry, RemoteFolder)
      */
     RemoteEntry copy(RemoteFolder toFolder) throws IOException;
 
@@ -98,15 +98,15 @@ public interface RemoteEntry {
      * Copy this file to a specified folder.
      * <p>
      * The behavior of the {@code overwriteFiles} parameter depends on the type of the {@code file} being passed.
-     * For files, see the description {@linkplain ApiService#copyFile(RemoteFile, RemoteFolder) here},
-     * otherwise see {@linkplain ApiService#copyFolder(RemoteFolder, RemoteFolder, boolean) here}.
+     * For files, see the description {@linkplain ApiClient#copyFile(RemoteFile, RemoteFolder) here},
+     * otherwise see {@linkplain ApiClient#copyFolder(RemoteFolder, RemoteFolder, boolean) here}.
      *
      * @param toFolder  The {@link RemoteFolder} where the file will be copied. Must not be null.
      * @param overwrite If set to {@code true}, a file with the same name in the destination folder will be overwritten
      * @return the copied file.
      * @throws IllegalArgumentException on a null {@code toFolder} argument.
      * @throws IOException              on a network or API error.
-     * @see ApiService#copy(RemoteEntry, RemoteFolder, boolean)
+     * @see ApiClient#copy(RemoteEntry, RemoteFolder, boolean)
      */
     RemoteEntry copy(RemoteFolder toFolder, boolean overwrite) throws IOException;
 
@@ -117,7 +117,7 @@ public interface RemoteEntry {
      * @return the copied file.
      * @throws IllegalArgumentException on a null {@code toFolder} argument.
      * @throws IOException              on a network or API error.
-     * @see ApiService#move(RemoteEntry, RemoteFolder)
+     * @see ApiClient#move(RemoteEntry, RemoteFolder)
      */
     RemoteEntry move(RemoteFolder toFolder) throws IOException;
 
@@ -128,7 +128,7 @@ public interface RemoteEntry {
      * @return the renamed file.
      * @throws IllegalArgumentException on a null {@code newFilename} argument.
      * @throws IOException              on a network or API error.
-     * @see ApiService#rename(RemoteEntry, String)
+     * @see ApiClient#rename(RemoteEntry, String)
      */
     RemoteEntry rename(String newFilename) throws IOException;
 
@@ -138,7 +138,7 @@ public interface RemoteEntry {
      * @return {@code true} if deleted, {@code false} otherwise.
      * @throws IllegalArgumentException on a null {@code file} argument.
      * @throws IOException              on a network or API error.
-     * @see ApiService#delete(RemoteEntry)
+     * @see ApiClient#delete(RemoteEntry)
      */
     boolean delete() throws IOException;
 }

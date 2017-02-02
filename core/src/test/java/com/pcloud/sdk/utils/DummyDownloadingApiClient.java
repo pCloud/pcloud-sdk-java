@@ -27,17 +27,16 @@ import okio.Okio;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.Executor;
 
-public class DummyDownloadingApiService implements ApiService {
+public class DummyDownloadingApiClient implements ApiClient {
 
-    public static ApiService create(byte[] data){
-        return new DummyDownloadingApiService(data);
+    public static ApiClient create(byte[] data){
+        return new DummyDownloadingApiClient(data);
     }
 
-    public static ApiService create(){
-        return new DummyDownloadingApiService(new byte[0]);
+    public static ApiClient create(){
+        return new DummyDownloadingApiClient(new byte[0]);
     }
 
     private static BufferedSource createSource(byte[] data) {
@@ -46,7 +45,7 @@ public class DummyDownloadingApiService implements ApiService {
 
     private byte[] data;
 
-    private DummyDownloadingApiService(byte[] data) {
+    private DummyDownloadingApiClient(byte[] data) {
         this.data = data;
     }
 
@@ -349,7 +348,7 @@ public class DummyDownloadingApiService implements ApiService {
         @Override
         public void download(DataSink sink, ProgressListener listener) throws IOException {
             try {
-                DummyDownloadingApiService.this.download(this, sink, listener).execute();
+                DummyDownloadingApiClient.this.download(this, sink, listener).execute();
             } catch (ApiError apiError) {
                 throw new IOException(apiError);
             }

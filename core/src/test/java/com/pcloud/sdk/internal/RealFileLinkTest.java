@@ -17,9 +17,9 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.ApiService;
+import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.api.*;
-import com.pcloud.sdk.utils.DummyDownloadingApiService;
+import com.pcloud.sdk.utils.DummyDownloadingApiClient;
 import org.junit.After;
 import org.junit.Before;
 
@@ -29,11 +29,11 @@ import java.util.Date;
 
 public class RealFileLinkTest extends BaseFileLinkTest {
 
-    private ApiService service;
+    private ApiClient service;
 
     @Before
     public void setUp() throws Exception {
-        service = DummyDownloadingApiService.create();
+        service = DummyDownloadingApiClient.create();
         testInstance(new RealFileLink(service, new Date(), Collections.singletonList(new URL("http://www.pcloud.com"))));
     }
 

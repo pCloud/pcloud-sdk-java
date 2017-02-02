@@ -17,9 +17,9 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.ApiService;
+import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.api.BaseRemoteDataTest;
-import com.pcloud.sdk.utils.DummyDownloadingApiService;
+import com.pcloud.sdk.utils.DummyDownloadingApiClient;
 import org.junit.Before;
 
 import static org.mockito.Mockito.*;
@@ -27,12 +27,12 @@ import static org.mockito.Mockito.*;
 public class RealRemoteFileTest extends BaseRemoteDataTest {
 
     private RealRemoteFile testInstance;
-    private ApiService apiService;
+    private ApiClient apiClient;
 
     @Before
     public void setUp() throws Exception {
-        apiService = spy(DummyDownloadingApiService.create());
-        testInstance = new RealRemoteFile(apiService);
+        apiClient = spy(DummyDownloadingApiClient.create());
+        testInstance = new RealRemoteFile(apiClient);
         testInstance(testInstance);
     }
 }

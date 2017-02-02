@@ -22,9 +22,13 @@ import com.pcloud.sdk.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
+
+    private static final List<RemoteEntry> UNKNOWN_CHILDREN = Collections.unmodifiableList(new ArrayList<RemoteEntry>(0));
 
     @Expose
     @SerializedName("folderid")
@@ -32,7 +36,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
 
     @Expose
     @SerializedName("contents")
-    private List<RemoteEntry> children;
+    private List<RemoteEntry> children = UNKNOWN_CHILDREN;
 
     RealRemoteFolder(ApiClient apiClient) {
         super(apiClient);

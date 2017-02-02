@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 class RealFileLink implements FileLink {
 
@@ -87,7 +88,26 @@ class RealFileLink implements FileLink {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RealFileLink that = (RealFileLink) o;
+
+        if (!expirationDate.equals(that.expirationDate)) return false;
+        return links.equals(that.links);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = expirationDate.hashCode();
+        result = 31 * result + links.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return bestUrl().toString();
+        return String.format(Locale.US, "%s | Valid until:%s", bestUrl(), expirationDate);
     }
 }

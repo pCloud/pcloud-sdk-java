@@ -25,6 +25,7 @@ import com.pcloud.sdk.*;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.Locale;
 
 abstract class RealRemoteEntry implements RemoteEntry {
 
@@ -54,7 +55,7 @@ abstract class RealRemoteEntry implements RemoteEntry {
     @SerializedName("isfolder")
     private boolean isFolder;
 
-    protected RealRemoteEntry(ApiClient apiClient) {
+    RealRemoteEntry(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -114,6 +115,33 @@ abstract class RealRemoteEntry implements RemoteEntry {
 
     protected ApiClient ownerClient(){
         return apiClient;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RealRemoteEntry that = (RealRemoteEntry) o;
+
+        if (parentFolderId != that.parentFolderId) return false;
+        if (isFolder != that.isFolder) return false;
+        if (!id.equals(that.id)) return false;
+        if (!name.equals(that.name)) return false;
+        if (!lastModified.equals(that.lastModified)) return false;
+        return created.equals(that.created);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + (int) (parentFolderId ^ (parentFolderId >>> 32));
+        result = 31 * result + name.hashCode();
+        result = 31 * result + lastModified.hashCode();
+        result = 31 * result + created.hashCode();
+        result = 31 * result + (isFolder ? 1 : 0);
+        return result;
     }
 
     static class TypeAdapterFactory implements com.google.gson.TypeAdapterFactory {

@@ -25,6 +25,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
 
@@ -114,6 +115,32 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        RealRemoteFolder that = (RealRemoteFolder) o;
+
+        if (!folderId.equals(that.folderId)) return false;
+        return children.equals(that.children);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + folderId.hashCode();
+        result = 31 * result + children.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.US, "%s | ID:%s | Created:%s | Modified: %s | Child count:%s", name(), id(), created(), lastModified(), children == UNKNOWN_CHILDREN ? "?" : children().size());
     }
 
     static class InstanceCreator implements com.google.gson.InstanceCreator<RealRemoteFolder> {

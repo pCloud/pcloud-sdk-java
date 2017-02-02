@@ -24,6 +24,7 @@ import okio.BufferedSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.Locale;
 
 class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
 
@@ -157,6 +158,36 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     @Override
     public void download(DataSink sink) throws IOException {
         download(sink, null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        RealRemoteFile that = (RealRemoteFile) o;
+
+        if (fileId != that.fileId) return false;
+        if (size != that.size) return false;
+        if (!contentType.equals(that.contentType)) return false;
+        return hash.equals(that.hash);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (int) (fileId ^ (fileId >>> 32));
+        result = 31 * result + contentType.hashCode();
+        result = 31 * result + (int) (size ^ (size >>> 32));
+        result = 31 * result + hash.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.US, "%s | ID:%s | Created:%s | Modified: %s | Size:%s", name(), id(), created(), lastModified(), size());
     }
 
     static class InstanceCreator implements com.google.gson.InstanceCreator<RealRemoteFile> {

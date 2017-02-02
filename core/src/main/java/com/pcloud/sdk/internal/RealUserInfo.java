@@ -18,7 +18,7 @@ package com.pcloud.sdk.internal;
 
 import com.pcloud.sdk.UserInfo;
 
- class RealUserInfo implements UserInfo {
+class RealUserInfo implements UserInfo {
     private long userId;
 
     private String email;
@@ -28,6 +28,14 @@ import com.pcloud.sdk.UserInfo;
     private long totalQuota;
 
     private long usedQuota;
+
+    RealUserInfo(long userId, String email, boolean isEmailVerified, long totalQuota, long usedQuota) {
+        this.userId = userId;
+        this.email = email;
+        this.isEmailVerified = isEmailVerified;
+        this.totalQuota = totalQuota;
+        this.usedQuota = usedQuota;
+    }
 
     @Override
     public long userId() {
@@ -54,11 +62,28 @@ import com.pcloud.sdk.UserInfo;
         return usedQuota;
     }
 
-    RealUserInfo(long userId, String email, boolean isEmailVerified, long totalQuota, long usedQuota) {
-        this.userId = userId;
-        this.email = email;
-        this.isEmailVerified = isEmailVerified;
-        this.totalQuota = totalQuota;
-        this.usedQuota = usedQuota;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RealUserInfo that = (RealUserInfo) o;
+
+        if (userId != that.userId) return false;
+        if (isEmailVerified != that.isEmailVerified) return false;
+        if (totalQuota != that.totalQuota) return false;
+        if (usedQuota != that.usedQuota) return false;
+        return email.equals(that.email);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (userId ^ (userId >>> 32));
+        result = 31 * result + email.hashCode();
+        result = 31 * result + (isEmailVerified ? 1 : 0);
+        result = 31 * result + (int) (totalQuota ^ (totalQuota >>> 32));
+        result = 31 * result + (int) (usedQuota ^ (usedQuota >>> 32));
+        return result;
     }
 }

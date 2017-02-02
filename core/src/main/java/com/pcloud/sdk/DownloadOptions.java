@@ -98,6 +98,27 @@ public final class DownloadOptions {
         return forceDownload;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DownloadOptions that = (DownloadOptions) o;
+
+        if (skipFilename != that.skipFilename) return false;
+        if (forceDownload != that.forceDownload) return false;
+        return contentType != null ? contentType.equals(that.contentType) : that.contentType == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (skipFilename ? 1 : 0);
+        result = 31 * result + (forceDownload ? 1 : 0);
+        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
+        return result;
+    }
+
     /**
      * Creates {@link Builder} from {@link DownloadOptions}.
      * <p>

@@ -32,25 +32,19 @@ import java.util.concurrent.TimeUnit;
  * The general interface that exposes pCloud API's methods.
  * <p>
  * The class is a factory for {@linkplain Call} objects which can be used to execute certain operations on a pCloud account.
- * <h3>
- * The ApiService is designed with reuse in mind, it's best used when created once and shared among code using it,
+ * <h3> The ApiService is designed with reuse in mind, it's best used when created once and shared among code using it,
  * mainly due to used connection and thread pooling.</h3>
- * <li>
- * Users should configure and create instances through the {@link Builder} interface.
- * <li>
- * Builder instances can be created via the {@link PCloudSdk#newApiServiceBuilder()} method
- * or from an existing {@linkplain ApiService} instance through the {@linkplain #newBuilder()} method.
- * <li>
- * Shared instance's configuration can be changed by using the {@linkplain #newBuilder()} method that will return
- * a pre-configured builder.
- * <li>
- * There is no explicit need to call {@linkplain #shutdown()}, any idle threads and connections will automatically get closed once not used anymore.
- * <li>
- * All methods return non-null {@link Call} instances.
- * <li>
- * All methods are thread-safe.
- * <li>
- * All calls resulting in a collection of objects, return unmodifiable {@link java.util.Collection}-derived objects.</li>
+ * <ul>
+ * <li>Users should configure and create instances through the {@link Builder} interface.</li>
+ * <li>Builder instances can be created via the {@link PCloudSdk#newApiServiceBuilder()} method
+ * or from an existing {@linkplain ApiService} instance through the {@linkplain #newBuilder()} method.</li>
+ * <li>Shared instance's configuration can be changed by using the {@linkplain #newBuilder()} method that will return
+ * a pre-configured builder.</li>
+ * <li>There is no explicit need to call {@linkplain #shutdown()}, any idle threads and connections will automatically get closed once not used anymore.</li>
+ * <li>All methods return non-null {@link Call} instances.</li>
+ * <li>All methods are thread-safe.</li>
+ * <li>All calls resulting in a collection of objects, return unmodifiable {@link java.util.Collection}-derived objects.</li>
+ * </ul>
  * <h3>
  * Bear in mind that shutting down a {@link ApiService} instance will also affect all instances sharing the underlying resources.
  * </h3>
@@ -168,7 +162,7 @@ public interface ApiService {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html">documentation page</a>.
      * <p>
-     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules & restrictions.
+     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules &amp; restrictions.
      *
      * @param folderId      The id of the folder you would like to rename
      * @param newFolderName The new folder name
@@ -182,7 +176,7 @@ public interface ApiService {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html">documentation page</a>.
      * <p>
-     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules & restrictions.
+     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules &amp; restrictions.
      *
      * @param folder        The {@link RemoteFolder} you would like to rename. Must not be null.
      * @param newFolderName The new folder name. Must not be null.
@@ -285,7 +279,7 @@ public interface ApiService {
      * @param folder       The {@link RemoteFolder} where you would like to create the file. Must not be null.
      * @param filename     The file name. Must not be null.
      * @param data         {@link DataSource} object providing the file content. Must not be null.
-     * @param modifiedDate The last modification date to be used. If set to null, the upload date will be used instead.
+     * @param modifiedDate The last modification date to be used. If set to {@code null}, the upload date will be used instead.
      * @param listener     The listener to be used to notify about upload progress. If null, no progress will be reported.
      * @return {@link Call} resulting in the new file's metadata
      * @throws IllegalArgumentException on a null {@code folder} argument.
@@ -330,7 +324,7 @@ public interface ApiService {
      * @param folderId     The id of the folder you would like to create the file.
      * @param filename     The file name. Must not be null.
      * @param data         {@link DataSource} object providing the file content. Must not be null.
-     * @param modifiedDate The last modification date to be used. If set to null, the upload date will be used instead.
+     * @param modifiedDate The last modification date to be used. If set to {@code null}, the upload date will be used instead.
      * @param listener     The listener to be used to notify about upload progress. If null, no progress will be reported.
      * @return {@link Call} resulting in the new file's metadata
      * @throws IllegalArgumentException on a null {@code filename} argument.
@@ -739,7 +733,7 @@ public interface ApiService {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html">documentation page</a>.
      * <p>
-     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules & restrictions.
+     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules &amp; restrictions.
      *
      * @param fileId      The id of the folder you would like to rename
      * @param newFilename The new folder name. Must not be null.
@@ -755,7 +749,7 @@ public interface ApiService {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html">documentation page</a>.
      * <p>
-     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules & restrictions.
+     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules &amp; restrictions.
      *
      * @param file        The {@link RemoteFile} to be renamed. Must not be null.
      * @param newFilename The new folder name. Must not be null.
@@ -789,15 +783,12 @@ public interface ApiService {
 
     /**
      * Stop this instance and cleanup resources.
-     * <p>
-     * <li>
-     * All calls created by this instance will be cancelled..
-     * <li>
-     * The provided {@link okhttp3.ConnectionPool} will have all connections evicted.
-     * <li>
-     * The {@link okhttp3.Dispatcher} will have it's Executor shutdown.
-     * <li>
-     * If provided, the {@link okhttp3.Cache} instance will closed.
+     * <ul>
+     * <li>All calls created by this instance will be cancelled.</li>
+     * <li>The provided {@link okhttp3.ConnectionPool} will have all connections evicted.</li>
+     * <li>The {@link okhttp3.Dispatcher} will have it's Executor shutdown.</li>
+     * <li>If provided, the {@link okhttp3.Cache} instance will closed.</li>
+     * </ul>
      */
     void shutdown();
 
@@ -811,31 +802,24 @@ public interface ApiService {
     @SuppressWarnings("unused")
     interface Builder {
         /**
-         * Sets the response cache to be used to read and write cached responses.
-         *
+         * @param cache the response cache to be used to read and write cached responses. If null, no cache will be used.
+         * @return the same {@link Builder} instance
          * @see Cache
          */
         Builder cache(Cache cache);
 
         /**
-         * Sets the connectionPool used to recycle HTTP and HTTPS connections.
-         * <p>
-         * If unset, a new connection pool with a default configuration will be used.
-         *
+         * @param connectionPool the connectionPool used to recycle connections. If unset, a new connection pool with a default configuration will be used.
+         * @return the same {@link Builder} instance
          * @see ConnectionPool
          */
         Builder connectionPool(ConnectionPool connectionPool);
 
         /**
-         * Sets the {@link Dispatcher} used to set policy and execute asynchronous requests.
-         * <p>
-         * Must not be null.
-         * <p>
-         * If unset, a new dispatcher with a default configuration will be used.
-         *
+         * @param dispatcher the {@link Dispatcher} used to set policy and execute asynchronous requests. If unset, a new dispatcher with a default configuration will be used.
+         * @return the same {@link Builder} instance
          * @see Dispatcher
          */
-
         Builder dispatcher(Dispatcher dispatcher);
 
         /**
@@ -845,48 +829,53 @@ public interface ApiService {
          * Must not be null.
          * <p>
          * Previous calls to {@link #dispatcher(Dispatcher)}, {@link #connectionPool(ConnectionPool)},
-         * {@link Cache} will be overriden by this call.
+         * {@link Cache} will be overridden by this call.
          *
+         * @param client a non-null {@link OkHttpClient} to be shared
+         * @return the same {@link Builder} instance
          * @see OkHttpClient
          */
         Builder withClient(OkHttpClient client);
 
         /**
-         * Sets the default read timeout for new connections.
-         * <p>
-         * A value of 0 means no timeout, otherwise values must be between 1 and
-         * {@link Integer#MAX_VALUE} when converted to milliseconds.
+         * @param timeout  the read timeout for new connections.
+         *                 <p>A value of 0 means no timeout, otherwise values must be between 1 and
+         *                 {@link Integer#MAX_VALUE} when converted to milliseconds.
+         * @param timeUnit the unit of the {@code timeout} argument
+         * @return the same {@link Builder} instance
          */
         Builder readTimeout(long timeout, TimeUnit timeUnit);
 
         /**
-         * Sets the default write timeout for new connections.
-         * <p>
-         * A value of 0 means no timeout, otherwise values must be between 1 and
-         * {@link Integer#MAX_VALUE} when converted to milliseconds.
+         * @param timeout  the write timeout for new connections.
+         *                 <p>A value of 0 means no timeout, otherwise values must be between 1 and
+         *                 {@link Integer#MAX_VALUE} when converted to milliseconds.
+         * @param timeUnit the unit of the {@code timeout} argument
+         * @return the same {@link Builder} instance
          */
         Builder writeTimeout(long timeout, TimeUnit timeUnit);
 
         /**
-         * Sets the default connect timeout for new connections.
-         * <p>
-         * A value of 0 means no timeout, otherwise values must be between 1 and
-         * {@link Integer#MAX_VALUE} when converted to milliseconds.
+         * @param timeout  the connect timeout for new connections.
+         *                 <p>A value of 0 means no timeout, otherwise values must be between 1 and
+         *                 {@link Integer#MAX_VALUE} when converted to milliseconds.
+         * @param timeUnit the unit of the {@code timeout} argument
+         * @return the same {@link Builder} instance
          */
         Builder connectTimeout(long timeout, TimeUnit timeUnit);
 
         /**
-         * Sets an {@link Authenticator}.
-         * <p>
-         * Must not be null.
-         *
+         * @param authenticator the {@link Authenticator} instance to be used for authentication when making calls to pCloud's API.
+         *                      <p>If set to {@code null}, no authentication will be performed.
+         * @return the same {@link Builder} instance
          * @see Authenticator
          */
         Builder authenticator(Authenticator authenticator);
 
         /**
-         * Set an executor to be used when invoking {@link Callback} instances.
-         *
+         * @param callbackExecutor an executor to be used when invoking {@link Callback} and {@link ProgressListener} instance methods.
+         *                         <p>If set to {@code null}, the methods will be called on the thread executing th request to pCloud's API.
+         * @return the same {@link Builder} instance
          * @see Executor
          */
         Builder callbackExecutor(Executor callbackExecutor);
@@ -902,6 +891,7 @@ public interface ApiService {
          *
          * @param bytes the minimal amounts of bytes to be transferred before
          *              notifying about a transfer progress
+         * @return the same {@link Builder} instance
          * @see ProgressListener
          * @see ApiService#createFile(long, String, DataSource, Date, ProgressListener)
          * @see ApiService#download(FileLink, DataSink, ProgressListener)
@@ -912,7 +902,7 @@ public interface ApiService {
         /**
          * Create a new {@link ApiService} from the provided configuration.
          *
-         * @return a non-null {@link ApiService} object
+         * @return a new non-null {@link ApiService} object
          * @see ApiService
          */
         ApiService create();

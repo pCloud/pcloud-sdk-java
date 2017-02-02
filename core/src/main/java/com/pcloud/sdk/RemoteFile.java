@@ -29,27 +29,24 @@ import java.io.IOException;
 public interface RemoteFile extends RemoteEntry, RemoteData {
 
     /**
-     * Returns the fileId of the RemoteFile.
+     * @return the file identifier.
      */
     long getFileId();
 
     /**
-     * Returns the content type of the RemoteFile.
+     * @return the content type of the RemoteFile.
      * <p>
-     * For more information on content types, see
-     * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">here</a></p>
+     * For more information on content types, see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">here</a>.
      */
     String getContentType();
 
     /**
-     * Returns the size of the file in bytes.
+     * @return the size of the file in bytes.
      */
     long getSize();
 
     /**
-     * Returns a hash of the file content.
-     * <p>
-     * This parameter can be used to detect content changes.
+     * @return the hash of the file content. Can be used to detect content changes.
      */
     String getHash();
 
@@ -57,11 +54,12 @@ public interface RemoteFile extends RemoteEntry, RemoteData {
      * Create a file link for this file
      * <h3>
      * The method will block until the link is created or an exception is thrown.
+     * </h3>
      *
      * @param options {@link DownloadOptions} to be used creating the link. Must not be null.
      * @return a {@link FileLink} for this file.
-     * @throws IOException on a network error
-     * @throws ApiError    if error code is returned from pCloud's API
+     * @throws IOException              on a network error
+     * @throws ApiError                 if error code is returned from pCloud's API
      * @throws IllegalArgumentException on a null {@code options} argument.
      */
     FileLink createFileLink(DownloadOptions options) throws IOException, ApiError;
@@ -70,6 +68,7 @@ public interface RemoteFile extends RemoteEntry, RemoteData {
      * Create a file link for this file
      * <h3>
      * The method will block until the link is created or an exception is thrown.
+     * </h3>
      *
      * @return a {@link FileLink} for this file.
      * @throws IOException on a network error

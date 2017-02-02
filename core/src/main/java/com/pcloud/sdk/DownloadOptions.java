@@ -33,13 +33,17 @@ public final class DownloadOptions {
 
     /**
      * The default instance of {@link DownloadOptions}.
-     * <p>
+     * <ul>
      * <li>
      * The content-type will be determined from the file extension.
+     * </li>
      * <li>
      * File name <b>WILL BE</b> included in the link.
+     * </li>
      * <li>
      * Download will not be forced.
+     * </li>
+     * </ul>
      */
     public static final DownloadOptions DEFAULT = new Builder()
             .forceDownload(false)
@@ -55,6 +59,8 @@ public final class DownloadOptions {
      * Creates new default {@link Builder}.
      * <p>
      * {@link Builder} can be used to customise API call parameters to get {@link FileLink}.
+     *
+     * @return a new {@link Builder} instance
      */
     public static Builder create() {
         return DEFAULT.newBuilder();
@@ -67,30 +73,26 @@ public final class DownloadOptions {
     }
 
     /**
-     * Returns the value of {@code contentType} parameter of the {@link DownloadOptions}.
-     * <p>
-     * See {@link Builder#contentType(String)}
-     * <p>
-     * For more information, see
-     * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">here</a></p>
+     * @return the value of {@code contentType} parameter of the {@link DownloadOptions}.
+     * <p>For more information on content types, see
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">here</a>.
+     * @see Builder#contentType(String)
      */
     public String contentType() {
         return contentType;
     }
 
     /**
-     * Returns the value of {@code skipFilename} parameter of the {@link DownloadOptions}.
-     * <p>
-     * See {@link Builder#skipFilename(boolean skipFilename)}
+     * @return {@code true} if the filename will be omitted in the generated link, {@code false} otherwise
+     * @see Builder#skipFilename(boolean skipFilename)
      */
     public boolean skipFilename() {
         return skipFilename;
     }
 
     /**
-     * Returns the value of {@code forceDownload} parameter of the {@link DownloadOptions}.
-     * <p>
-     * See {@link Builder#forceDownload(boolean)}
+     * @return {@code true} if download will be forced, {@code false} otherwise
+     * @see Builder#forceDownload(boolean)
      */
     public boolean forceDownload() {
         return forceDownload;
@@ -132,11 +134,8 @@ public final class DownloadOptions {
         }
 
         /**
-         * Sets {@code skipFilename} option.
-         * <p>
-         * If {@code skipFilename} is set to FALSE the name of the file will be included in the generated {@link FileLink}. Otherwise the name will not be included.
-         *
-         * @return {@link Builder}
+         * @param skipFilename {@code true} to omit the filename in the generated link, {@code false} otherwise
+         * @return the same {@link Builder} instance
          */
         public Builder skipFilename(boolean skipFilename) {
             this.skipFilename = skipFilename;
@@ -146,11 +145,13 @@ public final class DownloadOptions {
         /**
          * Sets {@code forceDownload} option.
          * <p>
-         * <p>If {@code forceDownload} is TRUE {@code content-type} will be set to {@code application/octet-stream}.
+         * If {@code forceDownload} is TRUE {@code content-type} will be set to {@code application/octet-stream}.
          * In this case {@code content-type} option should be set to null.
-         * <p>For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a></p>
+         * <p>
+         * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a>
          *
-         * @return {@link Builder}
+         * @param forceDownload {@code true} to force a download, {@code false} otherwise
+         * @return the same {@link Builder} instance
          */
         public Builder forceDownload(boolean forceDownload) {
             this.forceDownload = forceDownload;
@@ -160,10 +161,12 @@ public final class DownloadOptions {
         /**
          * Sets {@code contentType} option.
          * <p>
-         * <p>{@code contentType} option can be null. If it is left to null the API will return {@link FileLink} with default content-type for the file extension.
-         * <p>For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a></p>
+         * {@code contentType} option can be null. If it is left to null the API will return {@link FileLink} with default content-type for the file extension.
+         * <p>
+         * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a>
          *
-         * @return {@link Builder}
+         * @param contentType a content type
+         * @return the same {@link Builder} instance
          */
         public Builder contentType(String contentType) {
             this.contentType = contentType;
@@ -172,6 +175,8 @@ public final class DownloadOptions {
 
         /**
          * Creates new {@link DownloadOptions} with the set {@code skipFilename, forceDownload and contentType} options.
+         *
+         * @return a new {@link DownloadOptions} object with the configuration from this build
          */
         public DownloadOptions build() {
             return new DownloadOptions(skipFilename, forceDownload, contentType);

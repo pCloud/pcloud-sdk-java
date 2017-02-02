@@ -31,17 +31,18 @@ import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
  * A consumer of data.
  * <p>
  * An abstraction over the byte stream reading operations, this class allows for a flexible way to read bytes from a {@link BufferedSource}.
- * <li>
- * The {@link #create(File)} method can be used for writing data to a file.
- * <li>
- * For any other cases just extend the class and do your magic in the {@link #readAll(BufferedSource)} method.
+ * <ul>
+ * <li>The {@link #create(File)} method can be used for writing data to a file.</li>
+ * <li>For any other cases just extend the class and do your magic in the {@link #readAll(BufferedSource)} method.</li>
+ * </ul>
  */
 public abstract class DataSink {
 
     /**
      * Reads all bytes from a source
-     *  <p> Do any reading here.
-     *  <h3> There is no explicit need to call {@link Closeable#close()} on the {@code source} argument, it will be closed for you.
+     * <p>
+     * Do any reading here.
+     * <h3> There is no explicit need to call {@link Closeable#close()} on the {@code source} argument, it will be closed for you.</h3>
      *
      * @param source the source
      * @throws IOException the io exception
@@ -53,7 +54,6 @@ public abstract class DataSink {
      *
      * @param file a file where the data will be written. Must not be null.
      * @return a {@link DataSink} that will write to the given file.
-     *
      * @throws IllegalArgumentException on a null {@code file} argument.
      */
     public static DataSink create(final File file) {

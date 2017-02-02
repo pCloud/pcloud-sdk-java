@@ -26,39 +26,37 @@ import java.util.Date;
 public interface RemoteEntry {
 
     /**
-     * Returns the entry id.
+     * @return the identifier of the file.
      */
     String getId();
 
     /**
-     * Returns the entry filename.
+     * @return the entry filename.
      */
     String getName();
 
     /**
-     * Returns the last modification date.
+     * @return the last modification date.
      */
     Date getLastModified();
 
     /**
-     * Returns the creation date.
+     * @return the creation date.
      */
     Date getCreated();
 
     /**
-     * Returns the parent folder's id for the entry.
-     * <p>
-     * See {@linkplain RemoteFolder#getFolderId()} ()}.
+     * @return the parent folder's id for the entry. See {@linkplain RemoteFolder#getFolderId()} ()}.
      */
     long getParentFolderId();
 
     /**
-     * Returns {@code true} if this entry is a file.
+     * @return {@code true} if this entry is a file.
      */
     boolean isFile();
 
     /**
-     * Returns {@code true} if this entry is a folder.
+     * @return {@code true} if this entry is a folder.
      */
     boolean isFolder();
 
@@ -67,7 +65,7 @@ public interface RemoteEntry {
      * <p>
      * See {@linkplain #isFolder()}.
      *
-     * @return {@link RemoteFolder}
+     * @return this object as a {@link RemoteFolder}
      * @throws IllegalStateException if the entry is not a folder
      */
     RemoteFolder asFolder();
@@ -77,7 +75,7 @@ public interface RemoteEntry {
      * <p>
      * See {@linkplain #isFile()}.
      *
-     * @return {@link RemoteFile}
+     * @return this object as a {@link RemoteFile}
      * @throws IllegalStateException if the entry is not a file
      */
     RemoteFile asFile();

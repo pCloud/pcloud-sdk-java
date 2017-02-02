@@ -33,14 +33,12 @@ public interface RemoteFolder extends RemoteEntry {
     int ROOT_FOLDER_ID = 0;
 
     /**
-     * Returns the folderId for this folder.
+     * @return the folderId for this folder.
      */
     long getFolderId();
 
     /**
-     * Returns the folder's children.
-     * <p>
-     * Cannot be null.
+     * @return the folder's children. Cannot be null.
      */
     List<RemoteEntry> getChildren();
 }

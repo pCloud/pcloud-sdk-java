@@ -24,29 +24,27 @@ package com.pcloud.sdk;
 public interface UserInfo {
 
     /**
-     * Returns the id of this User.
+     * @return the id of the user.
      */
     long getUserId();
 
     /**
-     * Returns the email of this User.
-     * <p>
-     * Cannot be null.
+     * @return the email of this User. Cannot be null.
      */
     String getEmail();
 
     /**
-     * Returns {@code true} if the user email address has been verified, {@code false} otherwise.
+     * @return {@code true} if the user email address has been verified, {@code false} otherwise.
      */
     boolean isEmailVerified();
 
     /**
-     * Returns the available storage space in bytes.
+     * @return the available storage space for the user in bytes.
      */
     long getTotalQuota();
 
     /**
-     * Returns the size of user content in bytes.
+     * @return the size of user content in bytes.
      */
     long getUsedQuota();
 }

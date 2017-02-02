@@ -31,14 +31,12 @@ import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
  * this class allows for a flexible way to write bytes to a {@link BufferedSink}.
  * <p>
  * Generally used for specifying a data source when creating/uploading files.
- * <li>
- * The {@link #create(File)} method can be used for reading data from a local file.
- * <li>
- * The {@link #create(byte[])} method can be used for reading data from a byte array.
- * <li>
- * The {@link #create(ByteString)} method can be used for reading data from Okio's immutable byte arrays.
- * <li>
- * For any other cases just extend the class and do your magic in the {@link #writeTo(BufferedSink)} method.
+ * <ul>
+ * <li>The {@link #create(File)} method can be used for reading data from a local file.</li>
+ * <li>The {@link #create(byte[])} method can be used for reading data from a byte array.</li>
+ * <li>The {@link #create(ByteString)} method can be used for reading data from Okio's immutable byte arrays.</li>
+ * <li>For any other cases just extend the class and do your magic in the {@link #writeTo(BufferedSink)} method.</li>
+ * </ul>
  */
 public abstract class DataSource {
 
@@ -61,7 +59,7 @@ public abstract class DataSource {
     };
 
     /**
-     * Provide the data source length.
+     * @return the data source length.
      * <p>
      * Override this method to provide the size of the data
      * to be written, if known in advance, otherwise return -1.
@@ -74,6 +72,7 @@ public abstract class DataSource {
      * Write the data to a {@link BufferedSink}.
      *
      * @param sink {@link BufferedSink}
+     * @throws IOException if an IO error occurs
      */
     public abstract void writeTo(BufferedSink sink) throws IOException;
 

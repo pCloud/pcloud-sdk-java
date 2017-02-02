@@ -29,8 +29,17 @@ public class Main {
                 .authenticator(Authenticators.newOAuthAuthenticator(token))
                 .create();
         try {
-            RemoteFolder folder = apiClient.listFolder(RemoteFolder.ROOT_FOLDER_ID, true).execute();
+            UserInfo userInfo = apiClient.getUserInfo().execute();
+
+            RemoteFolder folder = apiClient.listFolder(RemoteFolder.ROOT_FOLDER_ID).execute();
             printFolder(folder);
+
+            folder.children()
+                    .get(0)
+                    .copy(folder)
+                    .rename("a new File")
+                    .delete();
+
 
             RemoteFile newFile = uploadData(apiClient);
             printFileAttributes(newFile);
@@ -42,12 +51,12 @@ public class Main {
             System.out.println(bigFile.createFileLink());
             downloadFile(bigFile, new File("some directory path"));
 
-            UserInfo userInfo = apiClient.getUserInfo().execute();
             System.out.format(" User email: %s | Total quota %s | Used quota %s " , userInfo.email(), userInfo.totalQuota(), userInfo.usedQuota());
 
 
         } catch (IOException | ApiError e) {
             e.printStackTrace();
+            apiClient.shutdown();
         }
     }
 

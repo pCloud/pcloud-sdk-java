@@ -38,15 +38,15 @@ class RealFileLink implements FileLink {
         this.links = Collections.unmodifiableList(links);
     }
 
-    public Date getExpirationDate() {
+    public Date expirationDate() {
         return expirationDate;
     }
 
-    public List<URL> getUrls() {
+    public List<URL> urls() {
         return links;
     }
 
-    public URL getBestUrl(){
+    public URL bestUrl(){
         return links.get(0);
     }
 
@@ -88,6 +88,6 @@ class RealFileLink implements FileLink {
 
     @Override
     public String toString() {
-        return getBestUrl().toString();
+        return bestUrl().toString();
     }
 }

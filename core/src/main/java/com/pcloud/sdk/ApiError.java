@@ -42,7 +42,7 @@ public class ApiError extends Exception {
      *
      * @return the error code
      */
-    public int getErrorCode() {
+    public int errorCode() {
         return errorCode;
     }
 
@@ -51,7 +51,7 @@ public class ApiError extends Exception {
      *
      * @return a non-null String with the error description
      */
-    public String getErrorMessage() {
+    public String errorMessage() {
         return errorMessage;
     }
 }

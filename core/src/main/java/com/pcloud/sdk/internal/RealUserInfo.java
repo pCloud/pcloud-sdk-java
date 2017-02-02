@@ -30,27 +30,27 @@ import com.pcloud.sdk.UserInfo;
     private long usedQuota;
 
     @Override
-    public long getUserId() {
+    public long userId() {
         return userId;
     }
 
     @Override
-    public String getEmail() {
+    public String email() {
         return email;
     }
 
     @Override
-    public boolean isEmailVerified() {
+    public boolean emailVerified() {
         return isEmailVerified;
     }
 
     @Override
-    public long getTotalQuota() {
+    public long totalQuota() {
         return totalQuota;
     }
 
     @Override
-    public long getUsedQuota() {
+    public long usedQuota() {
         return usedQuota;
     }
 

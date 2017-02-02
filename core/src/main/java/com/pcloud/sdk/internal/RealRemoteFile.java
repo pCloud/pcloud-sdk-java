@@ -48,22 +48,22 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     }
 
     @Override
-    public long getFileId() {
+    public long fileId() {
         return fileId;
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return contentType;
     }
 
     @Override
-    public long getSize() {
+    public long size() {
         return size;
     }
 
     @Override
-    public String getHash() {
+    public String hash() {
         return hash;
     }
 
@@ -77,7 +77,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
         return createFileLink(DownloadOptions.create()
                 .skipFilename(true)
                 .forceDownload(false)
-                .contentType(getContentType())
+                .contentType(contentType())
                 .build());
     }
 
@@ -145,7 +145,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
         DownloadOptions options = DownloadOptions.create()
                 .skipFilename(true)
                 .forceDownload(false)
-                .contentType(getContentType())
+                .contentType(contentType())
                 .build();
         try {
             ownerService().createFileLink(this, options).execute().download(sink, listener);

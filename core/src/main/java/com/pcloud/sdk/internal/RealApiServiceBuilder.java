@@ -109,7 +109,7 @@ class RealApiServiceBuilder implements ApiService.Builder {
     }
 
     @Override
-    public ApiService.Builder progressCallbackThreshold(int bytes) {
+    public ApiService.Builder progressCallbackThreshold(long bytes) {
         if (bytes < 0) {
             throw new IllegalArgumentException("Threshold parameter must a positive number.");
         }

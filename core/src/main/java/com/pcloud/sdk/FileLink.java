@@ -29,16 +29,16 @@ public interface FileLink extends RemoteData {
     /**
      * @return the {@link Date} until the link is valid. Cannot be null.
      */
-    Date getExpirationDate();
+    Date expirationDate();
 
     /**
      * @return a list of {@link URL}s that can be used to access the file contents. Cannot be null or empty.
      */
-    List<URL> getUrls();
+    List<URL> urls();
 
     /**
      * @return a {@link URL} considered to have the best access times. Cannot be null.
      */
-    URL getBestUrl();
+    URL bestUrl();
 
 }

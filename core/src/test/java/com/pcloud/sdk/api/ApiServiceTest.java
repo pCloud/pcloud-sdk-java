@@ -332,7 +332,7 @@ public abstract class ApiServiceTest<T extends ApiService> {
     @Test
     public void rename_ReturnsANonNullCall() throws Exception {
         assertNotNull(instance.rename(file, "newName"));
-        assertNotNull(instance.rename(new DummyFile(1, "aname").getId(), "newName"));
+        assertNotNull(instance.rename(new DummyFile(1, "aname").id(), "newName"));
     }
 
     @Test
@@ -356,13 +356,13 @@ public abstract class ApiServiceTest<T extends ApiService> {
     @Test
     public void rename_ThrowsOnNullFilenameArgument2() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.rename(file.getId(), null);
+        instance.rename(file.id(), null);
     }
 
     @Test
     public void move_ReturnsANonNullCall() throws Exception {
         assertNotNull(instance.move(file, folder));
-        assertNotNull(instance.move(new DummyFile(1, "aname").getId(), new DummyFolder("aname", 1).getFolderId()));
+        assertNotNull(instance.move(new DummyFile(1, "aname").id(), new DummyFolder("aname", 1).folderId()));
     }
 
     @Test
@@ -374,7 +374,7 @@ public abstract class ApiServiceTest<T extends ApiService> {
     @Test
     public void move_ThrowsOnNullIdArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.move(null, folder.getFolderId());
+        instance.move(null, folder.folderId());
     }
 
     @Test
@@ -386,7 +386,7 @@ public abstract class ApiServiceTest<T extends ApiService> {
     @Test
     public void delete_ReturnsANonNullCall() throws Exception {
         assertNotNull(instance.delete(file));
-        assertNotNull(instance.delete(new DummyFile(1, "aname").getId()));
+        assertNotNull(instance.delete(new DummyFile(1, "aname").id()));
     }
 
     @Test
@@ -410,8 +410,8 @@ public abstract class ApiServiceTest<T extends ApiService> {
     public void copy_ReturnsANonNullCall() throws Exception {
         assertNotNull(instance.copy(file, folder));
         assertNotNull(instance.copy(file, folder, false));
-        assertNotNull(instance.copy(file.getId(), folder.getFolderId()));
-        assertNotNull(instance.copy(file.getId(), folder.getFolderId(), false));
+        assertNotNull(instance.copy(file.id(), folder.folderId()));
+        assertNotNull(instance.copy(file.id(), folder.folderId(), false));
     }
 
     @Test
@@ -429,13 +429,13 @@ public abstract class ApiServiceTest<T extends ApiService> {
     @Test
     public void copy_ThrowsOnNullIdArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.copy(null, folder.getFolderId());
+        instance.copy(null, folder.folderId());
     }
 
     @Test
     public void copy_ThrowsOnNullIdArgument2() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.copy(null, folder.getFolderId(), false);
+        instance.copy(null, folder.folderId(), false);
     }
 
     @Test

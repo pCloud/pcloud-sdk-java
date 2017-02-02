@@ -26,10 +26,16 @@ public final class PCloudSdk {
         // Instances are not allowed.
     }
 
-    public static String getVersionName(){
+    /**
+     * @return the version of this PCloud SDK
+     */
+    public static String versionName(){
         return Version.NAME;
     }
 
+    /**
+     * @return a new {@link com.pcloud.sdk.ApiService.Builder} instance.
+     */
     public static ApiService.Builder newApiServiceBuilder(){
         return Internal.newBuilder();
     }

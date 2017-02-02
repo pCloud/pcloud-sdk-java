@@ -37,27 +37,27 @@ public class DummyFolder implements RemoteFolder {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "f" + folderId;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public Date getLastModified() {
+    public Date lastModified() {
         return null;
     }
 
     @Override
-    public Date getCreated() {
+    public Date created() {
         return null;
     }
 
     @Override
-    public long getParentFolderId() {
+    public long parentFolderId() {
         return 0;
     }
 
@@ -107,12 +107,12 @@ public class DummyFolder implements RemoteFolder {
     }
 
     @Override
-    public long getFolderId() {
+    public long folderId() {
         return folderId;
     }
 
     @Override
-    public List<RemoteEntry> getChildren() {
+    public List<RemoteEntry> children() {
         return Collections.emptyList();
     }
 

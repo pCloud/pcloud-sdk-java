@@ -24,7 +24,6 @@ import okhttp3.OkHttpClient;
 import okio.BufferedSource;
 
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -92,7 +91,7 @@ public interface ApiService {
     /**
      * Create a folder.
      * <p>
-     * Same as calling {@link #createFolder(long, String)} with {@code parentFolderId} taken from {@linkplain RemoteFolder#getFolderId()}.
+     * Same as calling {@link #createFolder(long, String)} with {@code parentFolderId} taken from {@linkplain RemoteFolder#folderId()}.
      *
      * @param parentFolder The parent {@link RemoteFolder} for the newly created folder. Must not be null.
      * @param folderName   The new folder name
@@ -263,7 +262,7 @@ public interface ApiService {
     /**
      * Create a new file.
      * <p>
-     * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener)} with {@code folderId} taken from {@linkplain RemoteFolder#getFolderId()}.
+     * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener)} with {@code folderId} taken from {@linkplain RemoteFolder#folderId()}.
      *
      * @param folder       The {@link RemoteFolder} where you would like to create the file. Must not be null.
      * @param filename     The file name. Must not be null.
@@ -304,7 +303,7 @@ public interface ApiService {
      * <p>
      * The provided {@link DataSource} object will be used to populate the file's contents.
      * <p>
-     * If a {@link ProgressListener} is provided, it will be notified on every {@code n} bytes uploaded, as set per {@link Builder#progressCallbackThreshold(int)}
+     * If a {@link ProgressListener} is provided, it will be notified on every {@code n} bytes uploaded, as set per {@link Builder#progressCallbackThreshold(long)}
      * <p>
      * To create an empty file, call the method with a {@link DataSource#EMPTY} argument.
      * <p>
@@ -410,7 +409,7 @@ public interface ApiService {
      * about the progress via a provided {@link ProgressListener}. The content bytes will be
      * delivered though the {@link DataSink} object.
      * <p>
-     * See {@link Builder#progressCallbackThreshold(int)} for details on
+     * See {@link Builder#progressCallbackThreshold(long)} for details on
      * how to control the progress notifications rate.
      * <p>
      * If set via {@link Builder#callbackExecutor(Executor)}, the progress listener's
@@ -771,6 +770,60 @@ public interface ApiService {
     Builder newBuilder();
 
     /**
+     * @return the {@link Executor} specified via {@link Builder#callbackExecutor(Executor)}, {@code null} if it was not set.
+     * @see Builder#callbackExecutor(Executor)
+     */
+    Executor callbackExecutor();
+
+
+    /**
+     * @return the {@link Dispatcher} used by this instance. Cannot be null.
+     * @see Builder#dispatcher(Dispatcher)
+     */
+    Dispatcher dispatcher();
+
+    /**
+     * @return the {@link ConnectionPool} used by this instance. Cannot be null.
+     * @see Builder#connectionPool(ConnectionPool)
+     */
+    ConnectionPool connectionPool();
+
+    /**
+     * @return the {@link Cache} used by this instance, {@code null} if it was not set.
+     * @see Builder#cache(Cache)
+     */
+    Cache cache();
+
+    /**
+     * @return the API call request read timeout for this instance, in milliseconds.
+     * @see Builder#readTimeout(long, TimeUnit)
+     */
+    int readTimeoutMs();
+
+    /**
+     * @return the API call request write timeout for this instance, in milliseconds.
+     * @see Builder#writeTimeout(long, TimeUnit)
+     */
+    int writeTimeoutMs();
+
+    /**
+     * @return the API call request connect timeout for this instance, in milliseconds.
+     * @see Builder#connectTimeout(long, TimeUnit)
+     */
+    int connectTimeoutMs();
+
+    /**
+     * @return the progress updates threshold for this instance, in bytes.
+     * @see Builder#progressCallbackThreshold(long)
+     */
+    long progressCallbackThreshold();
+
+    /**
+     * @return the {@link Authenticator} specified via {@link Builder#authenticator(Authenticator)} , {@code null} if it was not set.
+     */
+    Authenticator authenticator();
+
+    /**
      * Stop this instance and cleanup resources.
      * <ul>
      * <li>All calls created by this instance will be cancelled.</li>
@@ -886,7 +939,7 @@ public interface ApiService {
          * @see ApiService#download(FileLink, DataSink, ProgressListener)
          * @see RemoteData#download(DataSink, ProgressListener)
          */
-        Builder progressCallbackThreshold(int bytes);
+        Builder progressCallbackThreshold(long bytes);
 
         /**
          * Create a new {@link ApiService} from the provided configuration.

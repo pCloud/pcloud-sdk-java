@@ -30,16 +30,12 @@ public class RealApiServiceTest extends ApiServiceTest<RealApiService> {
         RealApiService newService = (RealApiService) builder.create();
 
         assertEquals(testInstance().callbackExecutor(), newService.callbackExecutor());
-        assertEquals(testInstance().progressCallbackThresholdBytes(), newService.progressCallbackThresholdBytes());
-
-        OkHttpClient originalClient = testInstance().httpClient(), newClient = newService.httpClient();
-        assertEquals(originalClient.connectionPool(), newClient.connectionPool());
-        assertEquals(originalClient.dispatcher(), newClient.dispatcher());
-        assertEquals(originalClient.readTimeoutMillis(), newClient.readTimeoutMillis());
-        assertEquals(originalClient.writeTimeoutMillis(), newClient.writeTimeoutMillis());
-        assertEquals(originalClient.connectTimeoutMillis(), newClient.connectTimeoutMillis());
-        assertEquals(originalClient.protocols(), newClient.protocols());
-        assertEquals(originalClient.interceptors(), newClient.interceptors());
-        assertEquals(originalClient.cache(), newClient.cache());
+        assertEquals(testInstance().progressCallbackThreshold(), newService.progressCallbackThreshold());
+        assertEquals(testInstance().connectionPool(), newService.connectionPool());
+        assertEquals(testInstance().dispatcher(), newService.dispatcher());
+        assertEquals(testInstance().readTimeoutMs(), newService.readTimeoutMs());
+        assertEquals(testInstance().writeTimeoutMs(), newService.writeTimeoutMs());
+        assertEquals(testInstance().connectTimeoutMs(), newService.connectTimeoutMs());
+        assertEquals(testInstance().cache(), newService.cache());
     }
 }

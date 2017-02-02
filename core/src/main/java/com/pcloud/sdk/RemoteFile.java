@@ -31,24 +31,24 @@ public interface RemoteFile extends RemoteEntry, RemoteData {
     /**
      * @return the file identifier.
      */
-    long getFileId();
+    long fileId();
 
     /**
      * @return the content type of the RemoteFile.
      * <p>
      * For more information on content types, see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">here</a>.
      */
-    String getContentType();
+    String contentType();
 
     /**
      * @return the size of the file in bytes.
      */
-    long getSize();
+    long size();
 
     /**
      * @return the hash of the file content. Can be used to detect content changes.
      */
-    String getHash();
+    String hash();
 
     /**
      * Create a file link for this file

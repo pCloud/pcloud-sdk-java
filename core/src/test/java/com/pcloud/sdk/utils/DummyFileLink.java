@@ -48,17 +48,17 @@ public class DummyFileLink implements FileLink {
     }
 
     @Override
-    public Date getExpirationDate() {
+    public Date expirationDate() {
         return new Date(Long.MAX_VALUE);
     }
 
     @Override
-    public List<URL> getUrls() {
+    public List<URL> urls() {
         return Collections.singletonList(url);
     }
 
     @Override
-    public URL getBestUrl() {
+    public URL bestUrl() {
         return url;
     }
 

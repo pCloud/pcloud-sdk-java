@@ -31,27 +31,27 @@ public interface RemoteEntry {
     /**
      * @return the identifier of the file.
      */
-    String getId();
+    String id();
 
     /**
      * @return the entry filename.
      */
-    String getName();
+    String name();
 
     /**
      * @return the last modification date.
      */
-    Date getLastModified();
+    Date lastModified();
 
     /**
      * @return the creation date.
      */
-    Date getCreated();
+    Date created();
 
     /**
-     * @return the parent folder's id for the entry. See {@linkplain RemoteFolder#getFolderId()} ()}.
+     * @return the parent folder's id for the entry. See {@linkplain RemoteFolder#folderId()} ()}.
      */
-    long getParentFolderId();
+    long parentFolderId();
 
     /**
      * @return {@code true} if this entry is a file.

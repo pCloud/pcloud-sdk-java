@@ -18,6 +18,9 @@
 package com.pcloud.sdk.utils;
 
 import com.pcloud.sdk.*;
+import okhttp3.Cache;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
 import okio.BufferedSource;
 import okio.Okio;
 
@@ -25,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 public class DummyDownloadingApiService implements ApiService {
 
@@ -283,6 +287,51 @@ public class DummyDownloadingApiService implements ApiService {
 
     @Override
     public Builder newBuilder() {
+        return null;
+    }
+
+    @Override
+    public Executor callbackExecutor() {
+        return null;
+    }
+
+    @Override
+    public Dispatcher dispatcher() {
+        return null;
+    }
+
+    @Override
+    public ConnectionPool connectionPool() {
+        return null;
+    }
+
+    @Override
+    public Cache cache() {
+        return null;
+    }
+
+    @Override
+    public int readTimeoutMs() {
+        return 0;
+    }
+
+    @Override
+    public int writeTimeoutMs() {
+        return 0;
+    }
+
+    @Override
+    public int connectTimeoutMs() {
+        return 0;
+    }
+
+    @Override
+    public long progressCallbackThreshold() {
+        return 0;
+    }
+
+    @Override
+    public Authenticator authenticator() {
         return null;
     }
 

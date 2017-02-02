@@ -59,27 +59,27 @@ abstract class RealRemoteEntry implements RemoteEntry {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public Date getLastModified() {
+    public Date lastModified() {
         return lastModified;
     }
 
     @Override
-    public Date getCreated() {
+    public Date created() {
         return created;
     }
 
     @Override
-    public long getParentFolderId() {
+    public long parentFolderId() {
         return parentFolderId;
     }
 

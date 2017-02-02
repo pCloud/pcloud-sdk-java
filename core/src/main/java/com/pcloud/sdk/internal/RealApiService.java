@@ -52,6 +52,7 @@ import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 class RealApiService implements ApiService {
 
     private long progressCallbackThresholdBytes;
+    private Authenticator authenticator;
     private Gson gson;
     private OkHttpClient httpClient;
     private Executor callbackExecutor;
@@ -86,7 +87,8 @@ class RealApiService implements ApiService {
         }
 
         httpClientBuilder.authenticator(okhttp3.Authenticator.NONE);
-        if (builder.authenticator() != null) {
+        this.authenticator = builder.authenticator();
+        if (authenticator != null) {
             httpClientBuilder.addInterceptor((RealAuthenticator) builder.authenticator());
         }
 
@@ -121,7 +123,7 @@ class RealApiService implements ApiService {
 
     @Override
     public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data) {
-        return createFile(folder.getFolderId(), filename, data, null, null);
+        return createFile(folder.folderId(), filename, data, null, null);
     }
 
     @Override
@@ -129,7 +131,7 @@ class RealApiService implements ApiService {
         if (folder == null) {
             throw new IllegalArgumentException("Folder argument cannot be null.");
         }
-        return createFile(folder.getFolderId(), filename, data, modifiedDate, listener);
+        return createFile(folder.folderId(), filename, data, modifiedDate, listener);
     }
 
     @Override
@@ -214,7 +216,7 @@ class RealApiService implements ApiService {
         if (file == null) {
             throw new IllegalArgumentException("File argument cannot be null.");
         }
-        return deleteFile(file.getFileId());
+        return deleteFile(file.fileId());
     }
 
     @Override
@@ -242,7 +244,7 @@ class RealApiService implements ApiService {
         if (file == null) {
             throw new IllegalArgumentException("File argument cannot be null.");
         }
-        return createFileLink(file.getFileId(), options);
+        return createFileLink(file.fileId(), options);
     }
 
     @Override
@@ -355,9 +357,9 @@ class RealApiService implements ApiService {
 
         DownloadOptions options = DownloadOptions.create()
                 .skipFilename(false)
-                .contentType(file.getContentType())
+                .contentType(file.contentType())
                 .build();
-        return newCall(newDownloadLinkRequest(file.getFileId(), options), new ResponseAdapter<BufferedSource>() {
+        return newCall(newDownloadLinkRequest(file.fileId(), options), new ResponseAdapter<BufferedSource>() {
             @Override
             public BufferedSource adapt(Response response) throws IOException, ApiError {
                 FileLink link = getAsFileLink(response);
@@ -424,7 +426,7 @@ class RealApiService implements ApiService {
             throw new IllegalArgumentException("toFolder argument cannot be null.");
         }
 
-        return copyFile(file.getFileId(), toFolder.getFolderId(), overwrite);
+        return copyFile(file.fileId(), toFolder.folderId(), overwrite);
     }
 
     @Override
@@ -440,10 +442,10 @@ class RealApiService implements ApiService {
         if (toFolder == null) {
             throw new IllegalArgumentException("RemoteFolder argument cannot be null.");
         }
-        final long toFolderId = toFolder.getFolderId();
+        final long toFolderId = toFolder.folderId();
         return file.isFolder() ?
-                copyFolder(file.asFolder().getFolderId(), toFolderId, overwriteFiles) :
-                copyFile(file.asFile().getFileId(), toFolderId, overwriteFiles);
+                copyFolder(file.asFolder().folderId(), toFolderId, overwriteFiles) :
+                copyFile(file.asFile().fileId(), toFolderId, overwriteFiles);
     }
 
     @Override
@@ -470,10 +472,10 @@ class RealApiService implements ApiService {
             throw new IllegalArgumentException("RemoteFolder argument cannot be null.");
         }
 
-        final long toFolderId = toFolder.getFolderId();
+        final long toFolderId = toFolder.folderId();
         return file.isFolder() ?
-                moveFolder(file.asFolder().getFolderId(), toFolderId) :
-                moveFile(file.asFile().getFileId(), toFolderId);
+                moveFolder(file.asFolder().folderId(), toFolderId) :
+                moveFile(file.asFile().fileId(), toFolderId);
     }
 
     @Override
@@ -492,8 +494,8 @@ class RealApiService implements ApiService {
             throw new IllegalArgumentException("RemoteEntry argument cannot be null.");
         }
         return file.isFolder() ?
-                deleteFolder(file.asFolder().getFolderId()) :
-                deleteFile(file.asFile().getFileId());
+                deleteFolder(file.asFolder().folderId()) :
+                deleteFile(file.asFile().fileId());
     }
 
     @Override
@@ -516,8 +518,8 @@ class RealApiService implements ApiService {
         }
 
         return (file.isFolder() ?
-                renameFolder(file.asFolder().getFolderId(), newFilename) :
-                renameFile(file.asFile().getFileId(), newFilename));
+                renameFolder(file.asFolder().folderId(), newFilename) :
+                renameFile(file.asFile().fileId(), newFilename));
     }
 
     @Override
@@ -561,7 +563,7 @@ class RealApiService implements ApiService {
             throw new IllegalArgumentException("toFolder argument cannot be null.");
         }
 
-        return moveFile(file.getFileId(), toFolder.getFolderId());
+        return moveFile(file.fileId(), toFolder.folderId());
     }
 
     @Override
@@ -596,7 +598,7 @@ class RealApiService implements ApiService {
             throw new IllegalArgumentException("file argument cannot be null.");
         }
 
-        return renameFile(file.getFileId(), newFilename);
+        return renameFile(file.fileId(), newFilename);
     }
 
     @Override
@@ -604,7 +606,7 @@ class RealApiService implements ApiService {
         if (parentFolder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
         }
-        return createFolder(parentFolder.getFolderId(), folderName);
+        return createFolder(parentFolder.folderId(), folderName);
     }
 
     @Override
@@ -638,7 +640,7 @@ class RealApiService implements ApiService {
         if (folder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
         }
-        return deleteFolder(folder.getFolderId(), false);
+        return deleteFolder(folder.folderId(), false);
     }
 
     @Override
@@ -646,7 +648,7 @@ class RealApiService implements ApiService {
         if (folder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
         }
-        return deleteFolder(folder.getFolderId(), recursively);
+        return deleteFolder(folder.folderId(), recursively);
     }
 
     @Override
@@ -681,7 +683,7 @@ class RealApiService implements ApiService {
         if (folder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
         }
-        return renameFolder(folder.getFolderId(), newFolderName);
+        return renameFolder(folder.folderId(), newFolderName);
     }
 
     @Override
@@ -716,7 +718,7 @@ class RealApiService implements ApiService {
         if (folder == null || toFolder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
         }
-        return moveFolder(folder.getFolderId(), toFolder.getFolderId());
+        return moveFolder(folder.folderId(), toFolder.folderId());
     }
 
     @Override
@@ -746,7 +748,7 @@ class RealApiService implements ApiService {
         if (folder == null || toFolder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
         }
-        return copyFolder(folder.getFolderId(), toFolder.getFolderId(), false);
+        return copyFolder(folder.folderId(), toFolder.folderId(), false);
     }
 
     @Override
@@ -754,7 +756,7 @@ class RealApiService implements ApiService {
         if (folder == null || toFolder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
         }
-        return copyFolder(folder.getFolderId(), toFolder.getFolderId(), overwrite);
+        return copyFolder(folder.folderId(), toFolder.folderId(), overwrite);
     }
 
     @Override
@@ -811,14 +813,52 @@ class RealApiService implements ApiService {
 
     @Override
     public RealApiServiceBuilder newBuilder() {
-        Authenticator authenticator = null;
-        for (Interceptor interceptor : httpClient.interceptors()) {
-            if (interceptor instanceof RealAuthenticator) {
-                authenticator = (Authenticator) interceptor;
-                break;
-            }
-        }
         return new RealApiServiceBuilder(httpClient, callbackExecutor, progressCallbackThresholdBytes, authenticator);
+    }
+
+    @Override
+    public Executor callbackExecutor() {
+        return callbackExecutor;
+    }
+
+    @Override
+    public Dispatcher dispatcher() {
+        return httpClient.dispatcher();
+    }
+
+    @Override
+    public ConnectionPool connectionPool() {
+        return httpClient.connectionPool();
+    }
+
+    @Override
+    public Cache cache() {
+        return httpClient.cache();
+    }
+
+    @Override
+    public int readTimeoutMs() {
+        return httpClient.readTimeoutMillis();
+    }
+
+    @Override
+    public int writeTimeoutMs() {
+        return httpClient.writeTimeoutMillis();
+    }
+
+    @Override
+    public int connectTimeoutMs() {
+        return httpClient.connectTimeoutMillis();
+    }
+
+    @Override
+    public long progressCallbackThreshold() {
+        return progressCallbackThresholdBytes;
+    }
+
+    @Override
+    public Authenticator authenticator() {
+        return authenticator;
     }
 
     @Override
@@ -826,18 +866,6 @@ class RealApiService implements ApiService {
         this.httpClient.connectionPool().evictAll();
         this.httpClient.dispatcher().executorService().shutdownNow();
         closeQuietly(this.httpClient.cache());
-    }
-
-    long progressCallbackThresholdBytes() {
-        return progressCallbackThresholdBytes;
-    }
-
-    OkHttpClient httpClient() {
-        return httpClient;
-    }
-
-    Executor callbackExecutor() {
-        return callbackExecutor;
     }
 
     private Request.Builder newRequest() {
@@ -901,7 +929,7 @@ class RealApiService implements ApiService {
 
     private Request newDownloadRequest(FileLink link) {
         return new Request.Builder()
-                .url(link.getBestUrl())
+                .url(link.bestUrl())
                 .get()
                 .build();
     }

@@ -36,27 +36,27 @@ public class DummyFile implements RemoteFile {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "f" + fileId;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public Date getLastModified() {
+    public Date lastModified() {
         return null;
     }
 
     @Override
-    public Date getCreated() {
+    public Date created() {
         return null;
     }
 
     @Override
-    public long getParentFolderId() {
+    public long parentFolderId() {
         return 0;
     }
 
@@ -126,22 +126,22 @@ public class DummyFile implements RemoteFile {
     }
 
     @Override
-    public long getFileId() {
+    public long fileId() {
         return fileId;
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return null;
     }
 
     @Override
-    public long getSize() {
+    public long size() {
         return 0;
     }
 
     @Override
-    public String getHash() {
+    public String hash() {
         return null;
     }
 

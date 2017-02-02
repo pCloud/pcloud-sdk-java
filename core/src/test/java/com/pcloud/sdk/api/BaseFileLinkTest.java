@@ -39,26 +39,26 @@ public abstract class BaseFileLinkTest extends BaseRemoteDataTest {
 
     @Test
     public void getExpirationDate_IsNonNull() throws Exception {
-        assertNotNull(testInstance.getExpirationDate());
+        assertNotNull(testInstance.expirationDate());
     }
 
     @Test
     public void getUrls_IsNonNull() throws Exception {
-        assertNotNull(testInstance.getUrls());
+        assertNotNull(testInstance.urls());
     }
 
     @Test
     public void getUrls_IsNotEmpty() throws Exception {
-        assertFalse(testInstance.getUrls().isEmpty());
+        assertFalse(testInstance.urls().isEmpty());
     }
 
     @Test
     public void getUrls_ContainsBestUrl() throws Exception {
-        assertTrue(testInstance.getUrls().contains(testInstance.getBestUrl()));
+        assertTrue(testInstance.urls().contains(testInstance.bestUrl()));
     }
 
     @Test
     public void getBestUrl_IsNonNull() throws Exception {
-        assertNotNull(testInstance.getBestUrl());
+        assertNotNull(testInstance.bestUrl());
     }
 }

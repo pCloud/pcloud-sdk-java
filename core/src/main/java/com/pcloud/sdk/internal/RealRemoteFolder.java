@@ -39,12 +39,12 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     }
 
     @Override
-    public long getFolderId() {
+    public long folderId() {
         return folderId;
     }
 
     @Override
-    public List<RemoteEntry> getChildren() {
+    public List<RemoteEntry> children() {
         return children;
     }
 
@@ -56,7 +56,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     @Override
     public RemoteFolder reload(boolean recursively) throws IOException {
         try {
-            return ownerService().listFolder(getFolderId(), recursively).execute();
+            return ownerService().listFolder(folderId(), recursively).execute();
         } catch (ApiError apiError) {
             throw new IOException(apiError);
         }

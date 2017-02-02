@@ -36,14 +36,14 @@ public class Main {
             printFileAttributes(newFile);
 
             FileLink downloadLink = apiService.createFileLink(newFile, DownloadOptions.DEFAULT).execute();
-            System.out.print(downloadLink.getBestUrl());
+            System.out.print(downloadLink.bestUrl());
 
             RemoteFile bigFile = uploadFile(apiService, new File("some file path"));
             System.out.println(bigFile.createFileLink());
             downloadFile(bigFile, new File("some directory path"));
 
             UserInfo userInfo = apiService.getUserInfo().execute();
-            System.out.format(" User email: %s | Total quota %s | Used quota %s " , userInfo.getEmail(), userInfo.getTotalQuota(), userInfo.getUsedQuota());
+            System.out.format(" User email: %s | Total quota %s | Used quota %s " , userInfo.email(), userInfo.totalQuota(), userInfo.usedQuota());
 
 
         } catch (IOException | ApiError e) {
@@ -52,13 +52,13 @@ public class Main {
     }
 
     private static void printFolder(RemoteFolder folder) throws IOException, ApiError {
-        for (RemoteEntry entry : folder.getChildren()) {
+        for (RemoteEntry entry : folder.children()) {
             printFileAttributes(entry);
         }
     }
 
     private static void printFileAttributes(RemoteEntry entry) {
-        System.out.format("%s | Created:%s | Modified: %s | size:%s\n", entry.getName(), entry.getCreated(), entry.getLastModified(), entry.isFile() ? String.valueOf(entry.asFile().getSize()) : "-");
+        System.out.format("%s | Created:%s | Modified: %s | size:%s\n", entry.name(), entry.created(), entry.lastModified(), entry.isFile() ? String.valueOf(entry.asFile().size()) : "-");
     }
 
     private static RemoteFile uploadData(ApiService apiService) throws IOException, ApiError {
@@ -77,7 +77,7 @@ public class Main {
     }
 
     private static File downloadFile(RemoteFile remoteFile, File folder) throws IOException, ApiError {
-        File destination = new File(folder, remoteFile.getName());
+        File destination = new File(folder, remoteFile.name());
         remoteFile.download(DataSink.create(destination), new ProgressListener() {
             public void onProgress(long done, long total) {
                 System.out.format("\rDownloading... %.1f\n", ((double) done / (double) total) * 100d);

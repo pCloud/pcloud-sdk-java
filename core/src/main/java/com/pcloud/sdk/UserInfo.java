@@ -26,25 +26,25 @@ public interface UserInfo {
     /**
      * @return the id of the user.
      */
-    long getUserId();
+    long userId();
 
     /**
      * @return the email of this User. Cannot be null.
      */
-    String getEmail();
+    String email();
 
     /**
      * @return {@code true} if the user email address has been verified, {@code false} otherwise.
      */
-    boolean isEmailVerified();
+    boolean emailVerified();
 
     /**
      * @return the available storage space for the user in bytes.
      */
-    long getTotalQuota();
+    long totalQuota();
 
     /**
      * @return the size of user content in bytes.
      */
-    long getUsedQuota();
+    long usedQuota();
 }

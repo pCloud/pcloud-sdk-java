@@ -19,14 +19,12 @@ package com.pcloud.sdk.internal;
 
 import java.util.Locale;
 
-public class FileIdUtils {
+class FileIdUtils {
 
     public static final char DIRECTORY_ID_PREFIX = 'd';
     public static final char FILE_ID_PREFIX = 'f';
 
-    private FileIdUtils() {
-
-    }
+    private FileIdUtils() {}
 
     public static void isFileOrThrow(String id) {
         if (isFolder(id)) {

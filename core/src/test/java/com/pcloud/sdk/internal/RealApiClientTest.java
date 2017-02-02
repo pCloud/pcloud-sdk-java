@@ -1,7 +1,7 @@
 package com.pcloud.sdk.internal;
 
 import com.pcloud.sdk.ApiClient;
-import com.pcloud.sdk.api.ApiServiceTest;
+import com.pcloud.sdk.ApiServiceTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

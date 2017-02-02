@@ -18,7 +18,7 @@
 package com.pcloud.sdk.internal;
 
 import com.pcloud.sdk.ApiClient;
-import com.pcloud.sdk.api.*;
+import com.pcloud.sdk.BaseFileLinkTest;
 import com.pcloud.sdk.utils.DummyDownloadingApiClient;
 import org.junit.After;
 import org.junit.Before;

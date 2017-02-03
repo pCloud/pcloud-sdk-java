@@ -1,4 +1,4 @@
-include ':android'
+include ':android', ':sample-android'
 rootProject.name = 'main'
 include 'java-core'
 include 'sample'

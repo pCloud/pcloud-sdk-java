@@ -51,5 +51,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(path: ':android')
+    compile 'com.pcloud.sdk:java-core:1.0.0'
+    compile 'com.pcloud.sdk:android:1.0.0'
 }

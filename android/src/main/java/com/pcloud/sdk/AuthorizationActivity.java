@@ -50,7 +50,7 @@ import java.util.Map;
  * <li>Get a {@link AuthorizationResult} object from the returned {@link Intent} by calling {@link Intent#getSerializableExtra(String)} (String)} with {@link #KEY_AUTHORIZATION_RESULT}.</li>
  * <li>Refer to documentation of {@link AuthorizationResult} about the meaning of diferent values.</li>
  * <li>If the user granted permissions, a non-null access token will be available by calling {@link Intent#getStringExtra(String)} with {@link #KEY_ACCESS_TOKEN} on the returned {@link Intent}.</li>
- * <li>If the user granted permissions, a user identifier will be available by calling {@link Intent#getLongExtra(String, long)} (String)} with {@link #KEY_USER_ID} on the returned {@link Intent}.</li>
+ * <li>If the user granted permissions, a user identifier will be available by calling {@link Intent#getLongExtra(String, long)} with {@link #KEY_USER_ID} on the returned {@link Intent}.</li>
  * </ul>
  * <h3>
  * NOTE: Instances of this activity launched via {@link Intent} objects not created via the
@@ -58,42 +58,10 @@ import java.util.Map;
  * {@link #createIntent(Context, String)}
  * methods will throw an {@link IllegalStateException}.
  * </h3>
- * <p>
- * See the sample code below as a starting point for using this class:
- * <pre>
- * {@code
- *    public class SampleActivity extends Activity {
- *
- *          private static final int PCLOUD_AUTHORIZATION_REQUEST_CODE = 123;
- *
- *         @literal @Override
- *          protected void onCreate(Bundle savedInstanceState) {
- *              super.onCreate(savedInstanceState);
- *              Intent authIntent = AuthorizationActivity.createIntent(SampleActivity.this, "<your API key>");
- *              startActivityForResult(authIntent, PCLOUD_AUTHORIZATION_REQUEST_CODE);
- *          }
- *
- *         @literal @Override
- *          protected void onActivityResult(int requestCode, int resultCode, Intent data) {
- *              super.onActivityResult(requestCode, resultCode, data);
- *              if (requestCode == PCLOUD_AUTHORIZATION_REQUEST_CODE) {
- *                  AuthorizationResult result = (AuthorizationResult) data.getSerializableExtra(AuthorizationActivity.KEY_AUTHORIZATION_RESULT);
- *
- *                  if (result == AuthorizationResult.ACCESS_GRANTED) {
- *                      String accessToken = data.getStringExtra(AuthorizationActivity.KEY_ACCESS_TOKEN);
- *                      long userId = data.getLongExtra(AuthorizationActivity.KEY_USER_ID, 0);
- *                      //TODO: Do what's needed :)
- *                  } else {
- *                      //TODO: Add proper handling for denied grants or errors.
- *                  }
- *              }
- *          }
- *      }}
- * </pre>
  *
  * @see AuthorizationResult
  */
-public class AuthorizationActivity extends Activity {
+public final class AuthorizationActivity extends Activity {
 
     public final static String KEY_AUTHORIZATION_RESULT = "com.pcloud.authentication.AuthorizationActivity.KEY_AUTHORIZATION_RESULT";
     public final static String KEY_ACCESS_TOKEN = "com.pcloud.authentication.AuthorizationActivity.KEY_ACCESS_TOKEN";

@@ -5,7 +5,7 @@ ext {
     versionCode = 1;
     libraryName = "pcloud-sdk"
     groupId = "com.pcloud.sdk"
-    description = "The official pCloud Java SDK for integration with the pCloud API"
+    description = "The official pCloud Java SDK for integration with pCloud's API"
     siteUrl = 'https://github.com/pCloud/pcloud-sdk-java'
     vcsUrl = 'https://github.com/pCloud/pcloud-sdk-java'
 

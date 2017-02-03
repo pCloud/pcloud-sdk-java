@@ -23,6 +23,14 @@ buildscript {
     }
 }
 
+apply from: rootProject.file('publishing.gradle')
+
+ext {
+    description = "The official Android SDK for integration with pCloud's API."
+    bintrayPackage = 'android'
+    artifactId = 'android'
+}
+
 apply plugin: 'com.android.library'
 
 android {
@@ -32,8 +40,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode = Long.parseLong(getPublishProperty('versionCode'))
+        versionName getPublishProperty('versionName')
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -54,3 +62,6 @@ dependencies {
 
     compile 'com.android.support:support-annotations:25.1.0'
 }
+
+apply from: '../bintray.gradle'
+apply from: '../maven-pom.gradle'

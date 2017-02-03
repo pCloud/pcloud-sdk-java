@@ -19,15 +19,10 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.2.3'
     }
 }
 
-allprojects {
-    repositories {
-        jcenter()
-    }
-}
 apply plugin: 'com.android.library'
 
 android {
@@ -35,7 +30,7 @@ android {
     buildToolsVersion "25.0.1"
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 9
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -56,4 +51,6 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    compile 'com.android.support:support-annotations:25.1.0'
 }

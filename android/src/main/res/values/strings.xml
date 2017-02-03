@@ -16,5 +16,5 @@
   -->
 
 <resources>
-    <string name="app_name">Authenticate</string>
+    <string name="app_name">Authorize</string>
 </resources>

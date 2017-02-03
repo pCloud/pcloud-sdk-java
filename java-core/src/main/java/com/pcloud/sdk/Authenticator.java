@@ -20,7 +20,7 @@ package com.pcloud.sdk;
 /**
  * An interface for authenticating an application when using pCloud's SDK.
  * <p>
- * See the related API documentation <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html">pages</a>.
+ * See the related API documentation <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html" target="_blank">pages</a>.
  * <p>
  * See the available options in {@link Authenticators} on creating an Authenticator instances.
  *

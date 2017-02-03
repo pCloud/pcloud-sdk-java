@@ -56,7 +56,7 @@ public interface ApiClient {
      * <p>
      * Same as calling {@link #listFolder(long, boolean)} )} with {@code recursive} set to false.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html">documentation page</a>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html" target="_blank">documentation page</a>
      *
      * @param folderId {@link RemoteFolder} id
      * @return {@link Call}
@@ -68,7 +68,7 @@ public interface ApiClient {
      * <p>
      * Loads the metadata about the folder with the provided folder id.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html" target="_blank">documentation page</a>.
      *
      * @param folderId    target folder id
      * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
@@ -79,7 +79,7 @@ public interface ApiClient {
     /**
      * Create a new folder.
      * <p>Create a new folder in the specified folder</p>
-     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/createfolder.html">documentation page</a>.</p>
+     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/createfolder.html" target="_blank">documentation page</a>.</p>
      *
      * @param parentFolderId The id of the parent folder for the newly created folder
      * @param folderName     The new folder name
@@ -114,7 +114,7 @@ public interface ApiClient {
     /**
      * Delete a specified folder recursively.
      * <p>For more information, see the related documentation pages
-     * <a href="https://docs.pcloud.com/methods/folder/deletefolder.html">here</a></p> and <a href="https://docs.pcloud.com/methods/folder/deletefolderrecursive.html">here</a>.
+     * <a href="https://docs.pcloud.com/methods/folder/deletefolder.html" target="_blank">here</a></p> and <a href="https://docs.pcloud.com/methods/folder/deletefolderrecursive.html" target="_blank">here</a>.
      *
      * @param folderId    The id if the folder you would like to delete
      * @param recursively If set to {@code true} all child files will also be deleted.
@@ -148,9 +148,9 @@ public interface ApiClient {
     /**
      * Rename a specified folder.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html" target="_blank">documentation page</a>.
      * <p>
-     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules &amp; restrictions.
+     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html" target="_blank">documentation page</a> for any rules &amp; restrictions.
      *
      * @param folderId      The id of the folder you would like to rename
      * @param newFolderName The new folder name
@@ -162,9 +162,9 @@ public interface ApiClient {
     /**
      * Rename a specified folder.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html" target="_blank">documentation page</a>.
      * <p>
-     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules &amp; restrictions.
+     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html" target="_blank">documentation page</a> for any rules &amp; restrictions.
      *
      * @param folder        The {@link RemoteFolder} you would like to rename. Must not be null.
      * @param newFolderName The new folder name. Must not be null.
@@ -177,7 +177,7 @@ public interface ApiClient {
 
     /**
      * Change a specified folder's parent.
-     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html">documentation page</a>.</p>
+     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html" target="_blank">documentation page</a>.</p>
      *
      * @param folderId   The id of the folder you would like to move
      * @param toFolderId The id of the new parent folder
@@ -199,7 +199,7 @@ public interface ApiClient {
 
     /**
      * Copy specified folder.
-     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html">documentation page</a>.</p>
+     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html" target="_blank">documentation page</a>.</p>
      *
      * @param folderId   The id of the folder you would like to copy
      * @param toFolderId The id of the destination folder
@@ -221,7 +221,7 @@ public interface ApiClient {
 
     /**
      * Copy specified folder.
-     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html">documentation page</a>.</p>
+     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html" target="_blank">documentation page</a>.</p>
      *
      * @param folderId   The id of the folder you would like to copy
      * @param toFolderId The id of the destination folder
@@ -307,7 +307,7 @@ public interface ApiClient {
      * <p>
      * To create an empty file, call the method with a {@link DataSource#EMPTY} argument.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/uploadfile.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/uploadfile.html" target="_blank">documentation page</a>.
      *
      * @param folderId     The id of the folder you would like to create the file.
      * @param filename     The file name. Must not be null.
@@ -341,7 +341,7 @@ public interface ApiClient {
      * <p>
      * Deletes the remote file with the specified file id.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/deletefile.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/deletefile.html" target="_blank">documentation page</a>.
      *
      * @param fileId of the file to be deleted
      * @return {@link Call} resulting in true if operation was successful, false otherwise.
@@ -355,7 +355,7 @@ public interface ApiClient {
      * of the specified {@link RemoteFile} entry. See {@link DownloadOptions} for more details on possible options
      * for generating a link.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank">documentation page</a>.
      *
      * @param file    target file. Must not be null.
      * @param options to be used for the link generation. Must not be null.
@@ -374,7 +374,7 @@ public interface ApiClient {
      * of the remote file with the specified {@code fileId}. See {@link DownloadOptions} for more details on possible options
      * for generating a link.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank">documentation page</a>.
      *
      * @param fileId  the file
      * @param options the options
@@ -415,7 +415,7 @@ public interface ApiClient {
      * If set via {@link Builder#callbackExecutor(Executor)}, the progress listener's
      * methods will be scheduled on the provided Executor.
      * <p>
-     * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html"> documentation page</a>
+     * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank"> documentation page</a>
      * for details on any {@link ApiError} errors.
      *
      * @param fileLink the file link to be downloaded. Must not be null.
@@ -437,7 +437,7 @@ public interface ApiClient {
      * {@link #createFileLink(RemoteFile, DownloadOptions)} with {@link DownloadOptions#DEFAULT},
      * then using it with the {@link #download(FileLink)} method.
      * <p>
-     * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html"> documentation page</a>
+     * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank"> documentation page</a>
      * for details on any {@link ApiError} errors.
      * <h3>
      * NOTE: It is the caller's responsibility to close the resulting {@link BufferedSource} object
@@ -458,7 +458,7 @@ public interface ApiClient {
      * Upon success, this call will return a bytes source of the file that
      * the provided {@code fileLink} object was created for.
      * <p>
-     * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html"> documentation page</a>
+     * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank"> documentation page</a>
      * for details on any {@link ApiError} errors.
      * <h3>
      * NOTE: It is the caller's responsibility to close the resulting {@link BufferedSource} object
@@ -487,7 +487,7 @@ public interface ApiClient {
      * <p>
      * The call will copy the file specified by the {@code fileId} argument to the folder specified by the {@code toFolderId} argument.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html" target="_blank">documentation page</a>.
      *
      * @param fileId     The file id of the file to be copied.
      * @param toFolderId The folder id of the folder where the file will be copied.
@@ -501,7 +501,7 @@ public interface ApiClient {
      * <p>
      * Same as calling {@link #copyFile(long, long, boolean)} with {@code overwrite} set to {@code false}.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html" target="_blank">documentation page</a>.
      *
      * @param file     The {@link RemoteFile} to be copied. Must not be null.
      * @param toFolder The {@link RemoteFolder} where the file will be copied. Must not be null.
@@ -517,7 +517,7 @@ public interface ApiClient {
      * <p>
      * Same as calling {@link #copyFile(long, long, boolean)}
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/copyfile.html" target="_blank">documentation page</a>.
      *
      * @param file      The {@link RemoteFile} to be copied. Must not be null.
      * @param toFolder  The {@link RemoteFolder} where the file will be copied. Must not be null.
@@ -692,7 +692,7 @@ public interface ApiClient {
      * <p>
      * The call will move the file specified by the {@code fileId} argument to the folder specified by the {@code toFolderId}.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html" target="_blank">documentation page</a>.
      *
      * @param fileId     The file id of the file to be moved.
      * @param toFolderId The folder id of the folder where the file will be moved.
@@ -705,7 +705,7 @@ public interface ApiClient {
      * <p>
      * Same as calling {@link #moveFile(long, long)} (long, long)}
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html" target="_blank">documentation page</a>.
      *
      * @param file     The {@link RemoteFile} to be moved. Must not be null.
      * @param toFolder The {@link RemoteFolder} where the file will be moved. Must not be null.
@@ -719,9 +719,9 @@ public interface ApiClient {
     /**
      * Rename a specified file.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html" target="_blank">documentation page</a>.
      * <p>
-     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules &amp; restrictions.
+     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html" target="_blank">documentation page</a> for any rules &amp; restrictions.
      *
      * @param fileId      The id of the folder you would like to rename
      * @param newFilename The new folder name. Must not be null.
@@ -735,9 +735,9 @@ public interface ApiClient {
      * <p>
      * Same as calling {@link #renameFile(long, String)}
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html" target="_blank">documentation page</a>.
      * <p>
-     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html">documentation page</a> for any rules &amp; restrictions.
+     * Refer to the file names <a href="https://docs.pcloud.com/structures/filenames.html" target="_blank">documentation page</a> for any rules &amp; restrictions.
      *
      * @param file        The {@link RemoteFile} to be renamed. Must not be null.
      * @param newFilename The new folder name. Must not be null.
@@ -753,10 +753,10 @@ public interface ApiClient {
      * <p>
      * The call will return the user details of the current account that has granted access to the current SDK application.
      * <p>
-     * See the OAuth <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html">documentation page</a> or
+     * See the OAuth <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html" target="_blank">documentation page</a> or
      * the notes {@linkplain ApiClient here} on how permissions to access accounts are granted.
      * <p>
-     * For more information, see the related <a href="https://docs.pcloud.com/methods/general/userinfo.html">documentation page</a>.
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/general/userinfo.html" target="_blank">documentation page</a>.
      *
      * @return {@link Call} resulting in the accounts details
      */

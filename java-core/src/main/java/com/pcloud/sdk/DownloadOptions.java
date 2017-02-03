@@ -133,7 +133,7 @@ public final class DownloadOptions {
     /**
      * A builder for configuring and creating new {@link DownloadOptions} instances.
      * <p>
-     * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a>
+     * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank">here</a>
      *
      * @see DownloadOptions#newBuilder()
      * @see DownloadOptions#create()
@@ -169,7 +169,7 @@ public final class DownloadOptions {
          * If {@code forceDownload} is TRUE {@code content-type} will be set to {@code application/octet-stream}.
          * In this case {@code content-type} option should be set to null.
          * <p>
-         * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a>
+         * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank">here</a>
          *
          * @param forceDownload {@code true} to force a download, {@code false} otherwise
          * @return the same {@link Builder} instance
@@ -184,7 +184,7 @@ public final class DownloadOptions {
          * <p>
          * {@code contentType} option can be null. If it is left to null the API will return {@link FileLink} with default content-type for the file extension.
          * <p>
-         * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html">here</a>
+         * For more details see <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank">here</a>
          *
          * @param contentType a content type
          * @return the same {@link Builder} instance

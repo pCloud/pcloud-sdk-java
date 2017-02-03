@@ -81,7 +81,7 @@ public final class AuthorizationActivity extends Activity {
      *                <b>NOTE: If a non-{@link Activity} context is provided the resulting intent will have the {@link Intent#FLAG_ACTIVITY_NEW_TASK} flag set.</b>
      * @param apiKey  The API key for the application that will request access permission.
      *                <p>
-     *                For more details on how to obtain a key, see <a href="https://docs.pcloud.com/oauth/index.html">here</a>.
+     *                For more details on how to obtain a key, see <a href="https://docs.pcloud.com/oauth/index.html" target="_blank">here</a>.
      * @return a non-null {@link Intent} for launching an instance of [@link {@link AuthorizationActivity}}.
      * @see #createIntent(Context, String, Uri)
      */
@@ -98,7 +98,7 @@ public final class AuthorizationActivity extends Activity {
      *                    <b>NOTE: If a non-{@link Activity} context is provided the resulting intent will have the {@link Intent#FLAG_ACTIVITY_NEW_TASK} flag set.</b>
      * @param apiKey      The API key for the application that will request access permission.
      *                    <p>
-     *                    For more details on how to obtain a key, see <a href="https://docs.pcloud.com/oauth/index.html">here</a>.
+     *                    For more details on how to obtain a key, see <a href="https://docs.pcloud.com/oauth/index.html" target="_blank">here</a>.
      * @param redirectUrl An optional URL that will be called after successful authentication.
      *                    <p>
      *                    If set to null, {@link #DEFAULT_REDIRECT_URL} will be used.

@@ -22,8 +22,8 @@ import java.util.Locale;
 /**
  * Signals for pCloud API errors.
  * <p>
- * For more information on errors and their meaning, see <a href="https://docs.pcloud.com/errors/index.html"> the errors section</a>
- * or browse through method-specific pages at the <a href="https://docs.pcloud.com/">API documentation</a>.
+ * For more information on errors and their meaning, see <a href="https://docs.pcloud.com/errors/index.html" target="_blank"> the errors section</a>
+ * or browse through method-specific pages at the <a href="https://docs.pcloud.com/" target="_blank">API documentation</a>.
  */
 @SuppressWarnings("unused")
 public class ApiError extends Exception {

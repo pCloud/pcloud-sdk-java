@@ -31,7 +31,7 @@ public class Authenticators {
     /**
      * Create a new OAuth 2.0 {@link Authenticator}
      * <p>
-     * See the related API documentation <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html">pages</a>.
+     * See the related API documentation <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html" target="_blank">pages</a>.
      *
      * @param accessToken a valid access token. Must not be null.
      * @return a new {@link Authenticator} instance that uses PCloud API's OAuth 2.0 tokens.

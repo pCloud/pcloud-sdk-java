@@ -1,4 +1,4 @@
-# pCloud Java SDK
+# <img src="/docs/logo_color.png" width="72"> pCloud Java SDK
 
 The official pCloud SDK for Java & Android for integrating with [ pCloud's API][docs].
 
@@ -62,6 +62,11 @@ See the code in the `sample` module or the sample application [here.](https://gi
 #### Android
 
 See the code in the `sample-android` module or the sample application [here.](https://github.com/pCloud/pcloud-sdk-java/blob/master/sample-android/src/main/java/com/pcloud/sdk/sample/MainActivity.java)
+
+### Documentation
+
+- The documentation for the SDK can be found [here](https://pcloud.github.io/pcloud-sdk-java/).
+- The pCloud API can be found [here][docs].
 
 #License
 	Licensed under the Apache License, Version 2.0 (the "License");

@@ -19,6 +19,8 @@ package com.pcloud.sdk.internal;
 import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.Authenticator;
 
+import java.util.concurrent.Callable;
+
 public final class Internal {
 
     private Internal() {
@@ -29,7 +31,7 @@ public final class Internal {
         return new RealApiServiceBuilder();
     }
 
-    public static Authenticator createOAuthAuthenticator(String accessToken){
-        return new AccessTokenAuthenticator(accessToken);
+    public static Authenticator createOAuthAuthenticator(Callable<String> tokenProvider){
+        return new AccessTokenAuthenticator(tokenProvider);
     }
 }

@@ -19,6 +19,8 @@ package com.pcloud.sdk;
 
 import com.pcloud.sdk.internal.Internal;
 
+import java.util.concurrent.Callable;
+
 /**
  * A collection of {@link Authenticator} factory methods.
  */
@@ -36,7 +38,24 @@ public class Authenticators {
      * @param accessToken a valid access token. Must not be null.
      * @return a new {@link Authenticator} instance that uses PCloud API's OAuth 2.0 tokens.
      */
-    public static Authenticator newOAuthAuthenticator(String accessToken) {
-        return Internal.createOAuthAuthenticator(accessToken);
+    public static Authenticator newOAuthAuthenticator(final String accessToken) {
+        return Internal.createOAuthAuthenticator(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return accessToken;
+            }
+        });
+    }
+
+    /**
+     * Create a new OAuth 2.0 {@link Authenticator}
+     * <p>
+     * See the related API documentation <a href="https://docs.pcloud.com/methods/oauth_2.0/authorize.html" target="_blank">pages</a>.
+     *
+     * @param tokenProvider a non-null {@link Callable} object that will return an pCloud OAuth token.
+     * @return a new {@link Authenticator} instance that uses PCloud API's OAuth 2.0 tokens.
+     */
+    public static Authenticator newOauthAuthenticator(Callable<String> tokenProvider){
+        return Internal.createOAuthAuthenticator(tokenProvider);
     }
 }

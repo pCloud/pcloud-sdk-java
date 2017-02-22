@@ -21,23 +21,34 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 final class AccessTokenAuthenticator extends RealAuthenticator {
 
-    private String accessToken;
+    private Callable<String> tokenProvider;
 
-    AccessTokenAuthenticator(String accessToken) {
-        this.accessToken = accessToken;
+    AccessTokenAuthenticator(Callable<String> tokenProvider){
+        if (tokenProvider == null) {
+            throw new IllegalArgumentException("'tokenProvider' argument cannot be null.");
+        }
+
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
+        String accessToken;
+        try {
+            accessToken = tokenProvider.call();
+        } catch (Exception e) {
+            throw new IOException("Error while providing access token.", e);
+        }
         Request request = accessToken != null ?
-                setBearerTokenToRequest(chain.request()) : chain.request();
+                setBearerTokenToRequest(chain.request(), accessToken) : chain.request();
         return chain.proceed(request);
     }
 
-    private Request setBearerTokenToRequest(Request request) {
+    private Request setBearerTokenToRequest(Request request, String accessToken) {
         if (accessToken != null) {
             return request.newBuilder()
                     .header("Authorization", "Bearer " + accessToken)

@@ -10,12 +10,12 @@ The official pCloud SDK for Java & Android for integrating with [ pCloud's API][
 ## Documentation
 
 - The documentation for the SDK can be found [here](https://pcloud.github.io/pcloud-sdk-java/).
-- The pCloud API can be found [here][docs].
+- The pCloud API documentation can be found [here][docs].
 
 ## Getting started
 ### Register your application
 
-In order to use this SDK, you have to register your application in the [pCloud App Console](https://PUT/OUT/APP/CONSOLE/URL). Take note of the app key in the main page of your application once you create it.
+In order to use this SDK, you have to register your application in the [pCloud App Console](https://docs.pcloud.com/my_apps/). Take note of the app key in the main page of your application once you create it.
 
 ### Set up your application
 
@@ -26,6 +26,8 @@ To allow the SDK to do that, find the 'Redirect URIs' section in your applicatio
 
 #### Java
 
+
+ [ ![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/java-core/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/java-core/_latestVersion)
 Download [the latest JAR][jar-java] or grab via Maven:
 
 ```xml
@@ -42,6 +44,8 @@ compile 'com.pcloud.sdk:java-core:1.0.1'
 ```
 
 #### Android
+
+[ ![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/android/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/android/_latestVersion)
 
 Download [the latest JAR][jar-android] or grab via Maven:
 
@@ -87,6 +91,6 @@ See the code in the `sample-android` module or the sample application [here.](ht
 [site]: https://www.pcloud.com/
 [docs]: https://docs.pcloud.com/
 [bintray]: https://bintray.com/pcloud/pcloud-sdk/
-[jar-android]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fandroid%2F1.0.0%2Fandroid-1.0.0-javadoc.jar
-[jar-java]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fandroid%2F1.0.0%2Fandroid-1.0.0-javadoc.jar
+[jar-android]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fandroid%2F1.0.1%2Fandroid-1.0.1.aar
+[jar-java]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fjava-core%2F1.0.1%2Fjava-core-1.0.1.jar
 

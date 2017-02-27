@@ -28,6 +28,7 @@ To allow the SDK to do that, find the 'Redirect URIs' section in your applicatio
 
 
  [ ![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/java-core/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/java-core/_latestVersion)
+
 Download [the latest JAR][jar-java] or grab via Maven:
 
 ```xml

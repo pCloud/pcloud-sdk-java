@@ -13,21 +13,31 @@ The official pCloud SDK for Java & Android for integrating with [ pCloud's API][
 - The pCloud API documentation can be found [here][docs].
 
 ## Getting started
-### Register your application
+### 1. Register your pCloud API application
 
-In order to use this SDK, you have to register your application in the [pCloud App Console](https://docs.pcloud.com/my_apps/). Take note of the app key in the main page of your application once you create it.
+  - Create an application in the [pCloud App Console](https://docs.pcloud.com/my_apps/).
+<br/><img src="docs/screenshot_my_applications.png" width="640"/>
+<br/><img src="docs/screenshot_new_app.png" width="640"/>
 
-### Set up your application
+  - Take note of the app key(client ID) of your application once you create it.
+<br/><img src="docs/screenshot_client_id.png" width="640"/>
 
-The SDK uses an OAuth 2.0 access token to authorize requests to the pCloud API. You can obtain a token using the SDK's authorization flow.
-To allow the SDK to do that, find the 'Redirect URIs' section in your application configuration page and add a URI that will be redirected on a authorization grant.
+### 2. Configure your pCloud API application
 
-### Install the SDK
+  - Add a publisher.
+  - Add a description.
+  - Add a redirect URI in the `Redirect URIs` field in your application configuration page.
+
+  >The SDK allows users to provide multiple custom Uris or expects the `https://oauth2redirect` Uri to be added in the Application configuration page.
+
+  - Optionally add an icon that will be displayed to users upon authorization requests.
+  - Turn on the `Allow implicit grant` option.
+  - Save the changes.
+  <br/><img src="docs/screenshot_app_configuration.png" width="640"/>
+
+### 3. Install the SDK
 
 #### Java
-
-
- [ ![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/java-core/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/java-core/_latestVersion)
 
 Download [the latest JAR][jar-java] or grab via Maven:
 
@@ -43,10 +53,14 @@ or Gradle:
 ```groovy
 compile 'com.pcloud.sdk:java-core:1.0.1'
 ```
+[![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/java-core/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/java-core/_latestVersion)
 
 #### Android
 
-[ ![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/android/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/android/_latestVersion)
+In addition to the functionality provided by the `java-core` module, users can benfit from the Android-specific `android` module.
+The module provides a built-in authorization Activity that handles the application authorization requests.
+For details on usage, refer to the  [AuthorizationActivity](https://pcloud.github.io/pcloud-sdk-java/com/pcloud/sdk/AuthorizationActivity.html) documentation.
+
 
 Download [the latest JAR][jar-android] or grab via Maven:
 
@@ -62,17 +76,26 @@ or Gradle:
 ```groovy
 compile 'com.pcloud.sdk:android:1.0.1'
 ```
+[![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/android/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/android/_latestVersion)
 
-### Samples
 
-#### Java
+## Samples
 
-See the code in the `sample` module or the sample application [here.](https://github.com/pCloud/pcloud-sdk-java/blob/master/sample/src/main/java/Main.java)
+### Java
 
-#### Android
+See the code in the `sample` module or the sample application [here.](https://github.com/pCloud/pcloud-sdk-java/blob/master/sample/src/main/java/Main.java). The sample explains briefly:
+- [ApiClient](https://pcloud.github.io/pcloud-sdk-java/com/pcloud/sdk/ApiClient.html) instantiation and configuration.
+- File tree browsing and listing folder contents.
+- Copy/move/delete/rename operations on files and folders.
+- File uploads.
+- File downloads.
+- File download link generation.
 
-See the code in the `sample-android` module or the sample application [here.](https://github.com/pCloud/pcloud-sdk-java/blob/master/sample-android/src/main/java/com/pcloud/sdk/sample/MainActivity.java)
+### Android
 
+- See the code in the `sample-android` module or the sample application [here](https://github.com/pCloud/pcloud-sdk-java/blob/master/sample-android/src/main/java/com/pcloud/sdk/sample/MainActivity.java).
+- The sample contains an application allowing users to request authorization for a registered pCloud API application.
+- The sample gives a hint on how [AuthorizationActivity](https://pcloud.github.io/pcloud-sdk-java/com/pcloud/sdk/AuthorizationActivity.html) should be used.
 
 #License
 	Licensed under the Apache License, Version 2.0 (the "License");

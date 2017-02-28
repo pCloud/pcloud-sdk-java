@@ -57,8 +57,8 @@ compile 'com.pcloud.sdk:java-core:1.0.1'
 
 #### Android
 
-In addition to the functionality provided by the `java-core` module, users can benfit from the Android-specific `android` module.
-The module provides a built-in authorization Activity that handles the application authorization requests.
+In addition to the functionality provided by the `java-core` module, Android applications can benefit from platform-specific features.
+The `android` module provides a built-in authorization Activity that handles the application authorization requests.
 For details on usage, refer to the  [AuthorizationActivity](https://pcloud.github.io/pcloud-sdk-java/com/pcloud/sdk/AuthorizationActivity.html) documentation.
 
 

@@ -2,8 +2,6 @@
 
 The official pCloud SDK for Java & Android for integrating with [ pCloud's API][docs].
 
-[TOC]
-
 ## Requirements
 
 - Java 7.0+
@@ -96,6 +94,7 @@ ApiClient apiClient = PCloudSdk.newClientBuilder()
 - Existing `ApiClient` instances can be 'killed' by calling `ApiClient.shutdown()`.
 - For details on the available configuration options, see [here](https://pcloud.github.io/pcloud-sdk-java/com/pcloud/sdk/ApiClient.Builder.html)
 
+---
 ### Making API calls
 
 #### Creating a `Call`:
@@ -139,7 +138,7 @@ call.enqueue(new Callback<RemoteFolder>() {
 ```java
 Call<RemoteFolder> newCall = call.clone();
 ```
-
+---
 ### File operations
 
 #### List folder

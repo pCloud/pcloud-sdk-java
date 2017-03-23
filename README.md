@@ -102,16 +102,17 @@ ApiClient apiClient = PCloudSdk.newClientBuilder()
 ```java
 Call<RemoteFolder> call = apiClient.listFolder(RemoteFolder.ROOT_FOLDER_ID);
 ```
-  - Creating `Call` instances does not by itself make any API request, treat the objects as a declaration of intent. See the following sections for more inofrmation on how to execute calls.
+  - Creating `Call` instances does not by itself make any API request, treat the objects as a declaration of intent. See the following sections for more information on how to execute calls.
   - For a full list of available API calls, see [here](https://pcloud.github.io/pcloud-sdk-java/com/pcloud/sdk/ApiClient.html).
 
 #### Executing a `Call` and obtaining the result on the same thread:
 ```java
 RemoteFolder folder = call.execute();
 ```
-  - `Call.execute()` will block the current thread until call is executed, a timeout is reached or an error occurs.
+  - `Call.execute()` will execute the call on the calling thread, blocking it until a response is delivered, a timeout is reached or an error occurs.
   - `Call.execute()` will throw an `IOException` on a networking error and `ApiError` on error returned by pCloud's API.
   - Request timeouts can be controlled via the methods in `ApiClient.Builder`
+  - **Avoid calling `Call.execute()` from the UI thread, as it can potentially block for an extended period of time. On Android applications targetting API11+ , calling this method from the main thread will cause a `NetworkOnMainThreadException`.**
 
 #### Executing a `Call` asynchronously:
 ```java
@@ -133,7 +134,7 @@ call.enqueue(new Callback<RemoteFolder>() {
   - By default `Callback` methods will be called on an arbitrary thread, to control this behavior see `ApiClient.Builder.callbackExecutor(Executor)`
 
 #### Reusing `Call` instances:
- - A 'Call' instance should be used only once, that is any further call to `Call.execute()` or 'Call.enqueue()' after the se have been called for an object instance, will lead to a runtime exception.
+ - A 'Call' instance should be used only once, that is any further call to `Call.execute()` or 'Call.enqueue()' after the former have been already called, will lead to a runtime exception.
  - Calls can be reused by calling `Call.clone()` that will create a new, identical object, that can be used to make a new API request.
 ```java
 Call<RemoteFolder> newCall = call.clone();

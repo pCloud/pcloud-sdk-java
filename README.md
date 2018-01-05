@@ -13,16 +13,22 @@ The official pCloud SDK for Java & Android for integrating with [ pCloud's API][
 - The pCloud API documentation can be found [here][docs].
 
 ## Getting started
-### 1. Register your pCloud API application
+### 1. Create a pCloud account
+  
+  - Visit [pCloud's website](https://www.pcloud.com/) and create an account.
 
-  - Create an application in the [pCloud App Console](https://docs.pcloud.com/my_apps/).
+### 2. Register your pCloud API application
+
+  - Login to the [pCloud Developer Site](https://docs.pcloud.com/)
+
+  - Create an application in the [pCloud App Console Page](https://docs.pcloud.com/oauth/index.html).
 <br/><img src="docs/screenshot_my_applications.png" width="640"/>
 <br/><img src="docs/screenshot_new_app.png" width="640"/>
 
   - Take note of the app key(client ID) of your application once you create it.
 <br/><img src="docs/screenshot_client_id.png" width="640"/>
 
-### 2. Configure your pCloud API application
+### 3. Configure your pCloud API application
 
   - Add a publisher.
   - Add a description.
@@ -35,7 +41,7 @@ The official pCloud SDK for Java & Android for integrating with [ pCloud's API][
   - Save the changes.
   <br/><img src="docs/screenshot_app_configuration.png" width="640"/>
 
-### 3. Install the SDK
+### 4. Install the SDK
 
 #### Java
 

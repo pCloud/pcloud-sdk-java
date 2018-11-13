@@ -10,7 +10,6 @@ buildscript {
     }
     dependencies {
         classpath dep.bintrayPlugin
-        classpath dep.androidPlugin
         classpath dep.androidMavenPlugin
     }
 }

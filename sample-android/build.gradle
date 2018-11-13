@@ -56,7 +56,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.pcloud.sdk:java-core:1.0.0'
     implementation 'com.pcloud.sdk:android:1.0.0'
 }

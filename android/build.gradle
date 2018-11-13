@@ -63,12 +63,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestImplementation(dep.espressoCore) {
-        exclude group: 'com.android.support', module: 'support' +
-                '-annotations'
-    }
-
     implementation dep.supportAnnotations
 }
 

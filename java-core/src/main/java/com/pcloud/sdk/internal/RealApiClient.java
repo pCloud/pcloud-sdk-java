@@ -123,29 +123,53 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data) {
-        return createFile(folder.folderId(), filename, data, null, null);
+        return createFile(folder, filename, data, null, null, UploadOptions.DEFAULT);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, UploadOptions uploadOptions) {
+        return createFile(folder, filename, data, null, null, uploadOptions);
     }
 
     @Override
     public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, Date modifiedDate, ProgressListener listener) {
+        return createFile(folder, filename, data, modifiedDate, listener, UploadOptions.DEFAULT);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, Date modifiedDate, ProgressListener listener, UploadOptions uploadOptions) {
         if (folder == null) {
             throw new IllegalArgumentException("Folder argument cannot be null.");
         }
-        return createFile(folder.folderId(), filename, data, modifiedDate, listener);
+        return createFile(folder.folderId(), filename, data, modifiedDate, listener, uploadOptions);
     }
 
     @Override
     public Call<RemoteFile> createFile(long folderId, String filename, DataSource data) {
-        return createFile(folderId, filename, data, null, null);
+        return createFile(folderId, filename, data, null, null, UploadOptions.DEFAULT);
     }
 
     @Override
-    public Call<RemoteFile> createFile(long folderId, String filename, final DataSource data, Date modifiedDate, final ProgressListener listener) {
+    public Call<RemoteFile> createFile(long folderId, String filename, DataSource data, UploadOptions uploadOptions) {
+        return createFile(folderId, filename, data, null, null, uploadOptions);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(long folderId, String filename, DataSource data, Date modifiedDate, ProgressListener listener) {
+        return createFile(folderId, filename, data, modifiedDate, listener, UploadOptions.DEFAULT);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(long folderId, String filename, final DataSource data, Date modifiedDate, final ProgressListener listener, final UploadOptions uploadOptions) {
         if (filename == null) {
             throw new IllegalArgumentException("Filename cannot be null.");
         }
         if (data == null) {
             throw new IllegalArgumentException("File data cannot be null.");
+        }
+
+        if(uploadOptions == null) {
+            throw new IllegalArgumentException("Upload options cannot be null.");
         }
 
         RequestBody dataBody = new RequestBody() {
@@ -186,8 +210,8 @@ class RealApiClient implements ApiClient {
         HttpUrl.Builder urlBuilder = API_BASE_URL.newBuilder().
                 addPathSegment("uploadfile")
                 .addQueryParameter("folderid", String.valueOf(folderId))
-                .addQueryParameter("renameifexists", String.valueOf(1))
-                .addQueryParameter("nopartial", String.valueOf(1));
+                .addQueryParameter("renameifexists", String.valueOf(uploadOptions.overrideFile() ? 0 : 1))
+                .addQueryParameter("nopartial", String.valueOf(uploadOptions.partialUpload() ? 0 : 1));
 
         if (modifiedDate != null) {
             urlBuilder.addQueryParameter("mtime", String.valueOf(TimeUnit.MILLISECONDS.toSeconds(modifiedDate.getTime())));

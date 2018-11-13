@@ -115,6 +115,7 @@ public class ApiClientIntegrationTest {
         assertTrue(entryExistsInFolder(remoteFolder1, RemoteFolder.ROOT_FOLDER_ID));
     }
 
+
     @Test
     public void testCreateFile() throws IOException, ApiError {
         String someName = UUID.randomUUID().toString();
@@ -136,6 +137,20 @@ public class ApiClientIntegrationTest {
         assertTrue(entryExistsInRoot(remoteFile));
         assertEquals(fileContents.length, remoteFile.size());
         assertEquals(dateModified, remoteFile.created());
+    }
+
+    @Test
+    public void testCreateFileWithOverrideOption() throws IOException, ApiError {
+        String someName = UUID.randomUUID().toString() + ".txt";
+        byte[] fileContents = someName.getBytes();
+        byte[] file2Contents = UUID.randomUUID().toString().getBytes();
+        RemoteFile remoteFile = apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, someName, DataSource.create(fileContents), UploadOptions.OVERRIDE_FILE).execute();
+        RemoteFile remoteFile2 = apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, someName, DataSource.create(file2Contents), UploadOptions.OVERRIDE_FILE).execute();
+
+        assertFalse(entryExistsInRoot(remoteFile));
+        assertTrue(entryExistsInRoot(remoteFile2));
+        assertEquals(someName, remoteFile2.name());
+        assertEquals(file2Contents.length, remoteFile2.size());
     }
 
     @Test
@@ -232,7 +247,7 @@ public class ApiClientIntegrationTest {
     private boolean entryExistsInFolder(RemoteEntry entry, long parentFolderId) throws IOException, ApiError {
         RemoteFolder root = apiClient.listFolder(parentFolderId).execute();
         for (RemoteEntry e : root.children()) {
-            if (e.id().equals(entry.id()) || e.name().equals(entry.name())) {
+            if (e.equals(entry)) {
                 return true;
             }
         }

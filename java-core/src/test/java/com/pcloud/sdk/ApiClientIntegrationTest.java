@@ -19,7 +19,9 @@ package com.pcloud.sdk;
 
 import com.pcloud.sdk.*;
 
+import okio.BufferedSink;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -42,7 +44,7 @@ public class ApiClientIntegrationTest {
 
     @Before
     public void setUp() {
-        String token = System.getenv("pcloud_tests_token");
+        String token = System.getenv("pcloud_token");
         apiClient = PCloudSdk.newClientBuilder()
                 .authenticator(Authenticators.newOAuthAuthenticator(token))
                 .create();

@@ -338,7 +338,7 @@ public interface ApiClient {
      * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate}, {@code listener}
      * and {@linkplain UploadOptions#DEFAULT} arguments.
      *
-     * @param folderId The {@link RemoteFolder} id where you would like to create the file
+     * @param folderId The id of the folder you would like to create the file.
      * @param filename The file name. Must not be null.
      * @param data     {@link DataSource} object providing the file content. Must not be null.
      * @return {@link Call} resulting in the new file's metadata
@@ -357,9 +357,9 @@ public interface ApiClient {
     /**
      * Create a new file.
      * <p>
-     * Same as calling {@link #createFile(RemoteFolder, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate} and {@code listener} arguments.
+     * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate} and {@code listener} arguments.
      *
-     * @param folder   The {@link RemoteFolder} where you would like to create the file. Must not be null.
+     * @param folderId The id of the folder you would like to create the file.
      * @param filename The file name. Must not be null.
      * @param data     {@link DataSource} object providing the file content. Must not be null.
      * @param uploadOptions {@link UploadOptions} to be used for the file creation. Must not be null.

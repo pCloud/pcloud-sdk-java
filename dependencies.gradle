@@ -1,0 +1,29 @@
+ext {
+    compileSdkVersion = 28
+    buildToolsVersion = '28.0.3'
+    minSdkVersion = 9
+    targetSdkVersion = 28
+
+    sourceCompatibilityVersion = JavaVersion.VERSION_1_7
+    targetCompatibilityVersion = JavaVersion.VERSION_1_7
+
+    dep = [
+            androidPlugin        : "com.android.tools.build:gradle:3.2.1",
+            bintrayPlugin        : "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4",
+            androidMavenPlugin   : "com.github.dcendents:android-maven-gradle-plugin:2.1",
+
+            supportAnnotations   : "androidx.annotation:annotation:1.0.0",
+
+            okhttp3 : "com.squareup.okhttp3:okhttp:3.11.0",
+            gson : "com.google.code.gson:gson:2.8.5",
+
+            // Test dependencies
+            mockito : "org.mockito:mockito-core:2.23.0",
+            junit : "junit:junit:4.12",
+            hamcrestMatchers : "org.hamcrest:hamcrest-core:1.3",
+            testInstrumentationRunner : "android.support.test.runner.AndroidJUnitRunner"
+    ]
+
+
+    isCi = "true".equals(System.getenv('CI'))
+}

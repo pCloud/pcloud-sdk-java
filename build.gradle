@@ -1,16 +1,25 @@
 buildscript {
+
+    apply from: rootProject.file('dependencies.gradle')
+
     repositories {
+        mavenCentral()
         jcenter()
+        google()
+        maven { url "https://plugins.gradle.org/m2" }
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        classpath dep.bintrayPlugin
+        classpath dep.androidMavenPlugin
     }
 }
 
 allprojects {
     repositories {
+        mavenCentral()
         jcenter()
+        google()
+        maven { url "https://plugins.gradle.org/m2" }
     }
 }
 

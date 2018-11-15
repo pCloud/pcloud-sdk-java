@@ -45,7 +45,8 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 apiKeyView.setText(null);
                 authorizationResultView.setText(null);
-                Intent authIntent = AuthorizationActivity.createIntent(MainActivity.this, "0hYjMm0dOFm");
+                //TODO Set YOUR application Client ID
+                Intent authIntent = AuthorizationActivity.createIntent(MainActivity.this, "My Application Client ID");
                 startActivityForResult(authIntent, PCLOUD_AUTHORIZATION_REQUEST_CODE);
             }
         });

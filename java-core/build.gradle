@@ -3,20 +3,20 @@ import groovy.io.FileType
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = rootProject.ext.sourceCompatibilityVersion
+targetCompatibility = rootProject.ext.targetCompatibilityVersion
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.6.8'
-    testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: '1.3'
+    testImplementation dep.junit
+    testImplementation dep.mockito
+    testImplementation dep.hamcrestMatchers
 
-    compile 'com.squareup.okhttp3:okhttp:3.5.0'
-    compile 'com.google.code.gson:gson:2.8.0'
+    implementation dep.okhttp3
+    implementation dep.gson
 
 }
 

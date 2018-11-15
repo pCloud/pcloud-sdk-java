@@ -246,7 +246,8 @@ public interface ApiClient {
     /**
      * Create a new file.
      * <p>
-     * Same as calling {@link #createFile(RemoteFolder, String, DataSource, Date, ProgressListener)} with null {@code modifiedDate} and {@code listener} arguments.
+     * Same as calling {@link #createFile(RemoteFolder, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate},
+     * {@code listener} and {@linkplain UploadOptions#DEFAULT} arguments.
      *
      * @param folder   The {@link RemoteFolder} where you would like to create the file. Must not be null.
      * @param filename The file name. Must not be null.
@@ -255,14 +256,38 @@ public interface ApiClient {
      * @throws IllegalArgumentException on a null {@code folder} argument.
      * @throws IllegalArgumentException on a null {@code filename} argument.
      * @throws IllegalArgumentException on a null {@code data} argument.
-     * @see #createFile(long, String, DataSource, Date, ProgressListener) #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see #createFile(long, String, DataSource)
+     * @see #createFile(long, String, DataSource, UploadOptions)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)
      */
     Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data);
 
     /**
      * Create a new file.
      * <p>
-     * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener)} with {@code folderId} taken from {@linkplain RemoteFolder#folderId()}.
+     * Same as calling {@link #createFile(RemoteFolder, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate} and {@code listener} arguments.
+     *
+     * @param folder        The {@link RemoteFolder} where you would like to create the file. Must not be null.
+     * @param filename      The file name. Must not be null.
+     * @param data          {@link DataSource} object providing the file content. Must not be null.
+     * @param uploadOptions {@link UploadOptions} to be used for the file creation. Must not be null.
+     * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
+     * @throws IllegalArgumentException on a null {@code uploadOptions} argument.
+     * @see #createFile(long, String, DataSource)
+     * @see #createFile(long, String, DataSource, UploadOptions)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)
+     */
+    Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, UploadOptions uploadOptions);
+
+    /**
+     * Create a new file.
+     * <p>
+     * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)} with {@code folderId} taken from {@linkplain RemoteFolder#folderId()} and {@linkplain UploadOptions#DEFAULT} arguments.
      *
      * @param folder       The {@link RemoteFolder} where you would like to create the file. Must not be null.
      * @param filename     The file name. Must not be null.
@@ -273,16 +298,45 @@ public interface ApiClient {
      * @throws IllegalArgumentException on a null {@code folder} argument.
      * @throws IllegalArgumentException on a null {@code filename} argument.
      * @throws IllegalArgumentException on a null {@code data} argument.
-     * @see #createFile(long, String, DataSource, Date, ProgressListener) #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see #createFile(long, String, DataSource)
+     * @see #createFile(long, String, DataSource, UploadOptions)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)
      * @see DataSource
      * @see ProgressListener
+     * @see UploadOptions
      */
     Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, Date modifiedDate, ProgressListener listener);
+
 
     /**
      * Create a new file.
      * <p>
-     * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener)} with null {@code modifiedDate} and {@code listener} arguments.
+     * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)} with {@code folderId} taken from {@linkplain RemoteFolder#folderId()}.
+     *
+     * @param folder        The {@link RemoteFolder} where you would like to create the file. Must not be null.
+     * @param filename      The file name. Must not be null.
+     * @param data          {@link DataSource} object providing the file content. Must not be null.
+     * @param modifiedDate  The last modification date to be used. If set to {@code null}, the upload date will be used instead.
+     * @param listener      The listener to be used to notify about upload progress. If null, no progress will be reported.
+     * @param uploadOptions {@link UploadOptions} to be used for the file creation. Must not be null.
+     * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
+     * @throws IllegalArgumentException on a null {@code uploadOptions} argument.
+     * @see #createFile(long, String, DataSource, Date, ProgressListener) #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see DataSource
+     * @see ProgressListener
+     * @see UploadOptions
+     */
+    Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, Date modifiedDate, ProgressListener listener, UploadOptions uploadOptions);
+
+    /**
+     * Create a new file.
+     * <p>
+     * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate}, {@code listener}
+     * and {@linkplain UploadOptions#DEFAULT} arguments.
      *
      * @param folderId The {@link RemoteFolder} id where you would like to create the file
      * @param filename The file name. Must not be null.
@@ -290,20 +344,50 @@ public interface ApiClient {
      * @return {@link Call} resulting in the new file's metadata
      * @throws IllegalArgumentException on a null {@code filename} argument.
      * @throws IllegalArgumentException on a null {@code data} argument.
-     * @see #createFile(long, String, DataSource, Date, ProgressListener) #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see #createFile(long, String, DataSource, UploadOptions)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)
+     * @see DataSource
+     * @see ProgressListener
+     * @see UploadOptions
      */
     Call<RemoteFile> createFile(long folderId, String filename, DataSource data);
+
+
+    /**
+     * Create a new file.
+     * <p>
+     * Same as calling {@link #createFile(RemoteFolder, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate} and {@code listener} arguments.
+     *
+     * @param folder   The {@link RemoteFolder} where you would like to create the file. Must not be null.
+     * @param filename The file name. Must not be null.
+     * @param data     {@link DataSource} object providing the file content. Must not be null.
+     * @param uploadOptions {@link UploadOptions} to be used for the file creation. Must not be null.
+     * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
+     * @throws IllegalArgumentException on a null {@code uploadOptions} argument.
+     * @see #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)
+     * @see DataSource
+     * @see ProgressListener
+     * @see UploadOptions
+     */
+    Call<RemoteFile> createFile(long folderId, String filename, DataSource data, UploadOptions uploadOptions);
 
     /**
      * Create a new file.
      * <p>
      * Creates a new file with the specified name in the specified folder.
      * <p>
-     * If set, the {@code modifiedDate} parameter will be se tas the last modification date of the file.
+     * If set, the {@code modifiedDate} parameter will be set as the last modification date of the file.
      * <p>
      * The provided {@link DataSource} object will be used to populate the file's contents.
      * <p>
      * If a {@link ProgressListener} is provided, it will be notified on every {@code n} bytes uploaded, as set per {@link Builder#progressCallbackThreshold(long)}
+     * <p>
+     * Method is called with a {@link UploadOptions#DEFAULT} argument.
      * <p>
      * To create an empty file, call the method with a {@link DataSource#EMPTY} argument.
      * <p>
@@ -319,8 +403,42 @@ public interface ApiClient {
      * @throws IllegalArgumentException on a null {@code data} argument.
      * @see DataSource
      * @see ProgressListener
+     * @see UploadOptions
      */
     Call<RemoteFile> createFile(long folderId, String filename, DataSource data, Date modifiedDate, ProgressListener listener);
+
+    /**
+     * Create a new file.
+     * <p>
+     * Creates a new file with the specified name in the specified folder.
+     * <p>
+     * If set, the {@code modifiedDate} parameter will be set as the last modification date of the file.
+     * <p>
+     * The provided {@link DataSource} object will be used to populate the file's contents.
+     * <p>
+     * If a {@link ProgressListener} is provided, it will be notified on every {@code n} bytes uploaded, as set per {@link Builder#progressCallbackThreshold(long)}
+     * <p>
+     * Method uses the supplied {@link UploadOptions}, possible constant for usage are {@link UploadOptions#DEFAULT}, {@link UploadOptions#OVERRIDE_FILE}, {@link UploadOptions#PARTIAL_UPLOAD}.
+     * <p>
+     * To create an empty file, call the method with a {@link DataSource#EMPTY} argument.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/uploadfile.html" target="_blank">documentation page</a>.
+     *
+     * @param folderId     The id of the folder you would like to create the file.
+     * @param filename     The file name. Must not be null.
+     * @param data         {@link DataSource} object providing the file content. Must not be null.
+     * @param modifiedDate The last modification date to be used. If set to {@code null}, the upload date will be used instead.
+     * @param listener     The listener to be used to notify about upload progress. If null, no progress will be reported.
+     * @param uploadOptions {@link UploadOptions} to be used for the file creation. Must not be null.
+     * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
+     * @throws IllegalArgumentException on a null {@code uploadOptions} argument.
+     * @see DataSource
+     * @see ProgressListener
+     * @see UploadOptions
+     */
+    Call<RemoteFile> createFile(long folderId, String filename, DataSource data, Date modifiedDate, ProgressListener listener, UploadOptions uploadOptions);
 
 
     /**

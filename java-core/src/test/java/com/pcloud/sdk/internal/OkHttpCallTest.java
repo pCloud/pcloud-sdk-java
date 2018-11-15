@@ -72,6 +72,7 @@ public class OkHttpCallTest {
         Response response = new Response.Builder().request(testRequest)
                 .code(500)
                 .protocol(Protocol.HTTP_1_1)
+                .message("message")
                 .build();
 
         Object expectedResponse = new Object();
@@ -162,6 +163,7 @@ public class OkHttpCallTest {
                 .code(500)
                 .protocol(Protocol.HTTP_1_1)
                 .body(mock(ResponseBody.class))
+                .message("message")
                 .build();
 
         final Exception apiError = new ApiError(5000, "");
@@ -179,6 +181,7 @@ public class OkHttpCallTest {
         Response response = new Response.Builder().request(testRequest)
                 .code(200)
                 .protocol(Protocol.HTTP_1_1)
+                .message("message")
                 .build();
 
         Object adaptedResponse = new Object();

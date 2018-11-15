@@ -18,7 +18,7 @@
 package com.pcloud.sdk;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.Collections;
 import java.util.Map;

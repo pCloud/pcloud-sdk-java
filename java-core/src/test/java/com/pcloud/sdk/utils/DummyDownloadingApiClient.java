@@ -31,11 +31,11 @@ import java.util.concurrent.Executor;
 
 public class DummyDownloadingApiClient implements ApiClient {
 
-    public static ApiClient create(byte[] data){
+    public static ApiClient create(byte[] data) {
         return new DummyDownloadingApiClient(data);
     }
 
-    public static ApiClient create(){
+    public static ApiClient create() {
         return new DummyDownloadingApiClient(new byte[0]);
     }
 
@@ -135,7 +135,17 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, UploadOptions uploadOptions) {
+        return null;
+    }
+
+    @Override
     public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, Date modifiedDate, ProgressListener listener) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data, Date modifiedDate, ProgressListener listener, UploadOptions uploadOptions) {
         return null;
     }
 
@@ -145,7 +155,17 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFile> createFile(long folderId, String filename, DataSource data, UploadOptions uploadOptions) {
+        return null;
+    }
+
+    @Override
     public Call<RemoteFile> createFile(long folderId, String filename, DataSource data, Date modifiedDate, ProgressListener listener) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(long folderId, String filename, DataSource data, Date modifiedDate, ProgressListener listener, UploadOptions uploadOptions) {
         return null;
     }
 
@@ -374,7 +394,7 @@ public class DummyDownloadingApiClient implements ApiClient {
             BufferedSource source = createSource(data);
             sink.readAll(source);
             if (listener != null) {
-                listener.onProgress(0,0);
+                listener.onProgress(0, 0);
             }
         }
 

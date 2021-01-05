@@ -20,10 +20,13 @@ package com.pcloud.sdk.sample;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.pcloud.sdk.AuthorizationActivity;
+import com.pcloud.sdk.AuthorizationData;
+import com.pcloud.sdk.AuthorizationRequest;
 import com.pcloud.sdk.AuthorizationResult;
 
 public class MainActivity extends Activity {
@@ -37,8 +40,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        authorizationResultView = (TextView) findViewById(R.id.authorizationResult);
-        apiKeyView = (TextView) findViewById(R.id.apiKey);
+        authorizationResultView = findViewById(R.id.authorizationResult);
+        apiKeyView = findViewById(R.id.apiKey);
 
         findViewById(R.id.authorizeButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +49,14 @@ public class MainActivity extends Activity {
                 apiKeyView.setText(null);
                 authorizationResultView.setText(null);
                 //TODO Set YOUR application Client ID
-                Intent authIntent = AuthorizationActivity.createIntent(MainActivity.this, "My Application Client ID");
+                Intent authIntent = AuthorizationActivity.createIntent(
+                        MainActivity.this,
+                        AuthorizationRequest.create()
+                                .setType(AuthorizationRequest.Type.TOKEN)
+                                .setClientId("mdBPN4QVGE")
+                                .setForceAccessApproval(true)
+                                .addPermission("manageshares")
+                                .build());
                 startActivityForResult(authIntent, PCLOUD_AUTHORIZATION_REQUEST_CODE);
             }
         });
@@ -56,16 +66,29 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PCLOUD_AUTHORIZATION_REQUEST_CODE) {
-            AuthorizationResult result = (AuthorizationResult) data.getSerializableExtra(AuthorizationActivity.KEY_AUTHORIZATION_RESULT);
+            AuthorizationData authData = AuthorizationActivity.getResult(data);
+            AuthorizationResult result = authData.result;
             authorizationResultView.setText(result.name());
 
-            if (result == AuthorizationResult.ACCESS_GRANTED) {
-                String accessToken = data.getStringExtra(AuthorizationActivity.KEY_ACCESS_TOKEN);
-                long userId = data.getLongExtra(AuthorizationActivity.KEY_USER_ID, 0);
-                apiKeyView.setText(accessToken);
-                //TODO: Do what's needed :)
-            } else {
-                //TODO: Add proper handling for denied grants or errors.
+            switch (result) {
+                case ACCESS_GRANTED:
+                    //TODO: Do what's needed :)
+                    apiKeyView.setText(authData.toString());
+                    Log.d("pCloud", "Account access granted, authData:\n" + authData);
+                    break;
+                case ACCESS_DENIED:
+                    //TODO: Add proper handling for denied grants.
+                    Log.d("pCloud", "Account access denied");
+                    break;
+                case AUTH_ERROR:
+                    //TODO: Add error handling.
+                    apiKeyView.setText(authData.errorMessage);
+                    Log.d("pCloud", "Account access grant error:\n" + authData.errorMessage);
+                    break;
+                case CANCELLED:
+                    //TODO: Handle cancellation.
+                    Log.d("pCloud", "Account access grant cancelled:");
+                    break;
             }
         }
     }

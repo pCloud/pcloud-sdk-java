@@ -1,8 +1,8 @@
 ext {
-    isCi = "true".equals(System.getenv('CI'))
+    isCi = "true" == System.getenv('CI')
 
-    versionName = "1.1.0"
-    versionCode = 3
+    versionName = "1.2.0"
+    versionCode = 4
     libraryName = "pcloud-sdk"
     groupId = "com.pcloud.sdk"
     description = "The official pCloud Java SDK for integration with pCloud's API"

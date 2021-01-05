@@ -17,17 +17,32 @@
 
 package com.pcloud.sdk.utils;
 
-import com.pcloud.sdk.*;
-import okhttp3.Cache;
-import okhttp3.ConnectionPool;
-import okhttp3.Dispatcher;
-import okio.BufferedSource;
-import okio.Okio;
+import com.pcloud.sdk.ApiClient;
+import com.pcloud.sdk.ApiError;
+import com.pcloud.sdk.Authenticator;
+import com.pcloud.sdk.Call;
+import com.pcloud.sdk.Callback;
+import com.pcloud.sdk.DataSink;
+import com.pcloud.sdk.DataSource;
+import com.pcloud.sdk.DownloadOptions;
+import com.pcloud.sdk.FileLink;
+import com.pcloud.sdk.ProgressListener;
+import com.pcloud.sdk.RemoteEntry;
+import com.pcloud.sdk.RemoteFile;
+import com.pcloud.sdk.RemoteFolder;
+import com.pcloud.sdk.UploadOptions;
+import com.pcloud.sdk.UserInfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.Executor;
+
+import okhttp3.Cache;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
+import okio.BufferedSource;
+import okio.Okio;
 
 public class DummyDownloadingApiClient implements ApiClient {
 
@@ -351,6 +366,11 @@ public class DummyDownloadingApiClient implements ApiClient {
 
     @Override
     public Authenticator authenticator() {
+        return null;
+    }
+
+    @Override
+    public String apiHost() {
         return null;
     }
 

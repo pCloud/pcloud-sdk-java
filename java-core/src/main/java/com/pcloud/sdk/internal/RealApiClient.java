@@ -20,44 +20,74 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
-import com.pcloud.sdk.*;
+import com.pcloud.sdk.ApiClient;
+import com.pcloud.sdk.ApiError;
 import com.pcloud.sdk.Authenticator;
 import com.pcloud.sdk.Call;
-import com.pcloud.sdk.internal.networking.*;
+import com.pcloud.sdk.DataSink;
+import com.pcloud.sdk.DataSource;
+import com.pcloud.sdk.DownloadOptions;
+import com.pcloud.sdk.FileLink;
+import com.pcloud.sdk.ProgressListener;
+import com.pcloud.sdk.RemoteEntry;
+import com.pcloud.sdk.RemoteFile;
+import com.pcloud.sdk.RemoteFolder;
+import com.pcloud.sdk.UploadOptions;
+import com.pcloud.sdk.UserInfo;
+import com.pcloud.sdk.internal.networking.APIHttpException;
 import com.pcloud.sdk.internal.networking.ApiResponse;
 import com.pcloud.sdk.internal.networking.GetFileResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
+import com.pcloud.sdk.internal.networking.GetLinkResponse;
 import com.pcloud.sdk.internal.networking.UploadFilesResponse;
-
+import com.pcloud.sdk.internal.networking.UserInfoResponse;
 import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
 import com.pcloud.sdk.internal.networking.serialization.UnmodifiableListTypeFactory;
-import okhttp3.HttpUrl;
-import okhttp3.*;
-import okio.BufferedSink;
-import okio.BufferedSource;
-import okio.Okio;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
-import static com.pcloud.sdk.internal.FileIdUtils.*;
+import okhttp3.Cache;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
+
+import static com.pcloud.sdk.internal.FileIdUtils.isFile;
+import static com.pcloud.sdk.internal.FileIdUtils.toFileId;
+import static com.pcloud.sdk.internal.FileIdUtils.toFolderId;
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
 class RealApiClient implements ApiClient {
 
-    private long progressCallbackThresholdBytes;
-    private Authenticator authenticator;
-    private Gson gson;
-    private OkHttpClient httpClient;
-    private Executor callbackExecutor;
-
-    private static final HttpUrl API_BASE_URL = HttpUrl.parse("https://api.pcloud.com");
+    private final long progressCallbackThresholdBytes;
+    private final Authenticator authenticator;
+    private final Gson gson;
+    private final OkHttpClient httpClient;
+    private final Executor callbackExecutor;
+    private final HttpUrl apiHost;
 
     RealApiClient() {
         this(new RealApiServiceBuilder());
@@ -65,7 +95,7 @@ class RealApiClient implements ApiClient {
 
     RealApiClient(RealApiServiceBuilder builder) {
         Map<String, String> globalParams = new TreeMap<>();
-        globalParams.put("timeformat", String.valueOf("timestamp"));
+        globalParams.put("timeformat", "timestamp");
         String userAgent = String.format(Locale.US, "pCloud SDK Java %s", Version.NAME);
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .readTimeout(builder.readTimeoutMs(), TimeUnit.MILLISECONDS)
@@ -104,6 +134,7 @@ class RealApiClient implements ApiClient {
                 .registerTypeAdapter(RealRemoteFile.class, new RealRemoteFile.InstanceCreator(this))
                 .registerTypeAdapter(RealRemoteFolder.class, new RealRemoteFolder.InstanceCreator(this))
                 .create();
+        this.apiHost = builder.apiHost();
     }
 
     @Override
@@ -207,7 +238,7 @@ class RealApiClient implements ApiClient {
                 .addFormDataPart("file", filename, dataBody)
                 .build();
 
-        HttpUrl.Builder urlBuilder = API_BASE_URL.newBuilder().
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder().
                 addPathSegment("uploadfile")
                 .addQueryParameter("folderid", String.valueOf(folderId))
                 .addQueryParameter("renameifexists", String.valueOf(uploadOptions.overrideFile() ? 0 : 1))
@@ -246,7 +277,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<Boolean> deleteFile(long fileId) {
         Request request = new Request.Builder()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment("deletefile")
                         .build())
                 .get()
@@ -299,7 +330,7 @@ class RealApiClient implements ApiClient {
     }
 
     private Request newDownloadLinkRequest(long fileId, DownloadOptions options) {
-        HttpUrl.Builder urlBuilder = API_BASE_URL.newBuilder().
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder().
                 addPathSegment("getfilelink")
                 .addQueryParameter("fileid", String.valueOf(fileId));
 
@@ -422,7 +453,7 @@ class RealApiClient implements ApiClient {
         }
 
         Request request = newRequest()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment("copyfile")
                         .build())
                 .post(builder.build())
@@ -564,7 +595,7 @@ class RealApiClient implements ApiClient {
                 .build();
 
         Request request = newRequest()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment("renamefile")
                         .build())
                 .post(body)
@@ -602,7 +633,7 @@ class RealApiClient implements ApiClient {
                 .build();
 
         Request request = newRequest()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment("renamefile")
                         .build())
                 .post(body)
@@ -653,7 +684,7 @@ class RealApiClient implements ApiClient {
                 .build();
 
         return newRequest()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment("createfolder").build())
                 .post(body)
                 .build();
@@ -687,7 +718,7 @@ class RealApiClient implements ApiClient {
                 .build();
 
         Request request = newRequest()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment(recursively ? "deletefolderrecursive" : "deletefolder")
                         .build())
                 .post(body)
@@ -730,7 +761,7 @@ class RealApiClient implements ApiClient {
                 .build();
 
         return newRequest()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment("renamefolder")
                         .build())
                 .post(body)
@@ -753,7 +784,7 @@ class RealApiClient implements ApiClient {
                 .build();
 
         Request request = newRequest()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment("renamefolder")
                         .build())
                 .post(body)
@@ -800,7 +831,7 @@ class RealApiClient implements ApiClient {
         }
 
         Request request = newRequest()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment("copyfolder")
                         .build())
                 .post(builder.build())
@@ -817,7 +848,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<UserInfo> getUserInfo() {
         Request request = newRequest()
-                .url(API_BASE_URL.newBuilder()
+                .url(apiHost.newBuilder()
                         .addPathSegment("userinfo")
                         .build())
                 .get().build();
@@ -837,7 +868,7 @@ class RealApiClient implements ApiClient {
 
     @Override
     public RealApiServiceBuilder newBuilder() {
-        return new RealApiServiceBuilder(httpClient, callbackExecutor, progressCallbackThresholdBytes, authenticator);
+        return new RealApiServiceBuilder(httpClient, callbackExecutor, progressCallbackThresholdBytes, authenticator, apiHost);
     }
 
     @Override
@@ -886,6 +917,11 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
+    public String apiHost() {
+        return apiHost.host();
+    }
+
+    @Override
     public void shutdown() {
         this.httpClient.connectionPool().evictAll();
         this.httpClient.dispatcher().executorService().shutdownNow();
@@ -893,11 +929,11 @@ class RealApiClient implements ApiClient {
     }
 
     private Request.Builder newRequest() {
-        return new Request.Builder().url(API_BASE_URL);
+        return new Request.Builder().url(apiHost);
     }
 
     private Request createListFolderRequest(long folderId, boolean recursive) {
-        HttpUrl.Builder urlBuilder = API_BASE_URL.newBuilder()
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
                 .addQueryParameter("folderid", String.valueOf(folderId))
                 .addQueryParameter("noshares", String.valueOf(1));

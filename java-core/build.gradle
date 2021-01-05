@@ -49,12 +49,12 @@ task generateSources {
         def templateEngine = new SimpleTemplateEngine()
         for (File file : fileList){
             println("Processing template file $file.absolutePath")
-            def relativeOutputPath = inputDir.toPath().relativize(file.toPath()).toString();
+            def relativeOutputPath = inputDir.toPath().relativize(file.toPath()).toString()
             println("Relative path of template file $relativeOutputPath")
-            File outputFile = new File(outputDir, relativeOutputPath);
+            File outputFile = new File(outputDir, relativeOutputPath)
             println("Writing to $outputFile.absolutePath")
             outputFile.getParentFile().mkdirs()
-            outputFile.write(templateEngine.createTemplate(file).make(binding).toString(), "UTF-8");
+            outputFile.write(templateEngine.createTemplate(file).make(binding).toString(), "UTF-8")
         }
     }
 }

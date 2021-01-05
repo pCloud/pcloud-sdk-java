@@ -103,7 +103,6 @@ public final class AuthorizationActivity extends Activity {
      *
      * @param context The {@link Context} to be bound to the new intent. Must not be null.
      *                <p>
-     *                <b>NOTE: If a non-{@link Activity} context is provided the resulting intent will have the {@link Intent#FLAG_ACTIVITY_NEW_TASK} flag set.</b>
      * @param apiKey  The API key for the application that will request access permission.
      *                <p>
      *                For more details on how to obtain a key, see <a href="https://docs.pcloud.com/oauth/index.html" target="_blank">here</a>.
@@ -124,7 +123,6 @@ public final class AuthorizationActivity extends Activity {
      *
      * @param context     The {@link Context} to be bound to the new intent. Must not be null.
      *                    <p>
-     *                    <b>NOTE: If a non-{@link Activity} context is provided the resulting intent will have the {@link Intent#FLAG_ACTIVITY_NEW_TASK} flag set.</b>
      * @param apiKey      The API key for the application that will request access permission.
      *                    <p>
      *                    For more details on how to obtain a key, see <a href="https://docs.pcloud.com/oauth/index.html" target="_blank">here</a>.
@@ -145,6 +143,7 @@ public final class AuthorizationActivity extends Activity {
     /**
      * Create a new {@link Intent} for launching an instance of [@link {@link AuthorizationActivity}}.
      *
+     * @param context The {@link Context} to be bound to the new intent. Must not be null.
      * @param request non-null {@linkplain AuthorizationRequest}
      * @return non-null {@linkplain Intent}
      */

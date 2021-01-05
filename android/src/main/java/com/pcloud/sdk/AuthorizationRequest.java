@@ -247,7 +247,7 @@ public class AuthorizationRequest implements Parcelable {
          * Build a {@linkplain AuthorizationRequest} instance.
          *
          * @return non-null {@linkplain AuthorizationRequest}
-         * @throws IllegalStateException if {@link #setType(Type)} has not been called.
+         * @throws IllegalStateException if {@link #setType(AuthorizationRequest.Type)} has not been called.
          * @throws IllegalStateException if {@link #setClientId(String)}  has not been called.
          */
         public AuthorizationRequest build() {

@@ -18,12 +18,19 @@ package com.pcloud.sdk.internal;
 
 import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.Authenticator;
-import okhttp3.*;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+
 class RealApiServiceBuilder implements ApiClient.Builder {
+
+    private static final HttpUrl DEFAULT_API_HOST = HttpUrl.parse("https://api.pcloud.com");
 
     private Cache cache;
     private Executor callbackExecutor;
@@ -34,8 +41,9 @@ class RealApiServiceBuilder implements ApiClient.Builder {
     private int connectTimeoutMs;
     private long progressCallbackThresholdBytes;
     private Authenticator authenticator;
+    private HttpUrl apiHost;
 
-    RealApiServiceBuilder(OkHttpClient okHttpClient, Executor callbackExecutor, long progressCallbackThresholdBytes, Authenticator authenticator) {
+    RealApiServiceBuilder(OkHttpClient okHttpClient, Executor callbackExecutor, long progressCallbackThresholdBytes, Authenticator authenticator, HttpUrl apiHost) {
         this.cache = okHttpClient.cache();
         this.callbackExecutor = callbackExecutor;
         this.connectionPool = okHttpClient.connectionPool();
@@ -45,9 +53,11 @@ class RealApiServiceBuilder implements ApiClient.Builder {
         this.connectTimeoutMs = okHttpClient.connectTimeoutMillis();
         this.progressCallbackThresholdBytes = progressCallbackThresholdBytes;
         this.authenticator = authenticator;
+        this.apiHost = apiHost;
     }
 
     RealApiServiceBuilder() {
+        this.apiHost = DEFAULT_API_HOST;
     }
 
     @Override
@@ -154,8 +164,22 @@ class RealApiServiceBuilder implements ApiClient.Builder {
         return progressCallbackThresholdBytes;
     }
 
+    public HttpUrl apiHost() {
+        return apiHost;
+    }
+
     public Authenticator authenticator() {
         return authenticator;
+    }
+
+    @Override
+    public ApiClient.Builder apiHost(String apiHost) {
+        HttpUrl newHost = HttpUrl.parse("https://" + apiHost);
+        if (newHost == null) {
+            throw new IllegalArgumentException("'" + apiHost + "' is not a valid API host.");
+        }
+        this.apiHost = newHost;
+        return this;
     }
 
     @Override

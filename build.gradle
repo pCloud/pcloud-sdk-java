@@ -9,6 +9,7 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2" }
     }
     dependencies {
+        classpath dep.androidPlugin
         classpath dep.bintrayPlugin
         classpath dep.androidMavenPlugin
     }
@@ -20,6 +21,59 @@ allprojects {
         jcenter()
         google()
         maven { url "https://plugins.gradle.org/m2" }
+    }
+
+    ext.applyForPlugin = { String plugin, Closure<Project> action ->
+        applyForPlugins([plugin], action)
+    }
+
+    ext.applyForPlugins = { Iterable<String> plugins, Closure<Project> action ->
+        for (String plugin : plugins) {
+            if (project.plugins.hasPlugin(plugin)) {
+                action.call(project)
+            } else {
+                project.plugins.withId(plugin, {
+                    action.call(project)
+                })
+            }
+        }
+    }
+}
+
+subprojects {
+    applyForPlugins(['com.android.library']) { project ->
+        project.with {
+            android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+
+                defaultConfig {
+                    minSdkVersion rootProject.ext.minSdkVersion
+                    targetSdkVersion rootProject.ext.targetSdkVersion
+
+                    testInstrumentationRunner dep.testInstrumentationRunner
+
+                }
+                buildTypes {
+                    release {
+                        minifyEnabled false
+                        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                    }
+                }
+
+                compileOptions {
+                    sourceCompatibility rootProject.ext.sourceCompatibilityVersion
+                    targetCompatibility rootProject.ext.targetCompatibilityVersion
+                }
+            }
+        }
+    }
+
+    applyForPlugins(['java']) { project ->
+        project.with {
+            sourceCompatibility = rootProject.ext.sourceCompatibilityVersion
+            targetCompatibility = rootProject.ext.targetCompatibilityVersion
+        }
     }
 }
 

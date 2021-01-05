@@ -26,6 +26,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#17bed0"
     android:orientation="vertical"
     android:gravity="center"
     tools:context="com.pcloud.sdk.sample.MainActivity">
@@ -39,15 +40,20 @@
 
     <TextView
         android:id="@+id/authorizationResult"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:freezesText="true"
-        android:layout_marginBottom="16dp"/>
+        tools:text="Success"
+        android:textStyle="bold"
+        android:textColor="?android:textColorPrimaryInverse"
+        android:layout_marginBottom="16dp" />
 
     <TextView
         android:id="@+id/apiKey"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:freezesText="true"
+        android:textColor="?android:textColorPrimaryInverse"
         android:layout_height="wrap_content"/>
 </LinearLayout>

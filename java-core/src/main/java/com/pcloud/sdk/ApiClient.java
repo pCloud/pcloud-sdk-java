@@ -17,15 +17,15 @@
 
 package com.pcloud.sdk;
 
+import java.util.Date;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okio.BufferedSource;
-
-import java.util.Date;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The general interface that exposes pCloud API's methods.
@@ -48,7 +48,6 @@ import java.util.concurrent.TimeUnit;
  * Bear in mind that shutting down a {@link ApiClient} instance will also affect all instances sharing the underlying resources.
  * </h3>
  */
-@SuppressWarnings("unused")
 public interface ApiClient {
 
     /**
@@ -359,9 +358,9 @@ public interface ApiClient {
      * <p>
      * Same as calling {@link #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate} and {@code listener} arguments.
      *
-     * @param folderId The id of the folder you would like to create the file.
-     * @param filename The file name. Must not be null.
-     * @param data     {@link DataSource} object providing the file content. Must not be null.
+     * @param folderId      The id of the folder you would like to create the file.
+     * @param filename      The file name. Must not be null.
+     * @param data          {@link DataSource} object providing the file content. Must not be null.
      * @param uploadOptions {@link UploadOptions} to be used for the file creation. Must not be null.
      * @return {@link Call} resulting in the new file's metadata
      * @throws IllegalArgumentException on a null {@code folder} argument.
@@ -424,11 +423,11 @@ public interface ApiClient {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/file/uploadfile.html" target="_blank">documentation page</a>.
      *
-     * @param folderId     The id of the folder you would like to create the file.
-     * @param filename     The file name. Must not be null.
-     * @param data         {@link DataSource} object providing the file content. Must not be null.
-     * @param modifiedDate The last modification date to be used. If set to {@code null}, the upload date will be used instead.
-     * @param listener     The listener to be used to notify about upload progress. If null, no progress will be reported.
+     * @param folderId      The id of the folder you would like to create the file.
+     * @param filename      The file name. Must not be null.
+     * @param data          {@link DataSource} object providing the file content. Must not be null.
+     * @param modifiedDate  The last modification date to be used. If set to {@code null}, the upload date will be used instead.
+     * @param listener      The listener to be used to notify about upload progress. If null, no progress will be reported.
      * @param uploadOptions {@link UploadOptions} to be used for the file creation. Must not be null.
      * @return {@link Call} resulting in the new file's metadata
      * @throws IllegalArgumentException on a null {@code filename} argument.
@@ -893,7 +892,6 @@ public interface ApiClient {
      */
     Executor callbackExecutor();
 
-
     /**
      * @return the {@link Dispatcher} used by this instance. Cannot be null.
      * @see Builder#dispatcher(Dispatcher)
@@ -942,6 +940,11 @@ public interface ApiClient {
     Authenticator authenticator();
 
     /**
+     * @return a non-null target pCloud API host for this client.
+     */
+    String apiHost();
+
+    /**
      * Stop this instance and cleanup resources.
      * <ul>
      * <li>All calls created by this instance will be cancelled.</li>
@@ -959,7 +962,6 @@ public interface ApiClient {
      * @see ApiClient#newBuilder()
      * @see PCloudSdk#newClientBuilder()
      */
-    @SuppressWarnings("unused")
     interface Builder {
         /**
          * @param cache the response cache to be used to read and write cached responses. If null, no cache will be used.
@@ -1058,6 +1060,17 @@ public interface ApiClient {
          * @see RemoteData#download(DataSink, ProgressListener)
          */
         Builder progressCallbackThreshold(long bytes);
+
+        /**
+         * Set a specific pCloud API host.
+         * <p>
+         * if not specifically set, the produced {@link ApiClient} will use
+         * {@code api.pcloud.com}.
+         *
+         * @param apiHost a valid pCloud API host. {@code (api.pcloud.com, eapi.pcloud.com)}
+         * @return the same {@link Builder} instance
+         */
+        Builder apiHost(String apiHost);
 
         /**
          * Create a new {@link ApiClient} from the provided configuration.

@@ -17,22 +17,18 @@
 
 package com.pcloud.sdk;
 
-import com.pcloud.sdk.*;
-
-import okio.BufferedSink;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
 import okio.BufferedSource;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -44,7 +40,7 @@ public class ApiClientIntegrationTest {
 
     @Before
     public void setUp() {
-        String token = System.getenv("pcloud_token");
+        String token = System.getenv("PCLOUD_TEST_TOKEN");
         apiClient = PCloudSdk.newClientBuilder()
                 .authenticator(Authenticators.newOAuthAuthenticator(token))
                 .create();
@@ -212,7 +208,7 @@ public class ApiClientIntegrationTest {
 
         FileLink fileLink = apiClient.createFileLink(remoteFile, options).execute();
         BufferedSource source = apiClient.download(fileLink).execute();
-        assertTrue(Arrays.equals(fileContents, source.readByteArray()));
+        assertArrayEquals(fileContents, source.readByteArray());
     }
 
     @Test
@@ -222,7 +218,7 @@ public class ApiClientIntegrationTest {
         RemoteFile remoteFile = apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents)).execute();
 
         BufferedSource source = apiClient.download(remoteFile).execute();
-        assertTrue(Arrays.equals(fileContents, source.readByteArray()));
+        assertArrayEquals(fileContents, source.readByteArray());
     }
 
     private RemoteFolder createRemoteFolder() throws IOException, ApiError {

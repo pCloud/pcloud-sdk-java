@@ -19,6 +19,7 @@ package com.pcloud.sdk;
 
 /**
  * Gives information about the outcome of an initiated authorization.
+ *
  * @see AuthorizationActivity
  */
 @SuppressWarnings("WeakerAccess")
@@ -27,20 +28,41 @@ public enum AuthorizationResult {
      * The user granted permissions to the calling application.
      * <p> See the description of {@link AuthorizationActivity} on how to obtain the access token.
      */
-    ACCESS_GRANTED,
+    ACCESS_GRANTED(0),
 
     /**
      * The authorization was cancelled by the user.
      */
-    CANCELLED,
+    CANCELLED(1),
 
     /**
      * The user did not grant permissions to the calling application.
      */
-    ACCESS_DENIED,
+    ACCESS_DENIED(2),
 
     /**
      * There was an error during the authorization process.
      */
-    AUTH_ERROR
+    AUTH_ERROR(3);
+
+    protected final int code;
+
+    AuthorizationResult(int code) {
+        this.code = code;
+    }
+
+    static AuthorizationResult fromCode(int code) {
+        switch (code) {
+            case 0:
+                return ACCESS_GRANTED;
+            case 1:
+                return CANCELLED;
+            case 2:
+                return ACCESS_DENIED;
+            case 3:
+                return AUTH_ERROR;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
 }

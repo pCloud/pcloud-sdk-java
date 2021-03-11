@@ -59,6 +59,18 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
+    public void testListFolderPath() throws Exception {
+        apiClient.listFolder("/").execute();
+    }
+
+    @Test
+    public void testGetFolderPath() throws Exception {
+        long id = RemoteFolder.ROOT_FOLDER_ID;
+        RemoteFolder folder = apiClient.listFolder("/", true).execute();
+        assertEquals(id, folder.folderId());
+    }
+
+    @Test
     public void testCreateFolder() throws IOException, ApiError {
         RemoteFolder remoteFolder = createRemoteFolder();
 
@@ -194,6 +206,24 @@ public class ApiClientIntegrationTest {
         assertNotEquals(remoteFile.name(), renamedFile.name());
     }
 
+    @Test
+    public void testStatFileWithId() throws IOException, ApiError {
+        RemoteFile remoteFile = createRemoteFile();
+        String randomNewName = UUID.randomUUID().toString();
+
+        RemoteFile fetchedFile = apiClient.stat(remoteFile.fileId()).execute();
+
+        assertEquals(remoteFile.fileId(), fetchedFile.fileId());
+    }
+
+    @Test
+    public void testStatFileWithPath() throws IOException, ApiError {
+        RemoteFile remoteFile = createRemoteFile();
+
+        RemoteFile fetchedFile = apiClient.stat("/" + remoteFile.name()).execute();
+
+        assertEquals(remoteFile.fileId(), fetchedFile.fileId());
+    }
 
     @Test
     public void testDownloadFileFromLink() throws IOException, ApiError {

@@ -153,6 +153,21 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFolder> listFolder(String path) {
+        return listFolder(path, false);
+    }
+
+    @Override
+    public Call<RemoteFolder> listFolder(String path, boolean recursively) {
+        return newCall(createListFolderRequest(path, recursively), new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
+    }
+
+    @Override
     public Call<RemoteFile> createFile(RemoteFolder folder, String filename, DataSource data) {
         return createFile(folder, filename, data, null, null, UploadOptions.DEFAULT);
     }
@@ -588,6 +603,26 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFile> stat(long fileId) {
+        return newCall(createStatRequest(fileId), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFile> stat(String path) {
+        return newCall(createStatRequest(path), new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    @Override
     public Call<RemoteFile> moveFile(long fileId, long toFolderId) {
         RequestBody body = new FormBody.Builder()
                 .add("fileid", String.valueOf(fileId))
@@ -940,6 +975,43 @@ class RealApiClient implements ApiClient {
         if (recursive) {
             urlBuilder.addEncodedQueryParameter("recursive", String.valueOf(1));
         }
+
+        return newRequest()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+    }
+
+    private Request createListFolderRequest(String path, boolean recursive) {
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder()
+                .addPathSegment("listfolder")
+                .addEncodedQueryParameter("path", String.valueOf(path))
+                .addQueryParameter("noshares", String.valueOf(1));
+        if (recursive) {
+            urlBuilder.addEncodedQueryParameter("recursive", String.valueOf(1));
+        }
+
+        return newRequest()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+    }
+
+    private Request createStatRequest(long fileId) {
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder()
+                .addPathSegment("stat")
+                .addQueryParameter("fileid", String.valueOf(fileId));
+
+        return newRequest()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+    }
+
+    private Request createStatRequest(String path) {
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder()
+                .addPathSegment("stat")
+                .addEncodedQueryParameter("path", String.valueOf(path));
 
         return newRequest()
                 .url(urlBuilder.build())

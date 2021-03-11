@@ -76,6 +76,31 @@ public interface ApiClient {
     Call<RemoteFolder> listFolder(long folderId, boolean recursively);
 
     /**
+     * Load a specified folder.
+     * <p>
+     * Same as calling {@link #listFolder(long, boolean)} )} with {@code recursive} set to false.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html" target="_blank">documentation page</a>
+     *
+     * @param path {@link RemoteFolder} path
+     * @return {@link Call}
+     */
+    Call<RemoteFolder> listFolder(String path);
+
+    /**
+     * Load a specified folder.
+     * <p>
+     * Loads the metadata about the folder with the provided folder id.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html" target="_blank">documentation page</a>.
+     *
+     * @param path    target folder path
+     * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
+     * @return {@link Call} resulting in a {@link RemoteFolder} instance holding the metadata for the requested fodler id.
+     */
+    Call<RemoteFolder> listFolder(String path, boolean recursively);
+
+    /**
      * Create a new folder.
      * <p>Create a new folder in the specified folder</p>
      * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/createfolder.html" target="_blank">documentation page</a>.</p>
@@ -803,6 +828,30 @@ public interface ApiClient {
      * @see #renameFolder(long, String)
      */
     Call<? extends RemoteEntry> rename(String id, String newFilename);
+
+    /**
+     * Load a specific file.
+     * <p>
+     * Loads the metadata about the file with the provided {@code fileId).
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/stat.html" target="_blank">documentation page</a>.
+     *
+     * @param fileId     target file id.
+     * @return {@link Call} resulting in a {@link RemoteFile} instance holding the metadata for the requested file id.
+     */
+    Call<RemoteFile> stat(long fileId);
+
+    /**
+     * Load a specific file.
+     * <p>
+     * Loads the metadata about the file with the provided {@code path).
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/stat.html" target="_blank">documentation page</a>.
+     *
+     * @param path     target file path.
+     * @return {@link Call} resulting in a {@link RemoteFile} instance holding the metadata for the requested path.
+     */
+    Call<RemoteFile> stat(String path);
 
     /**
      * Move a specified file.

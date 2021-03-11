@@ -75,6 +75,16 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFolder> listFolder(String path) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFolder> listFolder(String path, boolean recursively) {
+        return null;
+    }
+
+    @Override
     public Call<RemoteFolder> createFolder(long parentFolderId, String folderName) {
         return null;
     }
@@ -291,6 +301,16 @@ public class DummyDownloadingApiClient implements ApiClient {
 
     @Override
     public Call<? extends RemoteEntry> rename(String id, String newFilename) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFile> stat(long fileid) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFile> stat(String path) {
         return null;
     }
 

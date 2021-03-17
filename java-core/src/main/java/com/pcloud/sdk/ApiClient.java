@@ -71,9 +71,23 @@ public interface ApiClient {
      *
      * @param folderId    target folder id
      * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
-     * @return {@link Call} resulting in a {@link RemoteFolder} instance holding the metadata for the requested fodler id.
+     * @return {@link Call} resulting in a {@link RemoteFolder} instance holding the metadata for the requested folder id.
      */
     Call<RemoteFolder> listFolder(long folderId, boolean recursively);
+
+    /**
+     * Load a specified folder.
+     * <p>
+     * Loads the metadata about the folder with the provided folder id.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html" target="_blank">documentation page</a>.
+     *
+     * @param folderId    target folder id
+     * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
+     * @param noshares    if false, the folder tree will also include shared files and folders, otherwise resulting {@linkplain RemoteFolder folder} will contain only childer owned by the user
+     * @return {@link Call} resulting in a {@link RemoteFolder} instance holding the metadata for the requested folder id.
+     */
+    Call<RemoteFolder> listFolder(long folderId, boolean recursively, boolean noshares);
 
     /**
      * Load a specified folder.
@@ -94,11 +108,25 @@ public interface ApiClient {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html" target="_blank">documentation page</a>.
      *
-     * @param path    target folder path
+     * @param path        target folder path
      * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
      * @return {@link Call} resulting in a {@link RemoteFolder} instance holding the metadata for the requested fodler id.
      */
     Call<RemoteFolder> listFolder(String path, boolean recursively);
+
+    /**
+     * Load a specified folder.
+     * <p>
+     * Loads the metadata about the folder with the provided folder id.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html" target="_blank">documentation page</a>.
+     *
+     * @param path    target folder path
+     * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
+     * @param noshares    if false, the folder tree will also include shared files and folders, otherwise resulting {@linkplain RemoteFolder folder} will contain only childer owned by the user
+     * @return {@link Call} resulting in a {@link RemoteFolder} instance holding the metadata for the requested folder id.
+     */
+    Call<RemoteFolder> listFolder(String path, boolean recursively, boolean noshares);
 
     /**
      * Create a new folder.

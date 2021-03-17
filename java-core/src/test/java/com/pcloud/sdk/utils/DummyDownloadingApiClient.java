@@ -75,12 +75,22 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFolder> listFolder(long folderId, boolean recursively, boolean noshares) {
+        return null;
+    }
+
+    @Override
     public Call<RemoteFolder> listFolder(String path) {
         return null;
     }
 
     @Override
     public Call<RemoteFolder> listFolder(String path, boolean recursively) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFolder> listFolder(String path, boolean recursively, boolean noshares) {
         return null;
     }
 

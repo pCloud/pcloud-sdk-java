@@ -41,8 +41,10 @@ public class ApiClientIntegrationTest {
     @Before
     public void setUp() {
         String token = System.getenv("PCLOUD_TEST_TOKEN");
+        String apiHost = System.getenv("PCLOUD_TEST_API_HOST");
         apiClient = PCloudSdk.newClientBuilder()
                 .authenticator(Authenticators.newOAuthAuthenticator(token))
+                .apiHost(apiHost)
                 .create();
     }
 
@@ -106,9 +108,9 @@ public class ApiClientIntegrationTest {
         RemoteFolder remoteFolder1 = createRemoteFolder();
         RemoteFolder remoteFolder2 = createRemoteFolder();
 
-        apiClient.moveFolder(remoteFolder1, remoteFolder2).execute();
+        RemoteFolder movedFolder = apiClient.moveFolder(remoteFolder1, remoteFolder2).execute();
 
-        assertTrue(entryExistsInFolder(remoteFolder1, remoteFolder2.folderId()));
+        assertTrue(entryExistsInFolder(movedFolder, remoteFolder2.folderId()));
         assertFalse(entryExistsInFolder(remoteFolder1, RemoteFolder.ROOT_FOLDER_ID));
     }
 
@@ -117,9 +119,9 @@ public class ApiClientIntegrationTest {
         RemoteFolder remoteFolder1 = createRemoteFolder();
         RemoteFolder remoteFolder2 = createRemoteFolder();
 
-        apiClient.copyFolder(remoteFolder1, remoteFolder2).execute();
+        RemoteFolder copiedFolder = apiClient.copyFolder(remoteFolder1, remoteFolder2).execute();
 
-        assertTrue(entryExistsInFolder(remoteFolder1, remoteFolder2.folderId()));
+        assertTrue(entryExistsInFolder(copiedFolder, remoteFolder2.folderId()));
         assertTrue(entryExistsInFolder(remoteFolder1, RemoteFolder.ROOT_FOLDER_ID));
     }
 
@@ -176,12 +178,11 @@ public class ApiClientIntegrationTest {
         RemoteFolder remoteFolder = createRemoteFolder();
         RemoteFile remoteFile = createRemoteFile();
 
-        apiClient.moveFile(remoteFile, remoteFolder).execute();
+        RemoteFile movedFile = apiClient.moveFile(remoteFile, remoteFolder).execute();
 
-        assertTrue(entryExistsInFolder(remoteFile, remoteFolder.folderId()));
+        assertTrue(entryExistsInFolder(movedFile, remoteFolder.folderId()));
         assertFalse(entryExistsInFolder(remoteFile, RemoteFolder.ROOT_FOLDER_ID));
     }
-
 
     @Test
     public void testCopyFile() throws IOException, ApiError {

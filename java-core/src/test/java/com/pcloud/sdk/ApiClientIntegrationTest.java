@@ -208,22 +208,42 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
-    public void testStatFileWithId() throws IOException, ApiError {
+    public void testLoadFileWithId() throws IOException, ApiError {
         RemoteFile remoteFile = createRemoteFile();
         String randomNewName = UUID.randomUUID().toString();
 
-        RemoteFile fetchedFile = apiClient.stat(remoteFile.fileId()).execute();
+        RemoteFile fetchedFile = apiClient.loadFile(remoteFile.fileId()).execute();
 
         assertEquals(remoteFile.fileId(), fetchedFile.fileId());
     }
 
     @Test
-    public void testStatFileWithPath() throws IOException, ApiError {
+    public void testLoadFileWithPath() throws IOException, ApiError {
         RemoteFile remoteFile = createRemoteFile();
 
-        RemoteFile fetchedFile = apiClient.stat("/" + remoteFile.name()).execute();
+        RemoteFile fetchedFile = apiClient.loadFile("/" + remoteFile.name()).execute();
 
         assertEquals(remoteFile.fileId(), fetchedFile.fileId());
+    }
+
+    @Test
+    public void testLoadFolderWithId() throws IOException, ApiError {
+        RemoteFolder remoteFolder = createRemoteFolder();
+
+        RemoteFolder fetchedFolder = apiClient.loadFolder(remoteFolder.folderId()).execute();
+
+        assertEquals(remoteFolder.folderId(), fetchedFolder.folderId());
+        assertTrue(fetchedFolder.children().isEmpty());
+    }
+
+    @Test
+    public void testLoadFolderWithPath() throws IOException, ApiError {
+        RemoteFolder remoteFolder = createRemoteFolder();
+
+        RemoteFolder fetchedFolder = apiClient.loadFolder("/" + remoteFolder.name()).execute();
+
+        assertEquals(remoteFolder.folderId(), fetchedFolder.folderId());
+        assertTrue(fetchedFolder.children().isEmpty());
     }
 
     @Test

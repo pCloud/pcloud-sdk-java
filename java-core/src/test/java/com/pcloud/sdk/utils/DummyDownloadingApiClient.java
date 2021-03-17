@@ -305,12 +305,22 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
-    public Call<RemoteFile> stat(long fileid) {
+    public Call<RemoteFile> loadFile(long fileid) {
         return null;
     }
 
     @Override
-    public Call<RemoteFile> stat(String path) {
+    public Call<RemoteFile> loadFile(String path) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFolder> loadFolder(long folderId) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFolder> loadFolder(String path) {
         return null;
     }
 

@@ -18,12 +18,14 @@
 package com.pcloud.sdk;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okio.BufferedSource;
 
@@ -1144,6 +1146,14 @@ public interface ApiClient {
          * @return the same {@link Builder} instance
          */
         Builder apiHost(String apiHost);
+
+        /**
+         * Set custom interceptors
+         *
+         * @param interceptors a list of interceptors
+         * @return the same {@link Builder} instance
+         */
+        Builder interceptors(List<Interceptor> interceptors);
 
         /**
          * Create a new {@link ApiClient} from the provided configuration.

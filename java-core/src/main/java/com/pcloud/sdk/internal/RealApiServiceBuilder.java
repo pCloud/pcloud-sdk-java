@@ -19,6 +19,7 @@ package com.pcloud.sdk.internal;
 import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.Authenticator;
 
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +27,7 @@ import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
 class RealApiServiceBuilder implements ApiClient.Builder {
@@ -42,6 +44,7 @@ class RealApiServiceBuilder implements ApiClient.Builder {
     private long progressCallbackThresholdBytes;
     private Authenticator authenticator;
     private HttpUrl apiHost;
+    private List<Interceptor> interceptors;
 
     RealApiServiceBuilder(OkHttpClient okHttpClient, Executor callbackExecutor, long progressCallbackThresholdBytes, Authenticator authenticator, HttpUrl apiHost) {
         this.cache = okHttpClient.cache();
@@ -54,6 +57,7 @@ class RealApiServiceBuilder implements ApiClient.Builder {
         this.progressCallbackThresholdBytes = progressCallbackThresholdBytes;
         this.authenticator = authenticator;
         this.apiHost = apiHost;
+        this.interceptors = okHttpClient.interceptors();
     }
 
     RealApiServiceBuilder() {
@@ -85,7 +89,14 @@ class RealApiServiceBuilder implements ApiClient.Builder {
                 .dispatcher(client.dispatcher())
                 .readTimeout(client.readTimeoutMillis(), TimeUnit.MILLISECONDS)
                 .writeTimeout(client.writeTimeoutMillis(), TimeUnit.MILLISECONDS)
-                .connectTimeout(client.connectTimeoutMillis(), TimeUnit.MILLISECONDS);
+                .connectTimeout(client.connectTimeoutMillis(), TimeUnit.MILLISECONDS)
+                .interceptors(client.interceptors());
+    }
+
+    @Override
+    public ApiClient.Builder interceptors(List<Interceptor> interceptors) {
+        this.interceptors = interceptors;
+        return this;
     }
 
     @Override
@@ -172,6 +183,10 @@ class RealApiServiceBuilder implements ApiClient.Builder {
         return authenticator;
     }
 
+    public List<Interceptor> interceptors() {
+        return interceptors;
+    }
+
     @Override
     public ApiClient.Builder apiHost(String apiHost) {
         HttpUrl newHost = HttpUrl.parse("https://" + apiHost);
@@ -199,6 +214,7 @@ class RealApiServiceBuilder implements ApiClient.Builder {
         if (connectionPool != null ? !connectionPool.equals(builder.connectionPool) : builder.connectionPool != null)
             return false;
         if (dispatcher != null ? !dispatcher.equals(builder.dispatcher) : builder.dispatcher != null) return false;
+        if (interceptors != null ? !interceptors.equals(builder.interceptors) : builder.interceptors != null) return false;
         return authenticator != null ? authenticator.equals(builder.authenticator) : builder.authenticator == null;
 
     }

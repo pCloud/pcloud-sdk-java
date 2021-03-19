@@ -64,6 +64,7 @@ import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -88,6 +89,7 @@ class RealApiClient implements ApiClient {
     private final OkHttpClient httpClient;
     private final Executor callbackExecutor;
     private final HttpUrl apiHost;
+    private List<Interceptor> interceptors;
 
     RealApiClient() {
         this(new RealApiServiceBuilder());
@@ -120,6 +122,13 @@ class RealApiClient implements ApiClient {
         this.authenticator = builder.authenticator();
         if (authenticator != null) {
             httpClientBuilder.addInterceptor((RealAuthenticator) builder.authenticator());
+        }
+
+        this.interceptors = builder.interceptors();
+        if (interceptors != null) {
+            for (Interceptor interceptor : interceptors) {
+                httpClientBuilder.addInterceptor(interceptor);
+            }
         }
 
         this.httpClient = httpClientBuilder.build();

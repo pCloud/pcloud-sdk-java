@@ -211,6 +211,16 @@ public interface ApiClient {
 
     /**
      * Change a specified folder's parent.
+     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html" target="_blank">documentation page</a>.</p>
+     *
+     * @param path   The path of the folder you would like to move
+     * @param toPath The path of the new parent folder
+     * @return {@link Call} resulting in the moved folder's metadata.
+     */
+    Call<RemoteFolder> moveFolder(String path, String toPath);
+
+    /**
+     * Change a specified folder's parent.
      *
      * @param folder   The {@link RemoteFolder} you would like to move. Must not be null.
      * @param toFolder The new parent {@link RemoteFolder}. Must not be null.
@@ -220,6 +230,41 @@ public interface ApiClient {
      * @see #moveFolder(long, long) #moveFolder(long, long)
      */
     Call<RemoteFolder> moveFolder(RemoteFolder folder, RemoteFolder toFolder);
+
+    /**
+     * Change a specified folder's parent.
+     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html" target="_blank">documentation page</a>.</p>
+     *
+     * @param folderId   The id of the folder you would like to move
+     * @param toFolderId The id of the new parent folder
+     * @param toName     The new name of the moved folder
+     * @return {@link Call} resulting in the moved folder's metadata.
+     */
+    Call<RemoteFolder> moveFolder(long folderId, long toFolderId, String toName);
+
+    /**
+     * Change a specified folder's parent.
+     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/renamefolder.html" target="_blank">documentation page</a>.</p>
+     *
+     * @param path   The path of the folder you would like to move
+     * @param toPath The path of the new parent folder
+     * @param toName The new name of the moved folder
+     * @return {@link Call} resulting in the moved folder's metadata.
+     */
+    Call<RemoteFolder> moveFolder(String path, String toPath, String toName);
+
+    /**
+     * Change a specified folder's parent.
+     *
+     * @param folder   The {@link RemoteFolder} you would like to move. Must not be null.
+     * @param toFolder The new parent {@link RemoteFolder}. Must not be null.
+     * @param toName   The new name of the moved folder
+     * @return {@link Call} resulting in the moved folder's metadata.
+     * @throws IllegalArgumentException on a null {@code folder} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @see #moveFolder(long, long) #moveFolder(long, long)
+     */
+    Call<RemoteFolder> moveFolder(RemoteFolder folder, RemoteFolder toFolder, String toName);
 
     /**
      * Copy specified folder.
@@ -905,6 +950,64 @@ public interface ApiClient {
      * @see #moveFile(long, long) (long, long)
      */
     Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder);
+
+    /**
+     * Move a specified file.
+     * <p>
+     * The call will move the file specified by the {@code path} argument to the folder specified by the {@code toPath}.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html" target="_blank">documentation page</a>.
+     *
+     * @param path     The path of the file to be moved.
+     * @param toPath   The path of the folder where the file will be moved.
+     * @return {@link Call} resulting in the metadata of the moved file
+     */
+    Call<RemoteFile> moveFile(String path, String toPath);
+
+    /**
+     * Move a specified file.
+     * <p>
+     * The call will move the file specified by the {@code fileId} argument to the folder specified by the {@code toFolderId}.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html" target="_blank">documentation page</a>.
+     *
+     * @param fileId     The file id of the file to be moved.
+     * @param toFolderId The folder id of the folder where the file will be moved.
+     * @param toName     The new name of the moved file
+     * @return {@link Call} resulting in the metadata of the moved file
+     */
+    Call<RemoteFile> moveFile(long fileId, long toFolderId, String toName);
+
+    /**
+     * Move a specified file.
+     * <p>
+     * Same as calling {@link #moveFile(long, long)} (long, long)}
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html" target="_blank">documentation page</a>.
+     *
+     * @param file     The {@link RemoteFile} to be moved. Must not be null.
+     * @param toFolder The {@link RemoteFolder} where the file will be moved. Must not be null.
+     * @param toName   The new name of the moved file
+     * @return {@link Call} resulting in the metadata of the moved file
+     * @throws IllegalArgumentException on a null {@code file} argument.
+     * @throws IllegalArgumentException on a null {@code toFolder} argument.
+     * @see #moveFile(long, long) (long, long)
+     */
+    Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder, String toName);
+
+    /**
+     * Move a specified file.
+     * <p>
+     * The call will move the file specified by the {@code path} argument to the folder specified by the {@code toPath}.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html" target="_blank">documentation page</a>.
+     *
+     * @param path     The path of the file to be moved.
+     * @param toPath   The path of the folder where the file will be moved.
+     * @param toName   The new name of the moved file
+     * @return {@link Call} resulting in the metadata of the moved file
+     */
+    Call<RemoteFile> moveFile(String path, String toPath, String toName);
 
     /**
      * Rename a specified file.

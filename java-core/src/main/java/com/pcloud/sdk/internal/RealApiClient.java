@@ -712,10 +712,30 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFile> moveFile(long fileId, long toFolderId) {
-        RequestBody body = new FormBody.Builder()
+        return moveFile(fileId, toFolderId, null);
+    }
+
+    @Override
+    public Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder) {
+        return moveFile(file, toFolder, null);
+    }
+
+    @Override
+    public Call<RemoteFile> moveFile(String path, String toPath) {
+        return moveFile(path, toPath, null);
+    }
+
+    @Override
+    public Call<RemoteFile> moveFile(long fileId, long toFolderId, String toName) {
+        FormBody.Builder builder = new FormBody.Builder()
                 .add("fileid", String.valueOf(fileId))
-                .add("tofolderid", String.valueOf(toFolderId))
-                .build();
+                .add("tofolderid", String.valueOf(toFolderId));
+
+        if(toName != null) {
+            builder.add("toname", toName);
+        }
+
+        RequestBody body = builder.build();
 
         Request request = newRequest()
                 .url(apiHost.newBuilder()
@@ -733,7 +753,7 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
-    public Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder) {
+    public Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder, String toName) {
         if (file == null) {
             throw new IllegalArgumentException("file argument cannot be null.");
         }
@@ -741,7 +761,34 @@ class RealApiClient implements ApiClient {
             throw new IllegalArgumentException("toFolder argument cannot be null.");
         }
 
-        return moveFile(file.fileId(), toFolder.folderId());
+        return moveFile(file.fileId(), toFolder.folderId(), toName);
+    }
+
+    @Override
+    public Call<RemoteFile> moveFile(String path, String toPath, String toName) {
+        FormBody.Builder builder = new FormBody.Builder()
+                .addEncoded("path", path)
+                .addEncoded("topath", toPath);
+
+        if(toName != null) {
+            builder.add("toname", toName);
+        }
+
+        RequestBody body = builder.build();
+
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("renamefile")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
     }
 
     @Override
@@ -890,19 +937,66 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
-    public Call<RemoteFolder> moveFolder(RemoteFolder folder, RemoteFolder toFolder) {
-        if (folder == null || toFolder == null) {
-            throw new IllegalArgumentException("folder argument cannot be null.");
-        }
-        return moveFolder(folder.folderId(), toFolder.folderId());
+    public Call<RemoteFolder> moveFolder(long folderId, long toFolderId) {
+        return moveFolder(folderId, toFolderId, null);
     }
 
     @Override
-    public Call<RemoteFolder> moveFolder(long folderId, long toFolderId) {
-        RequestBody body = new FormBody.Builder()
+    public Call<RemoteFolder> moveFolder(String path, String toPath) {
+        return moveFolder(path, toPath, null);
+    }
+
+    @Override
+    public Call<RemoteFolder> moveFolder(RemoteFolder folder, RemoteFolder toFolder) {
+        return moveFolder(folder, toFolder, null);
+    }
+
+    @Override
+    public Call<RemoteFolder> moveFolder(RemoteFolder folder, RemoteFolder toFolder, String toName) {
+        if (folder == null || toFolder == null) {
+            throw new IllegalArgumentException("folder argument cannot be null.");
+        }
+        return moveFolder(folder.folderId(), toFolder.folderId(), toName);
+    }
+
+    @Override
+    public Call<RemoteFolder> moveFolder(long folderId, long toFolderId, String toName) {
+        FormBody.Builder builder = new FormBody.Builder()
                 .add("folderid", String.valueOf(folderId))
-                .add("tofolderid", String.valueOf(toFolderId))
+                .add("tofolderid", String.valueOf(toFolderId));
+
+        if(toName != null) {
+            builder.add("toname", toName);
+        }
+
+        RequestBody body = builder.build() ;
+
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("renamefolder")
+                        .build())
+                .post(body)
                 .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFolder> moveFolder(String path, String toPath, String toName) {
+        FormBody.Builder builder = new FormBody.Builder()
+                .addEncoded("path", path)
+                .addEncoded("topath", toPath);
+
+        if(toName != null) {
+            builder.add("toname", toName);
+        }
+
+        RequestBody body = builder.build() ;
 
         Request request = newRequest()
                 .url(apiHost.newBuilder()

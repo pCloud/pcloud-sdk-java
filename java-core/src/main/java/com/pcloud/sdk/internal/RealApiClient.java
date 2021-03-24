@@ -733,6 +733,28 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFile> moveFile(String path, String toPath) {
+        RequestBody body = new FormBody.Builder()
+                .addEncoded("path", path)
+                .addEncoded("topath", toPath)
+                .build();
+
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("renamefile")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    @Override
     public Call<RemoteFile> moveFile(RemoteFile file, RemoteFolder toFolder) {
         if (file == null) {
             throw new IllegalArgumentException("file argument cannot be null.");
@@ -902,6 +924,28 @@ class RealApiClient implements ApiClient {
         RequestBody body = new FormBody.Builder()
                 .add("folderid", String.valueOf(folderId))
                 .add("tofolderid", String.valueOf(toFolderId))
+                .build();
+
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("renamefolder")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFolder> moveFolder(String path, String toPath) {
+        RequestBody body = new FormBody.Builder()
+                .addEncoded("path", path)
+                .addEncoded("topath", toPath)
                 .build();
 
         Request request = newRequest()

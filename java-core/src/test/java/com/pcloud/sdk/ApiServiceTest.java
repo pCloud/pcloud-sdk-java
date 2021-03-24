@@ -141,7 +141,7 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     @Test
     public void moveFolder_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.moveFolder(null, null);
+        instance.moveFolder((RemoteFolder) null, (RemoteFolder) null);
     }
 
     @Test

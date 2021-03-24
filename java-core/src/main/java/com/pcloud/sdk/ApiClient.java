@@ -126,6 +126,19 @@ public interface ApiClient {
     Call<RemoteFolder> createFolder(RemoteFolder parentFolder, String folderName);
 
     /**
+     * Create a folder.
+     * <p>
+     * Same as calling {@link #createFolder(long, String)} with {@code parentFolderId} taken from {@linkplain RemoteFolder#folderId()}.
+     *
+     * @param path       The path of the parent folder for the newly created folder
+     * @param folderName The new folder name
+     * @return {@link Call}
+     * @throws IllegalArgumentException on a null {@code path} argument.
+     * @throws IllegalArgumentException on a null {@code folderName} argument.
+     */
+    Call<RemoteFolder> createFolder(String path, String folderName);
+
+    /**
      * Delete a specified folder recursively.
      * <p>
      * Same as calling {@link #deleteFolder(long, boolean)} (long, String)} with {@code recursively} set to false.
@@ -140,7 +153,7 @@ public interface ApiClient {
      * <p>For more information, see the related documentation pages
      * <a href="https://docs.pcloud.com/methods/folder/deletefolder.html" target="_blank">here</a></p> and <a href="https://docs.pcloud.com/methods/folder/deletefolderrecursive.html" target="_blank">here</a>.
      *
-     * @param folderId    The id if the folder you would like to delete
+     * @param folderId    The id of the folder you would like to delete
      * @param recursively If set to {@code true} all child files will also be deleted.
      *                    <p>If set to {@code false}, the operation will fail on any non-empty folder
      * @return {@link Call} resulting in true if the operation is successful, or false otherwise
@@ -168,6 +181,29 @@ public interface ApiClient {
      * @see #deleteFolder(long, boolean) #deleteFolder(long, boolean)
      */
     Call<Boolean> deleteFolder(RemoteFolder folder, boolean recursively);
+
+    /**
+     * Delete a specified folder recursively.
+     * <p>
+     * Same as calling {@link #deleteFolder(String, boolean)} (String, String)} with {@code recursively} set to false.
+     *
+     * @param path The path of the folder you would like to delete
+     * @return {@link Call}
+     * @throws IllegalArgumentException on a null {@code path} argument.
+     */
+    Call<Boolean> deleteFolder(String path);
+
+    /**
+     * Delete a specified folder recursively.
+     * <p>For more information, see the related documentation pages
+     * <a href="https://docs.pcloud.com/methods/folder/deletefolder.html" target="_blank">here</a></p> and <a href="https://docs.pcloud.com/methods/folder/deletefolderrecursive.html" target="_blank">here</a>.
+     *
+     * @param path        The path of the folder you would like to delete
+     * @param recursively If set to {@code true} all child files will also be deleted.
+     *                    <p>If set to {@code false}, the operation will fail on any non-empty folder
+     * @return {@link Call} resulting in true if the operation is successful, or false otherwise
+     */
+    Call<Boolean> deleteFolder(String path, boolean recursively);
 
     /**
      * Rename a specified folder.
@@ -474,6 +510,117 @@ public interface ApiClient {
      */
     Call<RemoteFile> createFile(long folderId, String filename, DataSource data, Date modifiedDate, ProgressListener listener, UploadOptions uploadOptions);
 
+    /**
+     * Create a new file.
+     * <p>
+     * Same as calling {@link #createFile(String, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate}, {@code listener}
+     * and {@linkplain UploadOptions#DEFAULT} arguments.
+     *
+     * @param path     The path of the folder you would like to create the file.
+     * @param filename The file name. Must not be null.
+     * @param data     {@link DataSource} object providing the file content. Must not be null.
+     * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code path} argument.
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
+     * @see #createFile(long, String, DataSource, UploadOptions)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener)
+     * @see #createFile(long, String, DataSource, Date, ProgressListener, UploadOptions)
+     * @see DataSource
+     * @see ProgressListener
+     * @see UploadOptions
+     */
+    Call<RemoteFile> createFile(String path, String filename, DataSource data);
+
+
+    /**
+     * Create a new file.
+     * <p>
+     * Same as calling {@link #createFile(String, String, DataSource, Date, ProgressListener, UploadOptions)} with null {@code modifiedDate} and {@code listener} arguments.
+     *
+     * @param path          The path of the folder you would like to create the file.
+     * @param filename      The file name. Must not be null.
+     * @param data          {@link DataSource} object providing the file content. Must not be null.
+     * @param uploadOptions {@link UploadOptions} to be used for the file creation. Must not be null.
+     * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code path} argument.
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
+     * @throws IllegalArgumentException on a null {@code uploadOptions} argument.
+     * @see #createFile(String, String, DataSource, Date, ProgressListener)
+     * @see #createFile(String, String, DataSource, Date, ProgressListener, UploadOptions)
+     * @see DataSource
+     * @see ProgressListener
+     * @see UploadOptions
+     */
+    Call<RemoteFile> createFile(String path, String filename, DataSource data, UploadOptions uploadOptions);
+
+    /**
+     * Create a new file.
+     * <p>
+     * Creates a new file with the specified name in the specified folder.
+     * <p>
+     * If set, the {@code modifiedDate} parameter will be set as the last modification date of the file.
+     * <p>
+     * The provided {@link DataSource} object will be used to populate the file's contents.
+     * <p>
+     * If a {@link ProgressListener} is provided, it will be notified on every {@code n} bytes uploaded, as set per {@link Builder#progressCallbackThreshold(long)}
+     * <p>
+     * Method is called with a {@link UploadOptions#DEFAULT} argument.
+     * <p>
+     * To create an empty file, call the method with a {@link DataSource#EMPTY} argument.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/uploadfile.html" target="_blank">documentation page</a>.
+     *
+     * @param path         The path of the folder you would like to create the file.
+     * @param filename     The file name. Must not be null.
+     * @param data         {@link DataSource} object providing the file content. Must not be null.
+     * @param modifiedDate The last modification date to be used. If set to {@code null}, the upload date will be used instead.
+     * @param listener     The listener to be used to notify about upload progress. If null, no progress will be reported.
+     * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code path} argument.
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
+     * @see DataSource
+     * @see ProgressListener
+     * @see UploadOptions
+     */
+    Call<RemoteFile> createFile(String path, String filename, DataSource data, Date modifiedDate, ProgressListener listener);
+
+    /**
+     * Create a new file.
+     * <p>
+     * Creates a new file with the specified name in the specified folder.
+     * <p>
+     * If set, the {@code modifiedDate} parameter will be set as the last modification date of the file.
+     * <p>
+     * The provided {@link DataSource} object will be used to populate the file's contents.
+     * <p>
+     * If a {@link ProgressListener} is provided, it will be notified on every {@code n} bytes uploaded, as set per {@link Builder#progressCallbackThreshold(long)}
+     * <p>
+     * Method uses the supplied {@link UploadOptions}, possible constant for usage are {@link UploadOptions#DEFAULT}, {@link UploadOptions#OVERRIDE_FILE}, {@link UploadOptions#PARTIAL_UPLOAD}.
+     * <p>
+     * To create an empty file, call the method with a {@link DataSource#EMPTY} argument.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/uploadfile.html" target="_blank">documentation page</a>.
+     *
+     * @param path          The path of the folder you would like to create the file.
+     * @param filename      The file name. Must not be null.
+     * @param data          {@link DataSource} object providing the file content. Must not be null.
+     * @param modifiedDate  The last modification date to be used. If set to {@code null}, the upload date will be used instead.
+     * @param listener      The listener to be used to notify about upload progress. If null, no progress will be reported.
+     * @param uploadOptions {@link UploadOptions} to be used for the file creation. Must not be null.
+     * @return {@link Call} resulting in the new file's metadata
+     * @throws IllegalArgumentException on a null {@code path} argument.
+     * @throws IllegalArgumentException on a null {@code filename} argument.
+     * @throws IllegalArgumentException on a null {@code data} argument.
+     * @throws IllegalArgumentException on a null {@code uploadOptions} argument.
+     * @see DataSource
+     * @see ProgressListener
+     * @see UploadOptions
+     */
+    Call<RemoteFile> createFile(String path, String filename, DataSource data, Date modifiedDate, ProgressListener listener, UploadOptions uploadOptions);
+
 
     /**
      * Delete a specified file.
@@ -499,6 +646,19 @@ public interface ApiClient {
      * @return {@link Call} resulting in true if operation was successful, false otherwise.
      */
     Call<Boolean> deleteFile(long fileId);
+
+    /**
+     * Delete a specified file.
+     * <p>
+     * Deletes the remote file with the specified path.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/deletefile.html" target="_blank">documentation page</a>.
+     *
+     * @param path of the file to be deleted
+     * @return {@link Call} resulting in true if operation was successful, false otherwise.
+     * @throws IllegalArgumentException on a null {@code path} argument.
+     */
+    Call<Boolean> deleteFile(String path);
 
     /**
      * Create a download link for a file
@@ -536,6 +696,25 @@ public interface ApiClient {
      * @see FileLink
      */
     Call<FileLink> createFileLink(long fileId, DownloadOptions options);
+
+    /**
+     * Create a download link for a file
+     * <p>
+     * If successful, this call will return a {@link FileLink} object, which can be used to download the contents
+     * of the remote file with the specified {@code path}. See {@link DownloadOptions} for more details on possible options
+     * for generating a link.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank">documentation page</a>.
+     *
+     * @param path    the file
+     * @param options the options
+     * @return {@link Call} resulting in a {@link FileLink}
+     * @throws IllegalArgumentException on a null {@code path} argument.
+     * @throws IllegalArgumentException on a null {@code options} argument.
+     * @see DownloadOptions
+     * @see FileLink
+     */
+    Call<FileLink> createFileLink(String path, DownloadOptions options);
 
     /**
      * Download a {@link FileLink} to a specified destination.

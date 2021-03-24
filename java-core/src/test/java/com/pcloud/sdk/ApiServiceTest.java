@@ -84,7 +84,13 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     @Test
     public void createFolder_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.createFolder(null, null);
+        instance.createFolder((RemoteFolder) null, null);
+    }
+
+    @Test
+    public void createFolder_ThrowsOnNullStringArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.createFolder((String) null, null);
     }
 
     @Test
@@ -99,13 +105,25 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     @Test
     public void deleteFolder_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.deleteFolder(null);
+        instance.deleteFolder((RemoteFolder) null);
     }
 
     @Test
     public void deleteFolder_ThrowsOnNullRemoteFolderArgument2() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.deleteFolder(null, false);
+        instance.deleteFolder((RemoteFolder) null, false);
+    }
+
+    @Test
+    public void deleteFolder_ThrowsOnNullStringArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.deleteFolder((String) null);
+    }
+
+    @Test
+    public void deleteFolder_ThrowsOnNullStringArgument2() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.deleteFolder((String) null, false);
     }
 
     @Test
@@ -205,7 +223,13 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     @Test
     public void deleteFile_ThrowsOnNullRemoteFileArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.deleteFile(null);
+        instance.deleteFile((RemoteFile) null);
+    }
+
+    @Test
+    public void deleteFile_ThrowsOnNullStringArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.deleteFile((String) null);
     }
 
     @Test
@@ -217,7 +241,13 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     @Test
     public void getDownloadLink_ThrowsOnNullRemoteFileArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.createFileLink(null, DownloadOptions.DEFAULT);
+        instance.createFileLink((RemoteFile) null, DownloadOptions.DEFAULT);
+    }
+
+    @Test
+    public void getDownloadLink_ThrowsOnNullStringArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.createFileLink((String) null, DownloadOptions.DEFAULT);
     }
 
     @Test

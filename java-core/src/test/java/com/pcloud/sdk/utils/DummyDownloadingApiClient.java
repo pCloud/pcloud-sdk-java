@@ -95,6 +95,11 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFolder> createFolder(String path, String folderName) {
+        return null;
+    }
+
+    @Override
     public Call<Boolean> deleteFolder(long folderId) {
         return null;
     }
@@ -111,6 +116,16 @@ public class DummyDownloadingApiClient implements ApiClient {
 
     @Override
     public Call<Boolean> deleteFolder(RemoteFolder folder, boolean recursively) {
+        return null;
+    }
+
+    @Override
+    public Call<Boolean> deleteFolder(String path) {
+        return null;
+    }
+
+    @Override
+    public Call<Boolean> deleteFolder(String path, boolean recursively) {
         return null;
     }
 
@@ -200,6 +215,26 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFile> createFile(String path, String filename, DataSource data) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(String path, String filename, DataSource data, UploadOptions uploadOptions) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(String path, String filename, DataSource data, Date modifiedDate, ProgressListener listener) {
+        return null;
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(String path, String filename, DataSource data, Date modifiedDate, ProgressListener listener, UploadOptions uploadOptions) {
+        return null;
+    }
+
+    @Override
     public Call<Boolean> deleteFile(RemoteFile file) {
         return null;
     }
@@ -210,12 +245,22 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
+    public Call<Boolean> deleteFile(String path) {
+        return null;
+    }
+
+    @Override
     public Call<FileLink> createFileLink(RemoteFile file, DownloadOptions options) {
         return new DummyCall<FileLink>(new DummyDownloadLink());
     }
 
     @Override
     public Call<FileLink> createFileLink(long fileid, DownloadOptions options) {
+        return new DummyCall<FileLink>(new DummyDownloadLink());
+    }
+
+    @Override
+    public Call<FileLink> createFileLink(String path, DownloadOptions options) {
         return new DummyCall<FileLink>(new DummyDownloadLink());
     }
 

@@ -204,6 +204,7 @@ public interface ApiClient {
      * @param recursively If set to {@code true} all child files will also be deleted.
      *                    <p>If set to {@code false}, the operation will fail on any non-empty folder
      * @return {@link Call} resulting in true if the operation is successful, or false otherwise
+     * @throws IllegalArgumentException on a null {@code path} argument.
      */
     Call<Boolean> deleteFolder(String path, boolean recursively);
 

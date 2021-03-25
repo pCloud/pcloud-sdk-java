@@ -173,7 +173,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<RemoteFolder> listFolder(String path, boolean recursively) {
         if (path == null) {
-            throw new IllegalArgumentException("path argument cannot be null.");
+            throw new IllegalArgumentException("Path argument cannot be null.");
         }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
@@ -257,7 +257,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<RemoteFile> createFile(String path, String filename, final DataSource data, Date modifiedDate, final ProgressListener listener, final UploadOptions uploadOptions) {
         if (path == null) {
-            throw new IllegalArgumentException("path argument cannot be null.");
+            throw new IllegalArgumentException("Path argument cannot be null.");
         }
         return createFile(null, path, filename, data, modifiedDate, listener, uploadOptions);
     }
@@ -375,7 +375,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<Boolean> deleteFile(String path) {
         if (path == null) {
-            throw new IllegalArgumentException("path argument cannot be null.");
+            throw new IllegalArgumentException("Path argument cannot be null.");
         }
         Request request = new Request.Builder()
                 .url(apiHost.newBuilder()
@@ -737,7 +737,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<RemoteFile> loadFile(String path) {
         if (path == null) {
-            throw new IllegalArgumentException("path argument cannot be null.");
+            throw new IllegalArgumentException("Path argument cannot be null.");
         }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("stat")
@@ -781,7 +781,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<RemoteFolder> loadFolder(String path) {
         if (path == null) {
-            throw new IllegalArgumentException("path argument cannot be null.");
+            throw new IllegalArgumentException("Path argument cannot be null.");
         }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
@@ -826,11 +826,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFile> moveFile(String path, String toPath) {
-        if (path == null) {
-            throw new IllegalArgumentException("path argument cannot be null.");
-        }
-        if (toPath == null) {
-            throw new IllegalArgumentException("toPath argument cannot be null.");
+        if (path == null || toPath == null) {
+            throw new IllegalArgumentException("Path or toPath argument cannot be null.");
         }
         RequestBody body = new FormBody.Builder()
                 .addEncoded("path", path)
@@ -935,7 +932,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<RemoteFolder> createFolder(String path, String folderName) {
         if (path == null) {
-            throw new IllegalArgumentException("folder argument cannot be null.");
+            throw new IllegalArgumentException("Path argument cannot be null.");
         }
 
         if (folderName == null) {
@@ -1012,7 +1009,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<Boolean> deleteFolder(String path, boolean recursively) {
         if (path == null) {
-            throw new IllegalArgumentException("folder argument cannot be null.");
+            throw new IllegalArgumentException("Path argument cannot be null.");
         }
         RequestBody body = new FormBody.Builder()
                 .addEncoded("path", path)
@@ -1100,11 +1097,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFolder> moveFolder(String path, String toPath) {
-        if (path == null) {
-            throw new IllegalArgumentException("path argument cannot be null.");
-        }
-        if (toPath == null) {
-            throw new IllegalArgumentException("toPath argument cannot be null.");
+        if (path == null || toPath == null) {
+            throw new IllegalArgumentException("Path or toPath argument cannot be null.");
         }
         RequestBody body = new FormBody.Builder()
                 .addEncoded("path", path)

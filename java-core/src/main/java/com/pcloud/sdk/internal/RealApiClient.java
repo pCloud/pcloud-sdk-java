@@ -177,7 +177,7 @@ class RealApiClient implements ApiClient {
         }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
-                .addEncodedQueryParameter("path", String.valueOf(path))
+                .addEncodedQueryParameter("path", path.isEmpty() ? "/" : path)
                 .addQueryParameter("noshares", String.valueOf(1));
         if (recursively) {
             urlBuilder.addEncodedQueryParameter("recursive", String.valueOf(1));

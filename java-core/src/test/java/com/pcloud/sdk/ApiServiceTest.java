@@ -84,13 +84,13 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     @Test
     public void createFolder_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.createFolder((RemoteFolder) null, null);
+        instance.createFolder(null, null);
     }
 
     @Test
     public void createFolder_ThrowsOnNullStringArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.createFolder((String) null, null);
+        instance.createFolder(null);
     }
 
     @Test

@@ -128,17 +128,15 @@ public interface ApiClient {
     Call<RemoteFolder> createFolder(RemoteFolder parentFolder, String folderName);
 
     /**
-     * Create a folder.
-     * <p>
-     * Same as calling {@link #createFolder(long, String)} with {@code parentFolderId} taken from {@linkplain RemoteFolder#folderId()}.
+     * Create a new folder.
+     * <p>Create a new folder in the specified folder</p>
+     * <p>For more information, see the related <a href="https://docs.pcloud.com/methods/folder/createfolder.html" target="_blank">documentation page</a>.</p>
      *
-     * @param path       The path of the parent folder for the newly created folder
-     * @param folderName The new folder name
-     * @return {@link Call}
+     * @param path       The complete path of the new folder
+     * @return {@link Call} resulting in the metadata for the new folder
      * @throws IllegalArgumentException on a null {@code path} argument.
-     * @throws IllegalArgumentException on a null {@code folderName} argument.
      */
-    Call<RemoteFolder> createFolder(String path, String folderName);
+    Call<RemoteFolder> createFolder(String path);
 
     /**
      * Delete a specified folder recursively.

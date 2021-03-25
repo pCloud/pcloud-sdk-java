@@ -930,18 +930,13 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
-    public Call<RemoteFolder> createFolder(String path, String folderName) {
+    public Call<RemoteFolder> createFolder(String path) {
         if (path == null) {
             throw new IllegalArgumentException("Path argument cannot be null.");
         }
 
-        if (folderName == null) {
-            throw new IllegalArgumentException("Folder name is null");
-        }
-
         RequestBody body = new FormBody.Builder()
                 .addEncoded("path", path)
-                .add("name", folderName)
                 .build();
 
         Request request = newRequest()

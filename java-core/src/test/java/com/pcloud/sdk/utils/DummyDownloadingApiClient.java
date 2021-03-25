@@ -95,7 +95,7 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
-    public Call<RemoteFolder> createFolder(String path, String folderName) {
+    public Call<RemoteFolder> createFolder(String path) {
         return null;
     }
 

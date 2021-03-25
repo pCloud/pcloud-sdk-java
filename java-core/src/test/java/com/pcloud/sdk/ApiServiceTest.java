@@ -154,12 +154,31 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     public void moveFolder_ReturnsANonNullCall() throws Exception {
         assertNotNull(instance.moveFolder(1, 2));
         assertNotNull(instance.moveFolder(new DummyFolder("1", 1), new DummyFolder("2", 2)));
+        assertNotNull(instance.moveFolder("/Some Folder", "/Some Other Folder/"));
     }
 
     @Test
     public void moveFolder_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.moveFolder((RemoteFolder) null, (RemoteFolder) null);
+        instance.moveFolder(null, new DummyFolder("1", 1));
+    }
+
+    @Test
+    public void moveFolder_ThrowsOnNullRemoteFolderArgument2() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFolder(new DummyFolder("1", 1), null);
+    }
+
+    @Test
+    public void moveFolder_ThrowsOnNullPathArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFolder((String) null, "/Some Folder/");
+    }
+
+    @Test
+    public void moveFolder_ThrowsOnNullToPathArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFolder("/Some Folder", (String) null);
     }
 
     @Test
@@ -333,6 +352,18 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     public void moveFile_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
         instance.moveFile(new DummyFile(1, "somename"), null);
+    }
+
+    @Test
+    public void moveFile_ThrowsOnNullPathArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFile(null, "/");
+    }
+
+    @Test
+    public void moveFile_ThrowsOnNullToPathArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFile("/somefile.txt", null);
     }
 
     @Test

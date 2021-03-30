@@ -84,7 +84,7 @@ public interface ApiClient {
      *
      * @param path {@link RemoteFolder} path
      * @return {@link Call}
-     * @throws IllegalArgumentException on a null {@code path} argument.
+     * @throws IllegalArgumentException on a null or empty {@code path} argument.
      */
     Call<RemoteFolder> listFolder(String path);
 
@@ -98,7 +98,7 @@ public interface ApiClient {
      * @param path    target folder path
      * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
      * @return {@link Call} resulting in a {@link RemoteFolder} instance holding the metadata for the requested fodler id.
-     * @throws IllegalArgumentException on a null {@code path} argument.
+     * @throws IllegalArgumentException on a null or empty {@code path} argument.
      */
     Call<RemoteFolder> listFolder(String path, boolean recursively);
 

@@ -172,12 +172,12 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFolder> listFolder(String path, boolean recursively) {
-        if (path == null) {
+        if (path == null || path.isEmpty()) {
             throw new IllegalArgumentException("Path argument cannot be null.");
         }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
-                .addEncodedQueryParameter("path", path.isEmpty() ? "/" : path)
+                .addEncodedQueryParameter("path", path)
                 .addQueryParameter("noshares", String.valueOf(1));
         if (recursively) {
             urlBuilder.addEncodedQueryParameter("recursive", String.valueOf(1));

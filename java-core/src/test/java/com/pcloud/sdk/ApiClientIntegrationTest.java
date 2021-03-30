@@ -54,6 +54,13 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
+    public void testGetFolder() throws Exception {
+        long id = RemoteFolder.ROOT_FOLDER_ID;
+        RemoteFolder folder = apiClient.listFolder(id, true).execute();
+        assertEquals(id, folder.folderId());
+    }
+
+    @Test
     public void testListFolderByPath() throws Exception {
         apiClient.listFolder("/").execute();
     }

@@ -172,8 +172,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFolder> listFolder(String path, boolean recursively) {
-        if (path == null || path.isEmpty()) {
-            throw new IllegalArgumentException("Path argument cannot be null.");
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
         }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
@@ -256,8 +256,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFile> createFile(String path, String filename, final DataSource data, Date modifiedDate, final ProgressListener listener, final UploadOptions uploadOptions) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path argument cannot be null.");
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
         }
         return createFile(null, path, filename, data, modifiedDate, listener, uploadOptions);
     }
@@ -374,8 +374,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<Boolean> deleteFile(String path) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path argument cannot be null.");
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
         }
         Request request = new Request.Builder()
                 .url(apiHost.newBuilder()
@@ -422,8 +422,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<FileLink> createFileLink(String path, DownloadOptions options) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path argument cannot be null.");
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
         }
         if (options == null) {
             throw new IllegalArgumentException("DownloadOptions parameter cannot be null.");
@@ -736,8 +736,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFile> loadFile(String path) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path argument cannot be null.");
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
         }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("stat")
@@ -780,8 +780,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFolder> loadFolder(String path) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path argument cannot be null.");
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
         }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
@@ -826,8 +826,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFile> moveFile(String path, String toPath) {
-        if (path == null || toPath == null) {
-            throw new IllegalArgumentException("Path or toPath argument cannot be null.");
+        if (!isValidPath(path) || !isValidPath(toPath)) {
+            throw new IllegalArgumentException("Path or toPath argument cannot be null or empty.");
         }
         RequestBody body = new FormBody.Builder()
                 .addEncoded("path", path)
@@ -931,8 +931,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFolder> createFolder(String path) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path argument cannot be null.");
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
         }
 
         RequestBody body = new FormBody.Builder()
@@ -1003,8 +1003,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<Boolean> deleteFolder(String path, boolean recursively) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path argument cannot be null.");
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
         }
         RequestBody body = new FormBody.Builder()
                 .addEncoded("path", path)
@@ -1092,8 +1092,8 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFolder> moveFolder(String path, String toPath) {
-        if (path == null || toPath == null) {
-            throw new IllegalArgumentException("Path or toPath argument cannot be null.");
+        if (!isValidPath(path) || !isValidPath(toPath)) {
+            throw new IllegalArgumentException("Path or toPath argument cannot be null or empty.");
         }
         RequestBody body = new FormBody.Builder()
                 .addEncoded("path", path)
@@ -1319,5 +1319,9 @@ class RealApiClient implements ApiClient {
                 closeQuietly(response);
             }
         }
+    }
+
+    private boolean isValidPath(String path) {
+        return (path != null && !path.isEmpty());
     }
 }

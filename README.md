@@ -51,13 +51,13 @@ Download [the latest JAR][jar-java] or grab via Maven:
 <dependency>
   <groupId>com.pcloud.sdk</groupId>
   <artifactId>java-core</artifactId>
-  <version>1.3.0</version>
+  <version>1.4.0</version>
   <type>pom</type>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.pcloud.sdk:java-core:1.3.0'
+implementation 'com.pcloud.sdk:java-core:1.4.0'
 ```
  [![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/java-core/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/java-core/_latestVersion)
 
@@ -74,13 +74,13 @@ Download [the latest JAR][jar-android] or grab via Maven:
 <dependency>
   <groupId>com.pcloud.sdk</groupId>
   <artifactId>android</artifactId>
-  <version>1.3.0</version>
+  <version>1.4.0</version>
   <type>pom</type>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.pcloud.sdk:android:1.3.0'
+implementation 'com.pcloud.sdk:android:1.4.0'
 ```
  [![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/android/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/android/_latestVersion)
 
@@ -309,6 +309,6 @@ See the code in the `sample` module or the sample application [here](https://git
 [site]: https://www.pcloud.com/
 [docs]: https://docs.pcloud.com/
 [bintray]: https://bintray.com/pcloud/pcloud-sdk/
-[jar-android]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fandroid%2F1.3.0%2Fandroid-1.3.0.aar
-[jar-java]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fjava-core%2F1.3.0%2Fjava-core-1.3.0.jar
+[jar-android]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fandroid%2F1.4.0%2Fandroid-1.4.0.aar
+[jar-java]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fjava-core%2F1.4.0%2Fjava-core-1.4.0.jar
 

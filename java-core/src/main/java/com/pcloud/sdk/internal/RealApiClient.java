@@ -815,7 +815,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<RemoteFile> moveFile(String path, String toPath) {
         requireValidPath(path, "path");
-        requireValidPath(path, "toPath");
+        requireValidPath(toPath, "toPath");
 
         RequestBody body = new FormBody.Builder()
                 .addEncoded("path", path)
@@ -1077,7 +1077,7 @@ class RealApiClient implements ApiClient {
     @Override
     public Call<RemoteFolder> moveFolder(String path, String toPath) {
         requireValidPath(path, "path");
-        requireValidPath(path, "toPath");
+        requireValidPath(toPath, "toPath");
 
         RequestBody body = new FormBody.Builder()
                 .addEncoded("path", path)

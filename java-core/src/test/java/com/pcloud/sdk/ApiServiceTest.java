@@ -17,8 +17,12 @@
 
 package com.pcloud.sdk;
 
-import com.pcloud.sdk.*;
-import com.pcloud.sdk.utils.*;
+import com.pcloud.sdk.utils.DummyDataSink;
+import com.pcloud.sdk.utils.DummyDataSource;
+import com.pcloud.sdk.utils.DummyFile;
+import com.pcloud.sdk.utils.DummyFileLink;
+import com.pcloud.sdk.utils.DummyFolder;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,7 +31,8 @@ import org.junit.rules.ExpectedException;
 
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public abstract class ApiServiceTest<T extends ApiClient> {
 

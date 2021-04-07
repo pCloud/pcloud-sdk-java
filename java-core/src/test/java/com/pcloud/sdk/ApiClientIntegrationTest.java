@@ -61,12 +61,12 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
-    public void testListFolderPath() throws Exception {
+    public void testListFolderByPath() throws Exception {
         apiClient.listFolder("/").execute();
     }
 
     @Test
-    public void testGetFolderPath() throws Exception {
+    public void testGetFolderByPath() throws Exception {
         long id = RemoteFolder.ROOT_FOLDER_ID;
         RemoteFolder folder = apiClient.listFolder("/", true).execute();
         assertEquals(id, folder.folderId());
@@ -80,9 +80,22 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
+    public void testCreateFolderByPath() throws IOException, ApiError {
+        RemoteFolder remoteFolder = createRemoteFolder("/");
+
+        assertTrue(entryExistsInRoot(remoteFolder));
+    }
+
+    @Test
     public void testDeleteFolder() throws IOException, ApiError {
         RemoteFolder remoteFolder = createRemoteFolder();
         assertTrue(apiClient.deleteFolder(remoteFolder).execute());
+    }
+
+    @Test
+    public void testDeleteFolderByPath() throws IOException, ApiError {
+        RemoteFolder remoteFolder = createRemoteFolder("/");
+        assertTrue(apiClient.deleteFolder("/" + remoteFolder.name()).execute());
     }
 
     @Test
@@ -90,6 +103,13 @@ public class ApiClientIntegrationTest {
         RemoteFolder remoteFolder = createRemoteFolder();
         createRemoteFolder(remoteFolder.folderId());
         assertTrue(apiClient.deleteFolder(remoteFolder, true).execute());
+    }
+
+    @Test
+    public void testDeleteFolderRecursivelyByPath() throws IOException, ApiError {
+        RemoteFolder remoteFolder = createRemoteFolder("/");
+        createRemoteFolder("/" + remoteFolder.name() + "/");
+        assertTrue(apiClient.deleteFolder("/" + remoteFolder.name(), true).execute());
     }
 
     @Test
@@ -115,6 +135,17 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
+    public void testMoveFolderByPath() throws IOException, ApiError {
+        RemoteFolder remoteFolder1 = createRemoteFolder("/");
+        RemoteFolder remoteFolder2 = createRemoteFolder("/");
+
+        RemoteFolder movedFolder = apiClient.moveFolder("/" + remoteFolder1.name(), "/" + remoteFolder2.name() + "/" + remoteFolder1.name()).execute();
+
+        assertTrue(entryExistsInFolder(movedFolder, remoteFolder2.folderId()));
+        assertFalse(entryExistsInFolder(remoteFolder1, RemoteFolder.ROOT_FOLDER_ID));
+    }
+
+    @Test
     public void testCopyFolder() throws IOException, ApiError {
         RemoteFolder remoteFolder1 = createRemoteFolder();
         RemoteFolder remoteFolder2 = createRemoteFolder();
@@ -124,7 +155,6 @@ public class ApiClientIntegrationTest {
         assertTrue(entryExistsInFolder(copiedFolder, remoteFolder2.folderId()));
         assertTrue(entryExistsInFolder(remoteFolder1, RemoteFolder.ROOT_FOLDER_ID));
     }
-
 
     @Test
     public void testCreateFile() throws IOException, ApiError {
@@ -137,12 +167,35 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
+    public void testCreateFileByPath() throws IOException, ApiError {
+        String someName = UUID.randomUUID().toString();
+        byte[] fileContents = someName.getBytes();
+        RemoteFile remoteFile = apiClient.createFile("/", someName + ".txt", DataSource.create(fileContents)).execute();
+
+        assertTrue(entryExistsInRoot(remoteFile));
+        assertEquals(fileContents.length, remoteFile.size());
+    }
+
+    @Test
     public void testCreateFileWithDate() throws IOException, ApiError {
         String someName = UUID.randomUUID().toString();
         byte[] fileContents = someName.getBytes();
         Date dateModified = new Date(1484902140000L);//Random date
         ProgressListener listener = Mockito.mock(ProgressListener.class);
         RemoteFile remoteFile = apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents), dateModified, listener).execute();
+
+        assertTrue(entryExistsInRoot(remoteFile));
+        assertEquals(fileContents.length, remoteFile.size());
+        assertEquals(dateModified, remoteFile.created());
+    }
+
+    @Test
+    public void testCreateFileWithDateByPath() throws IOException, ApiError {
+        String someName = UUID.randomUUID().toString();
+        byte[] fileContents = someName.getBytes();
+        Date dateModified = new Date(1484902140000L);//Random date
+        ProgressListener listener = Mockito.mock(ProgressListener.class);
+        RemoteFile remoteFile = apiClient.createFile("/", someName + ".txt", DataSource.create(fileContents), dateModified, listener).execute();
 
         assertTrue(entryExistsInRoot(remoteFile));
         assertEquals(fileContents.length, remoteFile.size());
@@ -164,10 +217,34 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
+    public void testCreateFileWithOverrideOptionByPath() throws IOException, ApiError {
+        String someName = UUID.randomUUID().toString() + ".txt";
+        byte[] fileContents = someName.getBytes();
+        byte[] file2Contents = UUID.randomUUID().toString().getBytes();
+        RemoteFile remoteFile = apiClient.createFile("/", someName, DataSource.create(fileContents), UploadOptions.OVERRIDE_FILE).execute();
+        RemoteFile remoteFile2 = apiClient.createFile("/", someName, DataSource.create(file2Contents), UploadOptions.OVERRIDE_FILE).execute();
+
+        assertFalse(entryExistsInRoot(remoteFile));
+        assertTrue(entryExistsInRoot(remoteFile2));
+        assertEquals(someName, remoteFile2.name());
+        assertEquals(file2Contents.length, remoteFile2.size());
+    }
+
+    @Test
     public void testDeleteFile() throws IOException, ApiError {
         RemoteFile remoteFile = createRemoteFile();
 
         Boolean isDeleted = apiClient.deleteFile(remoteFile).execute();
+
+        assertTrue(isDeleted);
+        assertFalse(entryExistsInRoot(remoteFile));
+    }
+
+    @Test
+    public void testDeleteFileByPath() throws IOException, ApiError {
+        RemoteFile remoteFile = createRemoteFile("/");
+
+        Boolean isDeleted = apiClient.deleteFile("/" + remoteFile.name()).execute();
 
         assertTrue(isDeleted);
         assertFalse(entryExistsInRoot(remoteFile));
@@ -179,6 +256,17 @@ public class ApiClientIntegrationTest {
         RemoteFile remoteFile = createRemoteFile();
 
         RemoteFile movedFile = apiClient.moveFile(remoteFile, remoteFolder).execute();
+
+        assertTrue(entryExistsInFolder(movedFile, remoteFolder.folderId()));
+        assertFalse(entryExistsInFolder(remoteFile, RemoteFolder.ROOT_FOLDER_ID));
+    }
+
+    @Test
+    public void testMoveFileBy() throws IOException, ApiError {
+        RemoteFolder remoteFolder = createRemoteFolder("/");
+        RemoteFile remoteFile = createRemoteFile("/");
+
+        RemoteFile movedFile = apiClient.moveFile("/" + remoteFile.name(), "/" + remoteFolder.name() + "/").execute();
 
         assertTrue(entryExistsInFolder(movedFile, remoteFolder.folderId()));
         assertFalse(entryExistsInFolder(remoteFile, RemoteFolder.ROOT_FOLDER_ID));
@@ -219,7 +307,7 @@ public class ApiClientIntegrationTest {
 
     @Test
     public void testLoadFileWithPath() throws IOException, ApiError {
-        RemoteFile remoteFile = createRemoteFile();
+        RemoteFile remoteFile = createRemoteFile("/");
 
         RemoteFile fetchedFile = apiClient.loadFile("/" + remoteFile.name()).execute();
 
@@ -238,7 +326,7 @@ public class ApiClientIntegrationTest {
 
     @Test
     public void testLoadFolderWithPath() throws IOException, ApiError {
-        RemoteFolder remoteFolder = createRemoteFolder();
+        RemoteFolder remoteFolder = createRemoteFolder("/");
 
         RemoteFolder fetchedFolder = apiClient.loadFolder("/" + remoteFolder.name()).execute();
 
@@ -263,6 +351,22 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
+    public void testDownloadFileFromLinkByPath() throws IOException, ApiError {
+        String someName = UUID.randomUUID().toString();
+        byte[] fileContents = someName.getBytes();
+        RemoteFile remoteFile = apiClient.createFile("/", someName + ".txt", DataSource.create(fileContents)).execute();
+        DownloadOptions options = DownloadOptions.create()
+                .skipFilename(true)
+                .forceDownload(false)
+                .contentType(remoteFile.contentType())
+                .build();
+
+        FileLink fileLink = apiClient.createFileLink("/" + remoteFile.name(), options).execute();
+        BufferedSource source = apiClient.download(fileLink).execute();
+        assertArrayEquals(fileContents, source.readByteArray());
+    }
+
+    @Test
     public void testDownloadFile() throws IOException, ApiError {
         String someName = UUID.randomUUID().toString();
         byte[] fileContents = someName.getBytes();
@@ -281,10 +385,21 @@ public class ApiClientIntegrationTest {
         return apiClient.createFolder(parentFolderId, randomFolderName).execute();
     }
 
+    private RemoteFolder createRemoteFolder(String path) throws IOException, ApiError {
+        String randomFolderName = UUID.randomUUID().toString();
+        return apiClient.createFolder(path + randomFolderName).execute();
+    }
+
     private RemoteFile createRemoteFile() throws IOException, ApiError {
         String someName = UUID.randomUUID().toString();
         byte[] fileContents = someName.getBytes();
         return apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents)).execute();
+    }
+
+    private RemoteFile createRemoteFile(String path) throws IOException, ApiError {
+        String someName = UUID.randomUUID().toString();
+        byte[] fileContents = someName.getBytes();
+        return apiClient.createFile(path, someName + ".txt", DataSource.create(fileContents)).execute();
     }
 
     private boolean entryExistsInRoot(RemoteEntry entry) throws IOException, ApiError {

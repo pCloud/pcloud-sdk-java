@@ -88,6 +88,12 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     }
 
     @Test
+    public void createFolder_ThrowsOnNullStringArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.createFolder(null);
+    }
+
+    @Test
     public void deleteFolder_ReturnsANonNullCall() throws Exception {
         RemoteFolder folder = new DummyFolder("bye", 1);
         assertNotNull(instance.deleteFolder(folder));
@@ -99,13 +105,25 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     @Test
     public void deleteFolder_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.deleteFolder(null);
+        instance.deleteFolder((RemoteFolder) null);
     }
 
     @Test
     public void deleteFolder_ThrowsOnNullRemoteFolderArgument2() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.deleteFolder(null, false);
+        instance.deleteFolder((RemoteFolder) null, false);
+    }
+
+    @Test
+    public void deleteFolder_ThrowsOnNullStringArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.deleteFolder((String) null);
+    }
+
+    @Test
+    public void deleteFolder_ThrowsOnNullStringArgument2() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.deleteFolder((String) null, false);
     }
 
     @Test
@@ -136,12 +154,31 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     public void moveFolder_ReturnsANonNullCall() throws Exception {
         assertNotNull(instance.moveFolder(1, 2));
         assertNotNull(instance.moveFolder(new DummyFolder("1", 1), new DummyFolder("2", 2)));
+        assertNotNull(instance.moveFolder("/Some Folder", "/Some Other Folder/"));
     }
 
     @Test
     public void moveFolder_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.moveFolder(null, null);
+        instance.moveFolder(null, new DummyFolder("1", 1));
+    }
+
+    @Test
+    public void moveFolder_ThrowsOnNullRemoteFolderArgument2() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFolder(new DummyFolder("1", 1), null);
+    }
+
+    @Test
+    public void moveFolder_ThrowsOnNullPathArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFolder((String) null, "/Some Folder/");
+    }
+
+    @Test
+    public void moveFolder_ThrowsOnNullToPathArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFolder("/Some Folder", (String) null);
     }
 
     @Test
@@ -205,7 +242,13 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     @Test
     public void deleteFile_ThrowsOnNullRemoteFileArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.deleteFile(null);
+        instance.deleteFile((RemoteFile) null);
+    }
+
+    @Test
+    public void deleteFile_ThrowsOnNullStringArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.deleteFile((String) null);
     }
 
     @Test
@@ -217,7 +260,13 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     @Test
     public void getDownloadLink_ThrowsOnNullRemoteFileArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
-        instance.createFileLink(null, DownloadOptions.DEFAULT);
+        instance.createFileLink((RemoteFile) null, DownloadOptions.DEFAULT);
+    }
+
+    @Test
+    public void getDownloadLink_ThrowsOnNullStringArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.createFileLink((String) null, DownloadOptions.DEFAULT);
     }
 
     @Test
@@ -303,6 +352,18 @@ public abstract class ApiServiceTest<T extends ApiClient> {
     public void moveFile_ThrowsOnNullRemoteFolderArgument() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
         instance.moveFile(new DummyFile(1, "somename"), null);
+    }
+
+    @Test
+    public void moveFile_ThrowsOnNullPathArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFile(null, "/");
+    }
+
+    @Test
+    public void moveFile_ThrowsOnNullToPathArgument() throws Exception {
+        exceptionRule.expect(IllegalArgumentException.class);
+        instance.moveFile("/somefile.txt", null);
     }
 
     @Test

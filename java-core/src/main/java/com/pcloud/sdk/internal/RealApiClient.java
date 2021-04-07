@@ -172,10 +172,12 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFolder> listFolder(String path, boolean recursively) {
-
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
+        }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
-                .addEncodedQueryParameter("path", String.valueOf(path))
+                .addEncodedQueryParameter("path", path)
                 .addQueryParameter("noshares", String.valueOf(1));
         if (recursively) {
             urlBuilder.addEncodedQueryParameter("recursive", String.valueOf(1));
@@ -234,6 +236,33 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFile> createFile(long folderId, String filename, final DataSource data, Date modifiedDate, final ProgressListener listener, final UploadOptions uploadOptions) {
+        return createFile(folderId, null, filename, data, modifiedDate, listener, uploadOptions);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(String path, String filename, DataSource data) {
+        return createFile(path, filename, data, null, null, UploadOptions.DEFAULT);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(String path, String filename, DataSource data, UploadOptions uploadOptions) {
+        return createFile(path, filename, data, null, null, uploadOptions);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(String path, String filename, DataSource data, Date modifiedDate, ProgressListener listener) {
+        return createFile(path, filename, data, modifiedDate, listener, UploadOptions.DEFAULT);
+    }
+
+    @Override
+    public Call<RemoteFile> createFile(String path, String filename, final DataSource data, Date modifiedDate, final ProgressListener listener, final UploadOptions uploadOptions) {
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
+        }
+        return createFile(null, path, filename, data, modifiedDate, listener, uploadOptions);
+    }
+
+    private Call<RemoteFile> createFile(Long folderId, String path, String filename, final DataSource data, Date modifiedDate, final ProgressListener listener, final UploadOptions uploadOptions) {
         if (filename == null) {
             throw new IllegalArgumentException("Filename cannot be null.");
         }
@@ -282,9 +311,16 @@ class RealApiClient implements ApiClient {
 
         HttpUrl.Builder urlBuilder = apiHost.newBuilder().
                 addPathSegment("uploadfile")
-                .addQueryParameter("folderid", String.valueOf(folderId))
                 .addQueryParameter("renameifexists", String.valueOf(uploadOptions.overrideFile() ? 0 : 1))
                 .addQueryParameter("nopartial", String.valueOf(uploadOptions.partialUpload() ? 0 : 1));
+
+        if (folderId != null) {
+            urlBuilder.addQueryParameter("folderid", String.valueOf(folderId));
+        }
+
+        if (path != null) {
+            urlBuilder.addEncodedQueryParameter("path", path);
+        }
 
         if (modifiedDate != null) {
             urlBuilder.addQueryParameter("mtime", String.valueOf(TimeUnit.MILLISECONDS.toSeconds(modifiedDate.getTime())));
@@ -337,6 +373,29 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
+    public Call<Boolean> deleteFile(String path) {
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
+        }
+        Request request = new Request.Builder()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("deletefile")
+                        .build())
+                .get()
+                .post(new FormBody.Builder()
+                        .addEncoded("path", path)
+                        .build())
+                .build();
+        return newCall(request, new ResponseAdapter<Boolean>() {
+            @Override
+            public Boolean adapt(Response response) throws IOException, ApiError {
+                GetFileResponse body = deserializeResponseBody(response, GetFileResponse.class);
+                return body.isSuccessful() && body.getFile() != null;
+            }
+        });
+    }
+
+    @Override
     public Call<FileLink> createFileLink(RemoteFile file, DownloadOptions options) {
         if (file == null) {
             throw new IllegalArgumentException("File argument cannot be null.");
@@ -350,7 +409,27 @@ class RealApiClient implements ApiClient {
             throw new IllegalArgumentException("DownloadOptions parameter cannot be null.");
         }
 
-        Request request = newDownloadLinkRequest(fileId, options);
+        Request request = newDownloadLinkRequest(fileId, null, options);
+
+        return newCall(request, new ResponseAdapter<FileLink>() {
+            @Override
+            public FileLink adapt(Response response) throws IOException, ApiError {
+                return getAsFileLink(response);
+            }
+        });
+
+    }
+
+    @Override
+    public Call<FileLink> createFileLink(String path, DownloadOptions options) {
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
+        }
+        if (options == null) {
+            throw new IllegalArgumentException("DownloadOptions parameter cannot be null.");
+        }
+
+        Request request = newDownloadLinkRequest(null, path, options);
 
         return newCall(request, new ResponseAdapter<FileLink>() {
             @Override
@@ -371,10 +450,17 @@ class RealApiClient implements ApiClient {
         return new RealFileLink(RealApiClient.this, body.getExpires(), downloadUrls);
     }
 
-    private Request newDownloadLinkRequest(long fileId, DownloadOptions options) {
+    private Request newDownloadLinkRequest(Long fileId, String path, DownloadOptions options) {
         HttpUrl.Builder urlBuilder = apiHost.newBuilder().
-                addPathSegment("getfilelink")
-                .addQueryParameter("fileid", String.valueOf(fileId));
+                addPathSegment("getfilelink");
+
+        if (fileId != null) {
+                urlBuilder.addQueryParameter("fileid", String.valueOf(fileId));
+        }
+
+        if (path != null) {
+            urlBuilder.addEncodedQueryParameter("path", path);
+        }
 
         if (options.forceDownload()) {
             urlBuilder.addQueryParameter("forcedownload", String.valueOf(1));
@@ -456,7 +542,7 @@ class RealApiClient implements ApiClient {
                 .skipFilename(false)
                 .contentType(file.contentType())
                 .build();
-        return newCall(newDownloadLinkRequest(file.fileId(), options), new ResponseAdapter<BufferedSource>() {
+        return newCall(newDownloadLinkRequest(file.fileId(), null, options), new ResponseAdapter<BufferedSource>() {
             @Override
             public BufferedSource adapt(Response response) throws IOException, ApiError {
                 FileLink link = getAsFileLink(response);
@@ -650,6 +736,9 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFile> loadFile(String path) {
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
+        }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("stat")
                 .addEncodedQueryParameter("path", String.valueOf(path));
@@ -691,6 +780,9 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<RemoteFolder> loadFolder(String path) {
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
+        }
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
                 .addQueryParameter("path", path)
@@ -715,6 +807,31 @@ class RealApiClient implements ApiClient {
         RequestBody body = new FormBody.Builder()
                 .add("fileid", String.valueOf(fileId))
                 .add("tofolderid", String.valueOf(toFolderId))
+                .build();
+
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("renamefile")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFile>() {
+            @Override
+            public RemoteFile adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFileResponse.class).getFile();
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFile> moveFile(String path, String toPath) {
+        if (!isValidPath(path) || !isValidPath(toPath)) {
+            throw new IllegalArgumentException("Path or toPath argument cannot be null or empty.");
+        }
+        RequestBody body = new FormBody.Builder()
+                .addEncoded("path", path)
+                .addEncoded("topath", toPath)
                 .build();
 
         Request request = newRequest()
@@ -813,6 +930,30 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
+    public Call<RemoteFolder> createFolder(String path) {
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
+        }
+
+        RequestBody body = new FormBody.Builder()
+                .addEncoded("path", path)
+                .build();
+
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("createfolder").build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
+    }
+
+    @Override
     public Call<Boolean> deleteFolder(RemoteFolder folder) {
         if (folder == null) {
             throw new IllegalArgumentException("folder argument cannot be null.");
@@ -837,6 +978,36 @@ class RealApiClient implements ApiClient {
     public Call<Boolean> deleteFolder(long folderId, boolean recursively) {
         RequestBody body = new FormBody.Builder()
                 .add("folderid", String.valueOf(folderId))
+                .build();
+
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment(recursively ? "deletefolderrecursive" : "deletefolder")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<Boolean>() {
+            @Override
+            public Boolean adapt(Response response) throws IOException, ApiError {
+                getAsApiResponse(response, ApiResponse.class);
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public Call<Boolean> deleteFolder(String path) {
+        return deleteFolder(path, false);
+    }
+
+    @Override
+    public Call<Boolean> deleteFolder(String path, boolean recursively) {
+        if (!isValidPath(path)) {
+            throw new IllegalArgumentException("Path argument cannot be null or empty.");
+        }
+        RequestBody body = new FormBody.Builder()
+                .addEncoded("path", path)
                 .build();
 
         Request request = newRequest()
@@ -902,6 +1073,31 @@ class RealApiClient implements ApiClient {
         RequestBody body = new FormBody.Builder()
                 .add("folderid", String.valueOf(folderId))
                 .add("tofolderid", String.valueOf(toFolderId))
+                .build();
+
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("renamefolder")
+                        .build())
+                .post(body)
+                .build();
+
+        return newCall(request, new ResponseAdapter<RemoteFolder>() {
+            @Override
+            public RemoteFolder adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
+            }
+        });
+    }
+
+    @Override
+    public Call<RemoteFolder> moveFolder(String path, String toPath) {
+        if (!isValidPath(path) || !isValidPath(toPath)) {
+            throw new IllegalArgumentException("Path or toPath argument cannot be null or empty.");
+        }
+        RequestBody body = new FormBody.Builder()
+                .addEncoded("path", path)
+                .addEncoded("topath", toPath)
                 .build();
 
         Request request = newRequest()
@@ -1123,5 +1319,9 @@ class RealApiClient implements ApiClient {
                 closeQuietly(response);
             }
         }
+    }
+
+    private boolean isValidPath(String path) {
+        return (path != null && !path.isEmpty());
     }
 }

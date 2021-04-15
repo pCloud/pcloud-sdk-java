@@ -18,7 +18,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
         google()
         maven { url "https://plugins.gradle.org/m2" }
     }
@@ -31,7 +30,6 @@ apply from: rootProject.file('publishing.gradle')
 
 ext {
     description = "The official Android SDK for integration with pCloud's API."
-    bintrayPackage = 'android'
     artifactId = 'android'
 }
 
@@ -62,5 +60,4 @@ dependencies {
     implementation dep.supportAnnotations
 }
 
-apply from: '../bintray.gradle'
-apply from: '../maven-pom.gradle'
+apply from: '../publish-mavencentral.gradle'

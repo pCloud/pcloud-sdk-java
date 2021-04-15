@@ -7,11 +7,12 @@ ext {
     groupId = "com.pcloud.sdk"
     description = "The official pCloud Java SDK for integration with pCloud's API"
     siteUrl = 'https://github.com/pCloud/pcloud-sdk-java'
-    vcsUrl = 'https://github.com/pCloud/pcloud-sdk-java'
+    scmUrl = 'https://github.com/pCloud/pcloud-sdk-java.git'
 
     developerId = 'android-pcloud'
     developerName = 'pCloud AG'
     developerEmail = 'android@pcloud.com'
+    developerUrl = 'https://www.pcloud.com'
 
     licenseName = 'The Apache License v2.0'
     licenseUrl = 'https://github.com/pCloud/pcloud-sdk-java/LICENSE'

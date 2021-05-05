@@ -9,7 +9,6 @@ ext {
 
     dep = [
             androidPlugin        : "com.android.tools.build:gradle:4.1.1",
-            bintrayPlugin        : "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4",
             androidMavenPlugin   : "com.github.dcendents:android-maven-gradle-plugin:2.1",
 
             supportAnnotations   : "androidx.annotation:annotation:1.1.0",

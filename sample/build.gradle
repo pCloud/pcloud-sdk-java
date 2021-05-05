@@ -8,7 +8,6 @@ targetCompatibility = rootProject.ext.targetCompatibilityVersion
 
 repositories {
     mavenCentral()
-    maven { url "https://dl.bintray.com/pcloud/pcloud-sdk/" }
 }
 
 dependencies {

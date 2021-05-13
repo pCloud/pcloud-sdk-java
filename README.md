@@ -2,6 +2,8 @@
 
 The official pCloud SDK for Java & Android for integrating with [ pCloud's API][docs].
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.pcloud.sdk/java-core/1.4.0?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.pcloud.sdk%22)
+
 ## Requirements
 
 - Java 7.0+
@@ -45,7 +47,7 @@ The official pCloud SDK for Java & Android for integrating with [ pCloud's API][
 
 #### Java
 
-Download [the latest JAR][jar-java] or grab via Maven:
+Grab via Maven:
 
 ```xml
 <dependency>
@@ -59,7 +61,7 @@ or Gradle:
 ```groovy
 implementation 'com.pcloud.sdk:java-core:1.4.0'
 ```
- [![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/java-core/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/java-core/_latestVersion)
+ [![Maven Central](https://img.shields.io/maven-central/v/com.pcloud.sdk/java-core/1.4.0?label=Maven%20Central)](https://search.maven.org/artifact/com.pcloud.sdk/java-core/1.4.0/jar)
 
 #### Android
 
@@ -68,7 +70,7 @@ The `android` module provides a built-in authorization Activity that handles the
 For details on usage, refer to the  [AuthorizationActivity](https://pcloud.github.io/pcloud-sdk-java/com/pcloud/sdk/AuthorizationActivity.html) documentation.
 
 
-Download [the latest JAR][jar-android] or grab via Maven:
+Grab via Maven:
 
 ```xml
 <dependency>
@@ -82,7 +84,7 @@ or Gradle:
 ```groovy
 implementation 'com.pcloud.sdk:android:1.4.0'
 ```
- [![Download](https://api.bintray.com/packages/pcloud/pcloud-sdk/android/images/download.svg) ](https://bintray.com/pcloud/pcloud-sdk/android/_latestVersion)
+[![Maven Central](https://img.shields.io/maven-central/v/com.pcloud.sdk/java-core/1.4.0?label=Maven%20Central)](https://search.maven.org/artifact/com.pcloud.sdk/android/1.4.0/jar)
 
 
 ## Basics
@@ -308,7 +310,3 @@ See the code in the `sample` module or the sample application [here](https://git
 
 [site]: https://www.pcloud.com/
 [docs]: https://docs.pcloud.com/
-[bintray]: https://bintray.com/pcloud/pcloud-sdk/
-[jar-android]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fandroid%2F1.4.0%2Fandroid-1.4.0.aar
-[jar-java]: https://bintray.com/pcloud/pcloud-sdk/download_file?file_path=com%2Fpcloud%2Fsdk%2Fjava-core%2F1.4.0%2Fjava-core-1.4.0.jar
-

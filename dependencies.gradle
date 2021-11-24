@@ -1,17 +1,25 @@
 ext {
-    compileSdkVersion = 30
+    compileSdkVersion = 31
     buildToolsVersion = '30.0.2'
-    minSdkVersion = 9
+    minSdkVersion = 16
     targetSdkVersion = 30
+    kotlin_version = '1.6.0'
+    kotlinCoroutines_version = '1.5.2'
 
-    sourceCompatibilityVersion = JavaVersion.VERSION_1_7
-    targetCompatibilityVersion = JavaVersion.VERSION_1_7
+    sourceCompatibilityVersion = JavaVersion.VERSION_1_8
+    targetCompatibilityVersion = JavaVersion.VERSION_1_8
 
     dep = [
             androidPlugin        : "com.android.tools.build:gradle:4.1.1",
             androidMavenPlugin   : "com.github.dcendents:android-maven-gradle-plugin:2.1",
 
+            kotlinCompiler       : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version",
+            kotlinRuntime            : "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+            kotlinCoroutines         : "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutines_version",
+
             supportAnnotations   : "androidx.annotation:annotation:1.1.0",
+            customTabs   : "androidx.browser:browser:1.4.0",
+            localBroadcastManager: 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0',
 
             okhttp3 : "com.squareup.okhttp3:okhttp:3.12.12",
             gson : "com.google.code.gson:gson:2.8.6",

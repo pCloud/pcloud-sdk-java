@@ -17,19 +17,30 @@
 
 package com.pcloud.sdk;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.content.pm.ServiceInfo;
 import android.net.Uri;
-import androidx.annotation.NonNull;
 
+import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsService;
+
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 class Utils {
 
-    private Utils(){
+    private static final String[] CHROME_PACKAGES = {
+        "com.android.chrome", "com.chrome.beta", "com.chrome.dev",
+    };
 
-    }
-
+    private Utils() { }
     @NonNull
     static Map<String, String> parseUrlFragmentParameters(@NonNull String url) {
         String fragment = Uri.parse(url).getFragment();
@@ -38,12 +49,28 @@ class Utils {
             String[] keyPairs = fragment.split("&");
             for (String keyPair : keyPairs){
                 int delimiterIndex = keyPair.indexOf('=');
-                parameters.put(keyPair.substring(0, delimiterIndex), keyPair.substring(delimiterIndex + 1, keyPair.length()));
+                parameters.put(keyPair.substring(0, delimiterIndex), keyPair.substring(delimiterIndex + 1));
             }
 
             return parameters;
         }
 
         return Collections.emptyMap();
+    }
+
+    public static String getChromePackage(Context context) {
+        Intent serviceIntent = new Intent(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION);
+        List<ResolveInfo> resolveInfos =
+                context.getPackageManager().queryIntentServices(serviceIntent, 0);
+        if (resolveInfos != null) {
+            Set<String> chromePackages = new HashSet<>(Arrays.asList(CHROME_PACKAGES));
+            for (ResolveInfo resolveInfo : resolveInfos) {
+                ServiceInfo serviceInfo = resolveInfo.serviceInfo;
+                if (serviceInfo != null && chromePackages.contains(serviceInfo.packageName)) {
+                    return serviceInfo.packageName;
+                }
+            }
+        }
+        return null;
     }
 }

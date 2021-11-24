@@ -43,22 +43,19 @@ public class MainActivity extends Activity {
         authorizationResultView = findViewById(R.id.authorizationResult);
         apiKeyView = findViewById(R.id.apiKey);
 
-        findViewById(R.id.authorizeButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                apiKeyView.setText(null);
-                authorizationResultView.setText(null);
-                //TODO Set YOUR application Client ID
-                Intent authIntent = AuthorizationActivity.createIntent(
-                        MainActivity.this,
-                        AuthorizationRequest.create()
-                                .setType(AuthorizationRequest.Type.TOKEN)
-                                .setClientId("mdBPN4QVGE")
-                                .setForceAccessApproval(true)
-                                .addPermission("manageshares")
-                                .build());
-                startActivityForResult(authIntent, PCLOUD_AUTHORIZATION_REQUEST_CODE);
-            }
+        findViewById(R.id.authorizeButton).setOnClickListener(v -> {
+            apiKeyView.setText(null);
+            authorizationResultView.setText(null);
+            //TODO Set YOUR application Client ID
+            Intent authIntent = AuthorizationActivity.createIntent(
+                    MainActivity.this,
+                    AuthorizationRequest.create()
+                            .setType(AuthorizationRequest.Type.TOKEN)
+                            .setClientId("mdBPN4QVGE")
+                            .setForceAccessApproval(true)
+                            .addPermission("manageshares")
+                            .build());
+            startActivityForResult(authIntent, PCLOUD_AUTHORIZATION_REQUEST_CODE);
         });
     }
 

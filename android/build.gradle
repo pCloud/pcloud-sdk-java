@@ -58,6 +58,8 @@ android {
 
 dependencies {
     implementation dep.supportAnnotations
+    implementation dep.customTabs
+    implementation dep.localBroadcastManager
 }
 
 apply from: '../publish-mavencentral.gradle'

@@ -11,7 +11,7 @@ local.properties
 
 # Log Files
 *.log
-
+*.hprof
 
 *.iml
 .idea/

@@ -145,17 +145,22 @@ public final class AuthorizationActivity extends Activity {
 
         Uri authorizationUri = buildAuthorizePageUri(request);
 
-        try {
-            openCustomTabs(authorizationUri);
-        } catch (ActivityNotFoundException e) {
+        String customTabsPackage = Utils.getCustomTabsPackage(this, request.allowedCustomTabPackages);
+        if (customTabsPackage != null) {
+            try {
+                openCustomTabs(authorizationUri, customTabsPackage);
+            } catch (ActivityNotFoundException e) {
+                displayWebView(authorizationUri);
+            }
+        } else {
             displayWebView(authorizationUri);
         }
     }
 
-    private void openCustomTabs(Uri authorizationUri) {
+    private void openCustomTabs(Uri authorizationUri, String customTabsPackage) {
         webView.setVisibility(View.INVISIBLE);
         customTab = new CustomTab(authorizationUri);
-        customTab.openCustomTab(this, Utils.getChromePackage(this));
+        customTab.openCustomTab(this, customTabsPackage);
         shouldCloseCustomTab = false;
 
         // This activity will receive a broadcast if it can't be opened from the back stack

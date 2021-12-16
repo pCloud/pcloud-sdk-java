@@ -44,7 +44,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode = Long.parseLong(getPublishProperty('versionCode'))
         versionName getPublishProperty('versionName')
-
         testInstrumentationRunner dep.testInstrumentationRunner
 
     }

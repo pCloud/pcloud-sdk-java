@@ -18,11 +18,14 @@
 package com.pcloud.sdk.sample;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pcloud.sdk.AuthorizationActivity;
 import com.pcloud.sdk.AuthorizationData;
@@ -46,12 +49,11 @@ public class MainActivity extends Activity {
         findViewById(R.id.authorizeButton).setOnClickListener(v -> {
             apiKeyView.setText(null);
             authorizationResultView.setText(null);
-            //TODO Set YOUR application Client ID
             Intent authIntent = AuthorizationActivity.createIntent(
                     MainActivity.this,
                     AuthorizationRequest.create()
                             .setType(AuthorizationRequest.Type.TOKEN)
-                            .setClientId("mdBPN4QVGE")
+                            .setClientId("6u4r0n9pXIf") //TODO Set YOUR application Client ID
                             .setForceAccessApproval(true)
                             .addPermission("manageshares")
                             .build());
@@ -66,11 +68,13 @@ public class MainActivity extends Activity {
             AuthorizationData authData = AuthorizationActivity.getResult(data);
             AuthorizationResult result = authData.result;
             authorizationResultView.setText(result.name());
+            apiKeyView.setOnClickListener(null);
 
             switch (result) {
                 case ACCESS_GRANTED:
                     //TODO: Do what's needed :)
                     apiKeyView.setText(authData.toString());
+                    apiKeyView.setOnClickListener(v -> copyTokenToClipboard(authData));
                     Log.d("pCloud", "Account access granted, authData:\n" + authData);
                     break;
                 case ACCESS_DENIED:
@@ -88,5 +92,11 @@ public class MainActivity extends Activity {
                     break;
             }
         }
+    }
+
+    private void copyTokenToClipboard(AuthorizationData authData) {
+        ClipData clipData = ClipData.newPlainText("pCloud API Token", authData.token);
+        ((ClipboardManager)this.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clipData);
+        Toast.makeText(this, "Token copied to clipboard.", Toast.LENGTH_SHORT).show();
     }
 }

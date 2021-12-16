@@ -28,26 +28,28 @@ import androidx.browser.customtabs.CustomTabsService;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
-class Utils {
+abstract class Utils {
 
-    private static final String[] CHROME_PACKAGES = {
-        "com.android.chrome", "com.chrome.beta", "com.chrome.dev",
-    };
+    static final List<String> CUSTOM_TAB_PACKAGES = Arrays.asList(
+            "com.android.chrome", "com.chrome.beta", "com.chrome.dev",
+            "org.mozilla.firefox", "org.mozilla.firefox_beta", "org.mozilla.fenix"
+    );
 
-    private Utils() { }
+    private Utils() {
+
+    }
+
     @NonNull
     static Map<String, String> parseUrlFragmentParameters(@NonNull String url) {
         String fragment = Uri.parse(url).getFragment();
         if (fragment != null) {
             Map<String, String> parameters = new TreeMap<>();
             String[] keyPairs = fragment.split("&");
-            for (String keyPair : keyPairs){
+            for (String keyPair : keyPairs) {
                 int delimiterIndex = keyPair.indexOf('=');
                 parameters.put(keyPair.substring(0, delimiterIndex), keyPair.substring(delimiterIndex + 1));
             }
@@ -58,18 +60,20 @@ class Utils {
         return Collections.emptyMap();
     }
 
-    public static String getChromePackage(Context context) {
+    public static String getCustomTabsPackage(Context context, List<String> allowedPackages) {
+        if (allowedPackages.isEmpty()) return null;
         Intent serviceIntent = new Intent(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION);
-        List<ResolveInfo> resolveInfos =
-                context.getPackageManager().queryIntentServices(serviceIntent, 0);
+        List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentServices(serviceIntent, 0);
         if (resolveInfos != null) {
-            Set<String> chromePackages = new HashSet<>(Arrays.asList(CHROME_PACKAGES));
-            for (ResolveInfo resolveInfo : resolveInfos) {
-                ServiceInfo serviceInfo = resolveInfo.serviceInfo;
-                if (serviceInfo != null && chromePackages.contains(serviceInfo.packageName)) {
-                    return serviceInfo.packageName;
+            for (String customTabsPackage : allowedPackages) {
+                for (ResolveInfo resolveInfo : resolveInfos) {
+                    ServiceInfo serviceInfo = resolveInfo.serviceInfo;
+                    if (customTabsPackage.equals(serviceInfo.packageName)) {
+                        return serviceInfo.packageName;
+                    }
                 }
             }
+
         }
         return null;
     }

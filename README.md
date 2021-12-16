@@ -36,7 +36,7 @@ The official pCloud SDK for Java & Android for integrating with [ pCloud's API][
   - Add a description.
   - Add a redirect URI in the `Redirect URIs` field in your application configuration page.
 
-  >The SDK allows users to provide multiple custom Uris or expects the `https://oauth2redirect` Uri to be added in the Application configuration page.
+  >The SDK expects `pcloud-oauth://{your.application.package}` custom Uri to be added in the Application configuration page.
 
   - Optionally add an icon that will be displayed to users upon authorization requests.
   - Turn on the `Allow implicit grant` option.

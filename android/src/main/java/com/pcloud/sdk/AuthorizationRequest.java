@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,12 @@ import java.util.Set;
  * @see Builder
  */
 public class AuthorizationRequest implements Parcelable {
+
+    public static final List<String> DEFAULT_CUSTOM_TAB_PACKAGES = Collections.unmodifiableList(Arrays.asList(
+            "com.android.chrome", "com.chrome.beta", "com.chrome.dev",
+            "org.mozilla.firefox", "org.mozilla.firefox_beta", "org.mozilla.fenix"
+    ));
+
 
     /**
      * The type of OAuth flow to be executed.
@@ -58,25 +65,39 @@ public class AuthorizationRequest implements Parcelable {
     public final Type type;
     public final String clientId;
     public final Set<String> permissions;
+    public final List<String> allowedCustomTabPackages;
     public final boolean forceAccessApproval;
 
     AuthorizationRequest(Builder builder) {
         this.type = builder.type;
         this.clientId = builder.clientId;
         this.permissions = Collections.unmodifiableSet(builder.permissions);
+        this.allowedCustomTabPackages = Collections.unmodifiableList(builder.allowedCustomTabPackages);
         this.forceAccessApproval = builder.forceAccessApproval;
     }
 
     protected AuthorizationRequest(Parcel in) {
         type = Type.fromCode(in.readByte());
         clientId = in.readString();
-        int permissionsSize = in.readInt();
+        final int permissionsSize = in.readInt();
         if (permissionsSize > 0) {
-            List<String> entries = new ArrayList<>(permissionsSize);
-            in.readStringList(entries);
-            permissions = Collections.unmodifiableSet(new HashSet<>(entries));
+            Set<String> entries = new HashSet<>(permissionsSize);
+            for (int i = 0; i< permissionsSize; i++) {
+                entries.add(in.readString());
+            }
+            permissions = Collections.unmodifiableSet(entries);
         } else {
             permissions = Collections.emptySet();
+        }
+        final int packagesSize = in.readInt();
+        if (packagesSize > 0) {
+            List<String> allowedCustomTabPackages = new ArrayList<>();
+            for (int i = 0; i< packagesSize; i++) {
+                allowedCustomTabPackages.add(in.readString());
+            }
+            this.allowedCustomTabPackages = Collections.unmodifiableList(allowedCustomTabPackages);
+        } else {
+            this.allowedCustomTabPackages = Collections.emptyList();
         }
         forceAccessApproval = in.readByte() != 0;
     }
@@ -86,8 +107,12 @@ public class AuthorizationRequest implements Parcelable {
         dest.writeByte((byte) type.code);
         dest.writeString(clientId);
         dest.writeInt(permissions.size());
-        if (!permissions.isEmpty()) {
-            dest.writeStringList(new ArrayList<>(permissions));
+        for (String permission : permissions) {
+            dest.writeString(permission);
+        }
+        dest.writeInt(allowedCustomTabPackages.size());
+        for (String allowedPackage : allowedCustomTabPackages) {
+            dest.writeString(allowedPackage);
         }
         dest.writeByte((byte) (forceAccessApproval ? 1 : 0));
     }
@@ -108,7 +133,6 @@ public class AuthorizationRequest implements Parcelable {
             return new AuthorizationRequest[size];
         }
     };
-
 
     /**
      * Change the parameters of this request.
@@ -141,31 +165,36 @@ public class AuthorizationRequest implements Parcelable {
         return result;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "AuthorizationRequest{" +
                 "type=" + type +
                 ", clientId='" + clientId + '\'' +
                 ", permissions=" + permissions +
+                ", customTabsPackages=" + allowedCustomTabPackages +
                 ", forceAccessApproval=" + forceAccessApproval +
                 '}';
     }
 
     public static class Builder {
-        private static final Set<String> EMPTY_PERMISSIONS = Collections.emptySet();
 
         private AuthorizationRequest.Type type;
         private String clientId;
-        private Set<String> permissions = EMPTY_PERMISSIONS;
+        private final Set<String> permissions;
+        private final List<String> allowedCustomTabPackages;
         private boolean forceAccessApproval = false;
 
         Builder() {
+            allowedCustomTabPackages = new ArrayList<>(DEFAULT_CUSTOM_TAB_PACKAGES);
+            permissions = new HashSet<>();
         }
 
         Builder(AuthorizationRequest request) {
             this.type = request.type;
             this.clientId = request.clientId;
-            this.permissions = request.permissions;
+            this.permissions = new HashSet<>(request.permissions);
+            this.allowedCustomTabPackages = new ArrayList<>(request.allowedCustomTabPackages);
             this.forceAccessApproval = request.forceAccessApproval;
         }
 
@@ -209,9 +238,6 @@ public class AuthorizationRequest implements Parcelable {
             if (permission == null) {
                 throw new NullPointerException();
             }
-            if (this.permissions == EMPTY_PERMISSIONS) {
-                this.permissions = new HashSet<>();
-            }
             this.permissions.add(permission);
             return this;
         }
@@ -226,9 +252,24 @@ public class AuthorizationRequest implements Parcelable {
             if (permission == null) {
                 throw new NullPointerException();
             }
-            if (this.permissions != EMPTY_PERMISSIONS) {
-                this.permissions.remove(permission);
-            }
+            this.permissions.remove(permission);
+            return this;
+        }
+
+
+        /**
+         * Configure what application packages (Browser Applications) can be used
+         * to provide Custom Tabs support for displaying the OAuth page.
+         *
+         * Providing an empty list will effectively disable custom tabs and the
+         * OAuth flow will be carried out entirely through a WebView
+         *
+         * @param allowedPackages non-null list of Android package names
+         * @return this
+         */
+        public Builder setAllowedCustomTabPackages(@NonNull List<String> allowedPackages) {
+            this.allowedCustomTabPackages.clear();
+            this.allowedCustomTabPackages.addAll(allowedPackages);
             return this;
         }
 
@@ -283,12 +324,14 @@ public class AuthorizationRequest implements Parcelable {
             return result;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "Builder{" +
                     "type=" + type +
                     ", clientId='" + clientId + '\'' +
                     ", permissions=" + permissions +
+                    ", customTabsPackages=" + allowedCustomTabPackages +
                     ", forceAccessApproval=" + forceAccessApproval +
                     '}';
         }

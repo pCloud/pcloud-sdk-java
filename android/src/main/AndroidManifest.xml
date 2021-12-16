@@ -6,7 +6,28 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:theme="@style/AppTheme">
-        <activity android:name=".AuthorizationActivity"/>
+        <activity android:name=".AuthorizationActivity" />
+
+        <activity android:name=".CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="${applicationId}"
+                    android:scheme="pcloud-oauth" />
+            </intent-filter>
+        </activity>
+
     </application>
+
+    <queries>
+        <intent>
+            <action android:name = "android.support.customtabs.action.CustomTabsService" />
+        </intent>
+    </queries>
 
 </manifest>

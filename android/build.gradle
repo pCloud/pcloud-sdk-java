@@ -44,7 +44,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode = Long.parseLong(getPublishProperty('versionCode'))
         versionName getPublishProperty('versionName')
-
         testInstrumentationRunner dep.testInstrumentationRunner
 
     }
@@ -58,6 +57,8 @@ android {
 
 dependencies {
     implementation dep.supportAnnotations
+    implementation dep.customTabs
+    implementation dep.localBroadcastManager
 }
 
 apply from: '../publish-mavencentral.gradle'

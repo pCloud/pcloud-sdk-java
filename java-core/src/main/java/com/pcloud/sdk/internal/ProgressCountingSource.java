@@ -17,17 +17,20 @@
 package com.pcloud.sdk.internal;
 
 import com.pcloud.sdk.ProgressListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import okio.*;
 
 import java.io.IOException;
 
 final class ProgressCountingSource extends ForwardingSource {
     private long bytesReportedOnLastNotification;
-    private long notificationThresholdBytes;
-    private ProgressListener listener;
+    private final long notificationThresholdBytes;
+    private final ProgressListener listener;
 
     private long totalBytesRead;
-    private long totalBytes;
+    private final long totalBytes;
 
     ProgressCountingSource(Source delegate, long totalBytes, ProgressListener listener, long notificationThresholdBytes) {
         super(delegate);
@@ -37,7 +40,7 @@ final class ProgressCountingSource extends ForwardingSource {
     }
 
     @Override
-    public long read(Buffer sink, long byteCount) throws IOException {
+    public long read(@NotNull Buffer sink, long byteCount) throws IOException {
         long bytesRead = super.read(sink, byteCount);
         this.totalBytesRead += bytesRead != -1 ? bytesRead : 0;
 

@@ -17,6 +17,8 @@
 
 package com.pcloud.sdk;
 
+import java.util.Objects;
+
 /**
  * A container for the possible options when creating file links.
  * <p>
@@ -51,9 +53,9 @@ public final class DownloadOptions {
             .contentType(null)
             .build();
 
-    private boolean skipFilename;
-    private boolean forceDownload;
-    private String contentType;
+    private final boolean skipFilename;
+    private final boolean forceDownload;
+    private final String contentType;
 
     /**
      * Creates new default {@link Builder}.
@@ -107,7 +109,7 @@ public final class DownloadOptions {
 
         if (skipFilename != that.skipFilename) return false;
         if (forceDownload != that.forceDownload) return false;
-        return contentType != null ? contentType.equals(that.contentType) : that.contentType == null;
+        return Objects.equals(contentType, that.contentType);
 
     }
 

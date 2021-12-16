@@ -19,15 +19,15 @@ package com.pcloud.sdk.internal;
 import com.pcloud.sdk.UserInfo;
 
 class RealUserInfo implements UserInfo {
-    private long userId;
+    private final long userId;
 
-    private String email;
+    private final String email;
 
-    private boolean isEmailVerified;
+    private final boolean isEmailVerified;
 
-    private long totalQuota;
+    private final long totalQuota;
 
-    private long usedQuota;
+    private final long usedQuota;
 
     RealUserInfo(long userId, String email, boolean isEmailVerified, long totalQuota, long usedQuota) {
         this.userId = userId;

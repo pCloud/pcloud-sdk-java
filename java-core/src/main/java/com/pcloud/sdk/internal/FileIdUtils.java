@@ -28,24 +28,24 @@ class FileIdUtils {
 
     public static void isFileOrThrow(String id) {
         if (isFolder(id)) {
-            throw new IllegalArgumentException(String.format(Locale.US, "\'%s\' is not a file identifier.", id));
+            throw new IllegalArgumentException(String.format(Locale.US, "'%s' is not a file identifier.", id));
         }
     }
 
     public static void isFolderOrThrow(String id) {
         if (!isFolder(id)) {
-            throw new IllegalArgumentException(String.format(Locale.US, "\'%s\' is not a file identifier.", id));
+            throw new IllegalArgumentException(String.format(Locale.US, "'%s' is not a file identifier.", id));
         }
     }
 
     public static long toFileId(String id) {
         isFileOrThrow(id);
-        return Long.parseLong(id.substring(1, id.length()));
+        return Long.parseLong(id.substring(1));
     }
 
     public static long toFolderId(String id) {
         isFolderOrThrow(id);
-        return Long.parseLong(id.substring(1, id.length()));
+        return Long.parseLong(id.substring(1));
     }
 
     public static boolean isFile(String id) {
@@ -60,7 +60,7 @@ class FileIdUtils {
             case FILE_ID_PREFIX:
                 return false;
             default:
-                throw new IllegalArgumentException(String.format(Locale.US, "\'%s\' is not a valid pCloud file identifier.", id));
+                throw new IllegalArgumentException(String.format(Locale.US, "'%s' is not a valid pCloud file identifier.", id));
         }
     }
 

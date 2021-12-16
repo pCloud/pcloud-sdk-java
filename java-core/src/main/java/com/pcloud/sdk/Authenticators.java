@@ -39,12 +39,7 @@ public class Authenticators {
      * @return a new {@link Authenticator} instance that uses PCloud API's OAuth 2.0 tokens.
      */
     public static Authenticator newOAuthAuthenticator(final String accessToken) {
-        return Internal.createOAuthAuthenticator(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return accessToken;
-            }
-        });
+        return Internal.createOAuthAuthenticator(() -> accessToken);
     }
 
     /**

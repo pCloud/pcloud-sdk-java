@@ -16,20 +16,28 @@
 
 package com.pcloud.sdk.internal;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import com.pcloud.sdk.*;
+import com.pcloud.sdk.ApiClient;
+import com.pcloud.sdk.ApiError;
+import com.pcloud.sdk.RemoteEntry;
+import com.pcloud.sdk.RemoteFile;
+import com.pcloud.sdk.RemoteFolder;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
-import java.util.Locale;
 
 abstract class RealRemoteEntry implements RemoteEntry {
 
-    private ApiClient apiClient;
+    private final ApiClient apiClient;
 
     @Expose
     @SerializedName("id")

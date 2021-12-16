@@ -25,10 +25,12 @@ import java.io.IOException;
 
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
+import org.jetbrains.annotations.NotNull;
+
 final class OkHttpCall<T> implements Call<T> {
 
-    private okhttp3.Call rawCall;
-    private ResponseAdapter<T> responseAdapter;
+    private final okhttp3.Call rawCall;
+    private final ResponseAdapter<T> responseAdapter;
 
     OkHttpCall(okhttp3.Call rawCall, ResponseAdapter<T> adapter) {
         this.rawCall = rawCall;
@@ -49,12 +51,12 @@ final class OkHttpCall<T> implements Call<T> {
 
         rawCall.enqueue(new okhttp3.Callback() {
             @Override
-            public void onFailure(okhttp3.Call call, IOException e) {
+            public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
                 callback.onFailure(OkHttpCall.this, e);
             }
 
             @Override
-            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+            public void onResponse(@NotNull okhttp3.Call call, @NotNull Response response) {
                 try {
                     callback.onResponse(OkHttpCall.this, adapt(response));
                 } catch (ApiError | IOException e) {
@@ -80,7 +82,7 @@ final class OkHttpCall<T> implements Call<T> {
         return rawCall.isCanceled();
     }
 
-    @SuppressWarnings("CloneDoesntCallSuperClone")
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public OkHttpCall<T> clone() {
         // Class is final, there will be no 'super'.

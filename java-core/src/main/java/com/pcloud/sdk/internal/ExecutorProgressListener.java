@@ -24,8 +24,8 @@ import java.util.concurrent.RejectedExecutionException;
 
 class ExecutorProgressListener implements ProgressListener, Runnable{
 
-    private ProgressListener delegate;
-    private Executor executor;
+    private final ProgressListener delegate;
+    private final Executor executor;
 
     private volatile boolean pending;
     private volatile long done;

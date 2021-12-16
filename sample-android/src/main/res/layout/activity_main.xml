@@ -60,7 +60,6 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:drawableStart="@drawable/ic_copy"
-        android:drawableLeft="@drawable/ic_copy"
         android:drawablePadding="8dp"
         tools:text="some long otken\nbfsdfsdfsdfsd"
         android:textColor="?android:textColorPrimaryInverse"

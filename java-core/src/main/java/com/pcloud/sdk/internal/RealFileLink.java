@@ -29,9 +29,9 @@ import java.util.Locale;
 
 class RealFileLink implements FileLink {
 
-    private ApiClient apiClient;
-    private Date expirationDate;
-    private List<URL> links;
+    private final ApiClient apiClient;
+    private final Date expirationDate;
+    private final List<URL> links;
 
     RealFileLink(ApiClient apiClient, Date expirationDate, List<URL> links) {
         this.apiClient = apiClient;

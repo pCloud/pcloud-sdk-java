@@ -55,6 +55,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -79,6 +80,8 @@ import static com.pcloud.sdk.internal.FileIdUtils.isFile;
 import static com.pcloud.sdk.internal.FileIdUtils.toFileId;
 import static com.pcloud.sdk.internal.FileIdUtils.toFolderId;
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
+
+import org.jetbrains.annotations.NotNull;
 
 class RealApiClient implements ApiClient {
 
@@ -157,12 +160,7 @@ class RealApiClient implements ApiClient {
                 .get()
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -186,12 +184,7 @@ class RealApiClient implements ApiClient {
                 .get()
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -277,7 +270,7 @@ class RealApiClient implements ApiClient {
             }
 
             @Override
-            public void writeTo(BufferedSink sink) throws IOException {
+            public void writeTo(@NotNull BufferedSink sink) throws IOException {
                 if (listener != null) {
                     ProgressListener realListener = listener;
                     if (callbackExecutor != null) {
@@ -295,7 +288,7 @@ class RealApiClient implements ApiClient {
             }
 
             @Override
-            public long contentLength() throws IOException {
+            public long contentLength() {
                 return data.contentLength();
             }
         };
@@ -327,15 +320,12 @@ class RealApiClient implements ApiClient {
                 .method("POST", compositeBody)
                 .build();
 
-        return newCall(uploadRequest, new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                UploadFilesResponse body = getAsApiResponse(response, UploadFilesResponse.class);
-                if (!body.getUploadedFiles().isEmpty()) {
-                    return body.getUploadedFiles().get(0);
-                } else {
-                    throw new IOException("API uploaded file but did not return remote file data.");
-                }
+        return newCall(uploadRequest, response -> {
+            UploadFilesResponse body = getAsApiResponse(response, UploadFilesResponse.class);
+            if (!body.getUploadedFiles().isEmpty()) {
+                return body.getUploadedFiles().get(0);
+            } else {
+                throw new IOException("API uploaded file but did not return remote file data.");
             }
         });
     }
@@ -359,12 +349,9 @@ class RealApiClient implements ApiClient {
                         .add("fileid", String.valueOf(fileId))
                         .build())
                 .build();
-        return newCall(request, new ResponseAdapter<Boolean>() {
-            @Override
-            public Boolean adapt(Response response) throws IOException, ApiError {
-                GetFileResponse body = deserializeResponseBody(response, GetFileResponse.class);
-                return body.isSuccessful() && body.getFile() != null;
-            }
+        return newCall(request, response -> {
+            GetFileResponse body = deserializeResponseBody(response, GetFileResponse.class);
+            return body.isSuccessful() && body.getFile() != null;
         });
     }
 
@@ -380,12 +367,9 @@ class RealApiClient implements ApiClient {
                         .addEncoded("path", path)
                         .build())
                 .build();
-        return newCall(request, new ResponseAdapter<Boolean>() {
-            @Override
-            public Boolean adapt(Response response) throws IOException, ApiError {
-                GetFileResponse body = deserializeResponseBody(response, GetFileResponse.class);
-                return body.isSuccessful() && body.getFile() != null;
-            }
+        return newCall(request, response -> {
+            GetFileResponse body = deserializeResponseBody(response, GetFileResponse.class);
+            return body.isSuccessful() && body.getFile() != null;
         });
     }
 
@@ -405,12 +389,7 @@ class RealApiClient implements ApiClient {
 
         Request request = newDownloadLinkRequest(fileId, null, options);
 
-        return newCall(request, new ResponseAdapter<FileLink>() {
-            @Override
-            public FileLink adapt(Response response) throws IOException, ApiError {
-                return getAsFileLink(response);
-            }
-        });
+        return newCall(request, this::getAsFileLink);
 
     }
 
@@ -423,12 +402,7 @@ class RealApiClient implements ApiClient {
 
         Request request = newDownloadLinkRequest(null, path, options);
 
-        return newCall(request, new ResponseAdapter<FileLink>() {
-            @Override
-            public FileLink adapt(Response response) throws IOException, ApiError {
-                return getAsFileLink(response);
-            }
-        });
+        return newCall(request, this::getAsFileLink);
 
     }
 
@@ -493,33 +467,30 @@ class RealApiClient implements ApiClient {
 
         Request request = newDownloadRequest(fileLink);
 
-        return newCall(request, new ResponseAdapter<Void>() {
-            @Override
-            public Void adapt(Response response) throws IOException, ApiError {
-                try {
-                    if (response.code() == 404) {
-                        throw new FileNotFoundException("The requested file cannot be found or the file link has expired.");
-                    }
-
-                    BufferedSource source = getAsRawBytes(response);
-                    if (listener != null) {
-                        ProgressListener realListener = listener;
-                        if (callbackExecutor != null) {
-                            realListener = new ExecutorProgressListener(listener, callbackExecutor);
-                        }
-
-                        source = Okio.buffer(new ProgressCountingSource(
-                                source,
-                                response.body().contentLength(),
-                                realListener,
-                                progressCallbackThresholdBytes));
-                    }
-
-                    sink.readAll(source);
-                    return null;
-                } finally {
-                    closeQuietly(response);
+        return newCall(request, response -> {
+            try {
+                if (response.code() == 404) {
+                    throw new FileNotFoundException("The requested file cannot be found or the file link has expired.");
                 }
+
+                BufferedSource source = getAsRawBytes(response);
+                if (listener != null) {
+                    ProgressListener realListener = listener;
+                    if (callbackExecutor != null) {
+                        realListener = new ExecutorProgressListener(listener, callbackExecutor);
+                    }
+
+                    source = Okio.buffer(new ProgressCountingSource(
+                            source,
+                            Objects.requireNonNull(response.body()).contentLength(),
+                            realListener,
+                            progressCallbackThresholdBytes));
+                }
+
+                sink.readAll(source);
+                return null;
+            } finally {
+                closeQuietly(response);
             }
         });
     }
@@ -534,12 +505,9 @@ class RealApiClient implements ApiClient {
                 .skipFilename(false)
                 .contentType(file.contentType())
                 .build();
-        return newCall(newDownloadLinkRequest(file.fileId(), null, options), new ResponseAdapter<BufferedSource>() {
-            @Override
-            public BufferedSource adapt(Response response) throws IOException, ApiError {
-                FileLink link = getAsFileLink(response);
-                return newDownloadCall(link);
-            }
+        return newCall(newDownloadLinkRequest(file.fileId(), null, options), response -> {
+            FileLink link = getAsFileLink(response);
+            return newDownloadCall(link);
         });
     }
 
@@ -549,12 +517,7 @@ class RealApiClient implements ApiClient {
             throw new IllegalArgumentException("FileLink argument cannot be null.");
         }
 
-        return newCall(newDownloadRequest(fileLink), new ResponseAdapter<BufferedSource>() {
-            @Override
-            public BufferedSource adapt(Response response) throws IOException, ApiError {
-                return getAsRawBytes(response);
-            }
-        });
+        return newCall(newDownloadRequest(fileLink), this::getAsRawBytes);
     }
 
     @Override
@@ -579,12 +542,7 @@ class RealApiClient implements ApiClient {
                 .post(builder.build())
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFileResponse.class).getFile();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFileResponse.class).getFile());
     }
 
     @Override
@@ -718,12 +676,7 @@ class RealApiClient implements ApiClient {
                 .get()
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFileResponse.class).getFile();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFileResponse.class).getFile());
     }
 
     @Override
@@ -738,12 +691,7 @@ class RealApiClient implements ApiClient {
                 .get()
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFileResponse.class).getFile();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFileResponse.class).getFile());
     }
 
     @Override
@@ -760,12 +708,7 @@ class RealApiClient implements ApiClient {
                 .get()
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -782,12 +725,7 @@ class RealApiClient implements ApiClient {
                 .get()
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -804,12 +742,7 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFileResponse.class).getFile();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFileResponse.class).getFile());
     }
 
     @Override
@@ -829,12 +762,7 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFileResponse.class).getFile();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFileResponse.class).getFile());
     }
 
     @Override
@@ -867,12 +795,7 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFile>() {
-            @Override
-            public RemoteFile adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFileResponse.class).getFile();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFileResponse.class).getFile());
     }
 
     @Override
@@ -909,12 +832,7 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -931,12 +849,7 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -973,12 +886,9 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<Boolean>() {
-            @Override
-            public Boolean adapt(Response response) throws IOException, ApiError {
-                getAsApiResponse(response, ApiResponse.class);
-                return true;
-            }
+        return newCall(request, response -> {
+            getAsApiResponse(response, ApiResponse.class);
+            return true;
         });
     }
 
@@ -1001,12 +911,9 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<Boolean>() {
-            @Override
-            public Boolean adapt(Response response) throws IOException, ApiError {
-                getAsApiResponse(response, ApiResponse.class);
-                return true;
-            }
+        return newCall(request, response -> {
+            getAsApiResponse(response, ApiResponse.class);
+            return true;
         });
     }
 
@@ -1036,12 +943,7 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -1066,12 +968,7 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -1091,12 +988,7 @@ class RealApiClient implements ApiClient {
                 .post(body)
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -1138,12 +1030,7 @@ class RealApiClient implements ApiClient {
                 .post(builder.build())
                 .build();
 
-        return newCall(request, new ResponseAdapter<RemoteFolder>() {
-            @Override
-            public RemoteFolder adapt(Response response) throws IOException, ApiError {
-                return getAsApiResponse(response, GetFolderResponse.class).getFolder();
-            }
-        });
+        return newCall(request, response -> getAsApiResponse(response, GetFolderResponse.class).getFolder());
     }
 
     @Override
@@ -1154,16 +1041,13 @@ class RealApiClient implements ApiClient {
                         .build())
                 .get().build();
 
-        return newCall(request, new ResponseAdapter<UserInfo>() {
-            @Override
-            public UserInfo adapt(Response response) throws IOException, ApiError {
-                UserInfoResponse body = getAsApiResponse(response, UserInfoResponse.class);
-                return new RealUserInfo(body.getUserId(),
-                        body.getEmail(),
-                        body.isEmailVerified(),
-                        body.getTotalQuota(),
-                        body.getUsedQuota());
-            }
+        return newCall(request, response -> {
+            UserInfoResponse body = getAsApiResponse(response, UserInfoResponse.class);
+            return new RealUserInfo(body.getUserId(),
+                    body.getEmail(),
+                    body.isEmailVerified(),
+                    body.getTotalQuota(),
+                    body.getUsedQuota());
         });
     }
 
@@ -1260,7 +1144,7 @@ class RealApiClient implements ApiClient {
                 throw new APIHttpException(response.code(), response.message());
             }
 
-            JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(response.body().byteStream())));
+            JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(Objects.requireNonNull(response.body()).byteStream())));
             try {
                 return gson.fromJson(reader, bodyType);
             } catch (JsonSyntaxException e) {
@@ -1294,7 +1178,7 @@ class RealApiClient implements ApiClient {
         try {
             if (response.isSuccessful()) {
                 callWasSuccessful = true;
-                return response.body().source();
+                return Objects.requireNonNull(response.body()).source();
             } else {
                 throw new APIHttpException(response.code(), response.message());
             }

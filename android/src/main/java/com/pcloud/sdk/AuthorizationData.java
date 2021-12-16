@@ -24,6 +24,10 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 /**
  * Gives information about the outcome of an initiated authorization.
  *
@@ -112,11 +116,11 @@ public class AuthorizationData implements Parcelable {
         if (locationId != that.locationId) return false;
         if (!request.equals(that.request)) return false;
         if (result != that.result) return false;
-        if (token != null ? !token.equals(that.token) : that.token != null) return false;
-        if (authCode != null ? !authCode.equals(that.authCode) : that.authCode != null)
+        if (!Objects.equals(token, that.token)) return false;
+        if (!Objects.equals(authCode, that.authCode))
             return false;
-        if (apiHost != null ? !apiHost.equals(that.apiHost) : that.apiHost != null) return false;
-        return errorMessage != null ? errorMessage.equals(that.errorMessage) : that.errorMessage == null;
+        if (!Objects.equals(apiHost, that.apiHost)) return false;
+        return Objects.equals(errorMessage, that.errorMessage);
     }
 
     @Override
@@ -132,6 +136,7 @@ public class AuthorizationData implements Parcelable {
         return result1;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "AuthorizationData{" +

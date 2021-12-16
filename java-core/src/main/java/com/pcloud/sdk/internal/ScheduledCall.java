@@ -25,8 +25,8 @@ import java.util.concurrent.Executor;
 
 class ScheduledCall<T> implements Call<T> {
 
-    private Call<T> delegate;
-    private Executor callbackExecutor;
+    private final Call<T> delegate;
+    private final Executor callbackExecutor;
 
     ScheduledCall(Call<T> delegate, Executor callbackExecutor) {
         this.delegate = delegate;
@@ -48,20 +48,11 @@ class ScheduledCall<T> implements Call<T> {
 
             @Override
             public void onResponse(Call<T> call, final T response) {
-                callbackExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        callback.onResponse(ScheduledCall.this, response);
-                    }
-                });
+                callbackExecutor.execute(() -> callback.onResponse(ScheduledCall.this, response));
             }
 
             @Override public void onFailure(Call<T> call, final Throwable t) {
-                callbackExecutor.execute(new Runnable() {
-                    @Override public void run() {
-                        callback.onFailure(ScheduledCall.this, t);
-                    }
-                });
+                callbackExecutor.execute(() -> callback.onFailure(ScheduledCall.this, t));
             }
         });
     }
@@ -81,7 +72,8 @@ class ScheduledCall<T> implements Call<T> {
         return delegate.isCanceled();
     }
 
-    @SuppressWarnings("CloneDoesntCallSuperClone") // Performing deep clone.
+    // Performing deep clone.
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override public ScheduledCall<T> clone() {
         return new ScheduledCall<>(delegate.clone(), callbackExecutor);
     }

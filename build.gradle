@@ -15,6 +15,7 @@ buildscript {
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin") version '1.0.0'
+    id("org.jetbrains.dokka") version "1.6.0"
 }
 
 allprojects {
@@ -79,3 +80,7 @@ subprojects {
 }
 
 apply from: rootProject.file('nexus-publish.gradle')
+
+tasks.named("dokkaHtmlMultiModule") {
+    outputDirectory.set(file("docs"))
+}

@@ -49,11 +49,11 @@ public class Main {
 
             RemoteFile bigFile = uploadFile(apiClient, new File("some file path"));
             System.out.println(bigFile.createFileLink());
-            downloadFile(bigFile, new File("some directory path"));
+            File file = downloadFile(bigFile, new File("some directory path"));
+
+            System.out.format(" File name: %s | File last modified %s" , file.getName(), file.lastModified());
 
             System.out.format(" User email: %s | Total quota %s | Used quota %s " , userInfo.email(), userInfo.totalQuota(), userInfo.usedQuota());
-
-
         } catch (IOException | ApiError e) {
             e.printStackTrace();
             apiClient.shutdown();
@@ -78,20 +78,17 @@ public class Main {
 
     private static RemoteFile uploadFile(ApiClient apiClient, File file) throws IOException, ApiError {
 
-        return apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, file.getName(), DataSource.create(file), new Date(file.lastModified()), new ProgressListener() {
-            public void onProgress(long done, long total) {
-                System.out.format("\rUploading... %.1f\n", ((double) done / (double) total) * 100d);
-            }
-        }).execute();
+        return apiClient.createFile(
+                    RemoteFolder.ROOT_FOLDER_ID, file.getName(),
+                    DataSource.create(file), new Date(file.lastModified()),
+                    (done, total) -> System.out.format("\rUploading... %.1f\n", ((double) done / (double) total) * 100d)
+                ).execute();
     }
 
     private static File downloadFile(RemoteFile remoteFile, File folder) throws IOException, ApiError {
         File destination = new File(folder, remoteFile.name());
-        remoteFile.download(DataSink.create(destination), new ProgressListener() {
-            public void onProgress(long done, long total) {
-                System.out.format("\rDownloading... %.1f\n", ((double) done / (double) total) * 100d);
-            }
-        });
+        remoteFile.download(DataSink.create(destination), (done, total) ->
+                System.out.format("\rDownloading... %.1f\n", ((double) done / (double) total) * 100d));
         return destination;
     }
 }

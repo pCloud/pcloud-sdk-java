@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -206,9 +207,6 @@ public class AuthorizationRequest implements Parcelable {
          * @see Type
          */
         public Builder setType(@NonNull AuthorizationRequest.Type type) {
-            if (type == null) {
-                throw new NullPointerException();
-            }
             this.type = type;
             return this;
         }
@@ -221,9 +219,6 @@ public class AuthorizationRequest implements Parcelable {
          * @return this
          */
         public Builder setClientId(@NonNull String clientId) {
-            if (clientId == null) {
-                throw new NullPointerException();
-            }
             this.clientId = clientId;
             return this;
         }
@@ -235,9 +230,6 @@ public class AuthorizationRequest implements Parcelable {
          * @return this
          */
         public Builder addPermission(@NonNull String permission) {
-            if (permission == null) {
-                throw new NullPointerException();
-            }
             this.permissions.add(permission);
             return this;
         }
@@ -249,9 +241,6 @@ public class AuthorizationRequest implements Parcelable {
          * @return this
          */
         public Builder removePermission(@NonNull String permission) {
-            if (permission == null) {
-                throw new NullPointerException();
-            }
             this.permissions.remove(permission);
             return this;
         }
@@ -310,8 +299,7 @@ public class AuthorizationRequest implements Parcelable {
 
             if (forceAccessApproval != builder.forceAccessApproval) return false;
             if (type != builder.type) return false;
-            if (clientId != null ? !clientId.equals(builder.clientId) : builder.clientId != null)
-                return false;
+            if (!Objects.equals(clientId, builder.clientId)) return false;
             return permissions.equals(builder.permissions);
         }
 

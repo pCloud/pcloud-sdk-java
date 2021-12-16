@@ -85,8 +85,8 @@ public final class UploadOptions {
             .build();
 
 
-    private boolean overrideFile;
-    private boolean partialUpload;
+    private final boolean overrideFile;
+    private final boolean partialUpload;
 
     /**
      * Creates new default {@link Builder}.

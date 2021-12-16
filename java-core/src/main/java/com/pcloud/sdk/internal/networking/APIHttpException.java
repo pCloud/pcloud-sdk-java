@@ -21,10 +21,10 @@ import java.util.Locale;
 
 public class APIHttpException extends IOException {
 
-    private int code;
+    private final int code;
 
     public APIHttpException(int code, String message) {
-        super(String.format(Locale.US, "API returned \'%d - %s\' HTTP error.", code, message));
+        super(String.format(Locale.US, "API returned '%d - %s' HTTP error.", code, message));
         this.code = code;
     }
 

@@ -29,7 +29,7 @@ import java.util.Locale;
 
 public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
 
-    private static final List<RemoteEntry> UNKNOWN_CHILDREN = Collections.unmodifiableList(new ArrayList<RemoteEntry>(0));
+    private static final List<RemoteEntry> UNKNOWN_CHILDREN = Collections.unmodifiableList(new ArrayList<>(0));
 
     @Expose
     @SerializedName("folderid")
@@ -37,7 +37,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
 
     @Expose
     @SerializedName("contents")
-    private List<RemoteEntry> children = UNKNOWN_CHILDREN;
+    private final List<RemoteEntry> children = UNKNOWN_CHILDREN;
 
     RealRemoteFolder(ApiClient apiClient) {
         super(apiClient);
@@ -145,7 +145,7 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
 
     static class InstanceCreator implements com.google.gson.InstanceCreator<RealRemoteFolder> {
 
-        private ApiClient apiClient;
+        private final ApiClient apiClient;
 
         InstanceCreator(ApiClient apiClient) {
             this.apiClient = apiClient;

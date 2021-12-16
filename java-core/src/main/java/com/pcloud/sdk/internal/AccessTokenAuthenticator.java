@@ -17,6 +17,8 @@
 
 package com.pcloud.sdk.internal;
 
+import org.jetbrains.annotations.NotNull;
+
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -25,7 +27,7 @@ import java.util.concurrent.Callable;
 
 final class AccessTokenAuthenticator extends RealAuthenticator {
 
-    private Callable<String> tokenProvider;
+    private final Callable<String> tokenProvider;
 
     AccessTokenAuthenticator(Callable<String> tokenProvider){
         if (tokenProvider == null) {
@@ -36,7 +38,7 @@ final class AccessTokenAuthenticator extends RealAuthenticator {
     }
 
     @Override
-    public Response intercept(Chain chain) throws IOException {
+    public Response intercept(@NotNull Chain chain) throws IOException {
         String accessToken;
         try {
             accessToken = tokenProvider.call();

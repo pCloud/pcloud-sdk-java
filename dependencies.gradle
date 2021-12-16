@@ -32,5 +32,5 @@ ext {
     ]
 
 
-    isCi = "true".equals(System.getenv('CI'))
+    isCi = "true" == System.getenv('CI')
 }

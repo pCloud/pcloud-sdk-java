@@ -192,7 +192,7 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
 
     static class InstanceCreator implements com.google.gson.InstanceCreator<RealRemoteFile> {
 
-        private ApiClient apiClient;
+        private final ApiClient apiClient;
 
         InstanceCreator(ApiClient apiClient) {
             this.apiClient = apiClient;

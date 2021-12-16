@@ -16,24 +16,26 @@
 
 package com.pcloud.sdk.internal;
 
+import org.jetbrains.annotations.NotNull;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
 class GlobalRequestInterceptor implements Interceptor {
 
-    private String userAgent;
-    private String cookieValues;
+    private final String userAgent;
+    private final String cookieValues;
 
     GlobalRequestInterceptor(String userAgent, Map<String, String> globalParameters) {
         this.userAgent = userAgent;
         this.cookieValues = buildCookieValue(globalParameters);
     }
 
+    @NotNull
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request newRequest = chain.request()
@@ -61,9 +63,7 @@ class GlobalRequestInterceptor implements Interceptor {
 
     private static String buildCookieValue(Map<String, String> parameters) {
         StringBuilder builder = new StringBuilder();
-        Iterator<Map.Entry<String, String>> iterator = parameters.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, String> keyValuePair = iterator.next();
+        for (Map.Entry<String, String> keyValuePair : parameters.entrySet()) {
             builder.append(keyValuePair.getKey()).append('=').append(keyValuePair.getValue());
             builder.append("; ");
         }

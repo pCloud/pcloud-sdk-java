@@ -28,8 +28,8 @@ import java.util.Locale;
 @SuppressWarnings("unused")
 public class ApiError extends Exception {
 
-    private int errorCode;
-    private String errorMessage;
+    private final int errorCode;
+    private final String errorMessage;
 
     public ApiError(int errorCode, String errorMessage) {
         super(String.format(Locale.US, "%d - %s", errorCode, errorMessage));

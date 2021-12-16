@@ -17,6 +17,9 @@
 package com.pcloud.sdk.internal;
 
 import com.pcloud.sdk.ProgressListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import okio.Buffer;
 import okio.ForwardingSink;
 import okio.Sink;
@@ -25,11 +28,11 @@ import java.io.IOException;
 
 final class ProgressCountingSink extends ForwardingSink {
     private long bytesReportedOnLastNotification;
-    private long notificationThresholdBytes;
-    private ProgressListener listener;
+    private final long notificationThresholdBytes;
+    private final ProgressListener listener;
 
     private long totalBytesWritten;
-    private long totalBytes;
+    private final long totalBytes;
 
     ProgressCountingSink(Sink delegate, long totalBytes, ProgressListener listener, long notificationThresholdBytes) {
         super(delegate);
@@ -39,7 +42,7 @@ final class ProgressCountingSink extends ForwardingSink {
     }
 
     @Override
-    public void write(Buffer source, long byteCount) throws IOException {
+    public void write(@NotNull Buffer source, long byteCount) throws IOException {
         super.write(source, byteCount);
         totalBytesWritten += byteCount;
 

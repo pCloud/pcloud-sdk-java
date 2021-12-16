@@ -19,6 +19,7 @@ package com.pcloud.sdk.internal;
 import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.Authenticator;
 
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -193,14 +194,11 @@ class RealApiServiceBuilder implements ApiClient.Builder {
         if (writeTimeoutMs != builder.writeTimeoutMs) return false;
         if (connectTimeoutMs != builder.connectTimeoutMs) return false;
         if (progressCallbackThresholdBytes != builder.progressCallbackThresholdBytes) return false;
-        if (cache != null ? !cache.equals(builder.cache) : builder.cache != null) return false;
-        if (callbackExecutor != null ? !callbackExecutor.equals(builder.callbackExecutor) : builder.callbackExecutor != null)
-            return false;
-        if (connectionPool != null ? !connectionPool.equals(builder.connectionPool) : builder.connectionPool != null)
-            return false;
-        if (dispatcher != null ? !dispatcher.equals(builder.dispatcher) : builder.dispatcher != null) return false;
-        return authenticator != null ? authenticator.equals(builder.authenticator) : builder.authenticator == null;
-
+        if (!Objects.equals(cache, builder.cache)) return false;
+        if (!Objects.equals(callbackExecutor, builder.callbackExecutor)) return false;
+        if (!Objects.equals(connectionPool, builder.connectionPool)) return false;
+        if (!Objects.equals(dispatcher, builder.dispatcher)) return false;
+        return Objects.equals(authenticator, builder.authenticator);
     }
 
     @Override

@@ -1,0 +1,128 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Call</title>
+</head><body><link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><link href="../../../styles/prism.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script><script type="text/javascript" src="../../../scripts/main.js" async></script><script type="text/javascript" src="../../../scripts/prism.js" async></script><script>const storage = localStorage.getItem("dokka-dark-mode")
+const savedDarkMode = storage ? JSON.parse(storage) : false
+if(savedDarkMode === true){
+    document.getElementsByTagName("html")[0].classList.add("theme-dark")
+}</script>
+
+  
+    <div class="navigation-wrapper" id="navigation-wrapper">
+      <div id="leftToggler"><span class="icon-toggler"></span></div>
+      <div class="library-name"><a href="../../../index.html"><span>main</span></a></div>
+      <div></div>
+      <div class="pull-right d-flex"><button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+      </div>
+    </div>
+    <div id="container">
+      <div id="leftColumn">
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main"><script type="text/javascript" src="../../../scripts/main.js"></script>
+        <div class="main-content" id="content" pageids="java-core::com.pcloud.sdk/Call///PointingToDeclaration//-1778586320">
+          <div class="breadcrumbs"><a href="../../index.html">java-core</a>/<a href="../index.html">com.pcloud.sdk</a>/<a href="index.html">Call</a></div>
+          <div class="cover ">
+            <h1 class="cover"><span><span>Call</span></span></h1>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":java-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">Call</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">T</a><span class="token operator">&gt;</span> : <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Cloneable.html">Cloneable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">An abstraction over a RPC call to pCloud's API servers. </p><p class="paragraph"> A <a href="index.html">Call</a> object resemebles a future request to execute a method having the following properties: </p><ul><li>Allows for asynchronous execution by the <a href="enqueue.html">enqueue</a> method with a <a href="../-callback/index.html">Callback</a> object.</li><li>Allows for synchronous execution on the same thread by calling the <a href="execute.html">execute</a> method.</li><li>Can be executed only once, state can be checked via the <a href="is-executed.html">isExecuted</a> property.</li><li>Once created, a <a href="index.html">Call</a> instance can be cloned via the <a href="clone.html">clone</a> method and executed again.</li><li>Executed calls can be cancelled via the <a href="cancel.html">cancel</a> method. It is safe to call <a href="cancel.html">cancel</a> multiple times.</li><li>Running calls that are being cancelled will result in an <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html">IOException</a> being thrown or reported via <a href="../-callback/on-failure.html">onFailure</a>.</li></ul></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Parameters">Parameters</button></div>
+            <div class="tabs-section-body">
+              <h2 class="">Parameters</h2>
+              <div data-togglable="Parameters">
+                <div class="platform-hinted WithExtraAttributes" data-platform-hinted="data-platform-hinted" data-togglable="Parameters"><div class="content sourceset-depenent-content" data-active="" data-togglable=":java-core:dokkaHtmlPartial/main"><div data-togglable="Parameters"><div class="table" data-togglable="Parameters"><div class="table-row" data-filterable-current=":java-core:dokkaHtmlPartial/main" data-filterable-set=":java-core:dokkaHtmlPartial/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex"><span><span>&lt;T&gt;</span></span></span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">the type of the returned result</p></div></div></div></div></div></div></div></div></div>
+              </div>
+              <h2 class="">Functions</h2>
+              <div class="table" data-togglable="Functions"><a data-name="449814851%2FFunctions%2F-1778586320" anchor-label="cancel" id="449814851%2FFunctions%2F-1778586320" data-filterable-set=":java-core:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":java-core:dokkaHtmlPartial/main" data-filterable-set=":java-core:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="cancel.html"><span><span>cancel</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="449814851%2FFunctions%2F-1778586320"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":java-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="cancel.html"><span class="token function">cancel</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief ">Cancel this call.</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1339952576%2FFunctions%2F-1778586320" anchor-label="clone" id="-1339952576%2FFunctions%2F-1778586320" data-filterable-set=":java-core:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":java-core:dokkaHtmlPartial/main" data-filterable-set=":java-core:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="clone.html"><span><span>clone</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1339952576%2FFunctions%2F-1778586320"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":java-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="clone.html"><span class="token function">clone</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Call</a><span class="token operator">&lt;</span><a href="../../com.pcloud.sdk.internal.networking/-body-response/index.html">T</a><span class="token operator">&gt;</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-166110332%2FFunctions%2F-1778586320" anchor-label="enqueue" id="-166110332%2FFunctions%2F-1778586320" data-filterable-set=":java-core:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":java-core:dokkaHtmlPartial/main" data-filterable-set=":java-core:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="enqueue.html"><span><span>enqueue</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-166110332%2FFunctions%2F-1778586320"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":java-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="enqueue.html"><span class="token function">enqueue</span></a><span class="token punctuation">(</span>callback<span class="token operator">: </span><a href="../-callback/index.html">Callback</a><span class="token operator">&lt;</span><a href="../../com.pcloud.sdk.internal.networking/-body-response/index.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief ">Asynchronously send the request and notify <code class="lang-kotlin">callback</code> of its response or if an error occurred talking to the server, creating the request, or processing the response.</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1164874536%2FFunctions%2F-1778586320" anchor-label="execute" id="1164874536%2FFunctions%2F-1778586320" data-filterable-set=":java-core:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":java-core:dokkaHtmlPartial/main" data-filterable-set=":java-core:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="execute.html"><span><span>execute</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1164874536%2FFunctions%2F-1778586320"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":java-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="execute.html"><span class="token function">execute</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.pcloud.sdk.internal.networking/-body-response/index.html">T</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief ">Synchronously send the request and return its response.</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="776862714%2FFunctions%2F-1778586320" anchor-label="isCanceled" id="776862714%2FFunctions%2F-1778586320" data-filterable-set=":java-core:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":java-core:dokkaHtmlPartial/main" data-filterable-set=":java-core:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="is-canceled.html"><span>is</span><wbr><span><span>Canceled</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="776862714%2FFunctions%2F-1778586320"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":java-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="is-canceled.html"><span class="token function">isCanceled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-978671164%2FFunctions%2F-1778586320" anchor-label="isExecuted" id="-978671164%2FFunctions%2F-1778586320" data-filterable-set=":java-core:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":java-core:dokkaHtmlPartial/main" data-filterable-set=":java-core:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="is-executed.html"><span>is</span><wbr><span><span>Executed</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-978671164%2FFunctions%2F-1778586320"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":java-core:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="is-executed.html"><span class="token function">isExecuted</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief ">Returns true if this call has been either <a href="execute.html">executed</a> or <a href="enqueue.html"> enqueued</a>.</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  
+</body></html>
+
+

@@ -1,1 +1,10 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:android
 com.pcloud.sdk
+module:java-core
+com.pcloud.sdk
+com.pcloud.sdk.internal
+com.pcloud.sdk.internal.networking
+com.pcloud.sdk.internal.networking.serialization

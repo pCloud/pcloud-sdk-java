@@ -23,7 +23,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 import okio.BufferedSource;
@@ -331,6 +334,34 @@ public class ApiClientIntegrationTest {
     }
 
     @Test
+    public void testChecksumFileWithId() throws IOException, ApiError, NoSuchAlgorithmException {
+        RemoteFile remoteFile = createRemoteFile();
+        byte[] fileContents = getFileContent(remoteFile);
+        Map<String, String> checksums = apiClient.checksumFile(remoteFile.fileId()).execute();
+        assertTrue("SHA-1 hash must always be returned", checksums.containsKey("SHA-1"));
+        assertTrue("MD-5 (us) or SHA-256 (eu) must exist", checksums.containsKey("SHA-256") || checksums.containsKey("MD-5"));
+        assertTrue(checksums.size() == 2);
+        for (String alg:checksums.keySet()) {
+        	String hash = calcMD(alg, fileContents);
+            assertEquals(hash.toLowerCase(), checksums.get(alg).toLowerCase());
+        }
+    }
+
+    @Test
+    public void testChecksumFileWithPath() throws IOException, ApiError, NoSuchAlgorithmException {
+        RemoteFile remoteFile = createRemoteFile("/");
+        byte[] fileContents = getFileContent(remoteFile);
+        Map<String, String> checksums = apiClient.checksumFile(remoteFile.fileId()).execute();
+        assertTrue("SHA-1 hash must always be returned", checksums.containsKey("SHA-1"));
+        assertTrue("MD-5 (us) or SHA-256 (eu) must exist", checksums.containsKey("SHA-256") || checksums.containsKey("MD-5"));
+        assertTrue(checksums.size() == 2);
+        for (String alg:checksums.keySet()) {
+        	String hash = calcMD(alg, fileContents);
+            assertEquals(hash.toLowerCase(), checksums.get(alg).toLowerCase());
+        }
+    }
+
+	@Test
     public void testLoadFolderWithId() throws IOException, ApiError {
         RemoteFolder remoteFolder = createRemoteFolder();
 
@@ -450,6 +481,16 @@ public class ApiClientIntegrationTest {
         try (BufferedSource source = apiClient.download(file).execute()) {
             return source.readByteArray();
         }
+    }
+
+    private String calcMD(String algorithm, byte[] content) throws NoSuchAlgorithmException {
+	    MessageDigest md = MessageDigest.getInstance(algorithm);
+		byte[] bytes = md.digest(content);
+        StringBuilder result = new StringBuilder();
+        for (byte b : bytes) {
+            result.append(String.format("%02x", b));
+        }
+        return result.toString();
     }
 
     @After

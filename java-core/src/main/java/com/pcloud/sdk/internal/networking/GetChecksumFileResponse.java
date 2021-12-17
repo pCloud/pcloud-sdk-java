@@ -30,27 +30,30 @@ public class GetChecksumFileResponse extends ApiResponse {
     @Expose
     public String sha256 = null;
     
-    /* possibility to also return file metadata not used
-    @Expose
-    @SerializedName("metadata")
-    private RemoteFile remoteFile;
-
+//    // possibility to also return file metadata not used 
+//    @Expose
+//    @SerializedName("metadata")
+//    private RemoteFile remoteFile;
+//
+//    
+//    public RemoteFile getFile() {
+//        return remoteFile;
+//    }
     
-    public RemoteFile getFile() {
-        return remoteFile;
-    }
-    */
-    
+    /**
+     * 
+     * @return list of hashes available. possible keys are "SHA-1" (exists always), "MD-5" (us only), "SHA-256" (eu only).
+     */
     public Map<String, String> getChecksums() {
     	Map<String, String> result = new HashMap<>();
     	if (sha1!=null) {
-    		result.put("sha1", sha1);
+    		result.put("SHA-1", sha1);
     	}
     	if (md5!=null) {
-    		result.put("md5", md5);
+    		result.put("MD-5", md5);
     	}
     	if (sha256!=null) {
-    		result.put("sha256", sha256);
+    		result.put("SHA-256", sha256);
     	}
     	return result;
     }

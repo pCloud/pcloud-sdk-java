@@ -1050,9 +1050,9 @@ public interface ApiClient {
     /**
      * Calculate checksums for the file with the provided {@code fileId}.
      * <p>
-     * 'sha1' checksum is returned from both US and Europe API servers. 
-     * 'md5' is returned only from US API servers, not added in Europe as it's quite old and has collions. 
-     * 'sha256' is returned in Europe only.
+     * 'SHA-1' checksum is returned from both US and Europe API servers. 
+     * 'MD-5' is returned only from US API servers, not added in Europe as it's quite old and has collions. 
+     * 'SHA-256' is returned in Europe only.
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/file/checksumfile.html" target="_blank">documentation page</a>.
      * 
@@ -1064,9 +1064,9 @@ public interface ApiClient {
     /**
      * Calculate checksums for the file with the provided {@code path}.
      * <p>    
-     * 'sha1' checksum is returned from both US and Europe API servers. 
-     * 'md5' is returned only from US API servers, not added in Europe as it's quite old and has collions. 
-     * 'sha256' is returned in Europe only.
+     * 'SHA-1' checksum is returned from both US and Europe API servers. 
+     * 'MD-5' is returned only from US API servers, not added in Europe as it's quite old and has collions. 
+     * 'SHA-256' is returned in Europe only.
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/file/checksumfile.html" target="_blank">documentation page</a>.
      * 

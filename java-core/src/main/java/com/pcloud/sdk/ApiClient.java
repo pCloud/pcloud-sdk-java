@@ -1070,7 +1070,7 @@ public interface ApiClient {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/file/checksumfile.html" target="_blank">documentation page</a>.
      * 
-     * @param fileId target file id.
+     * @param path target file path.
      * @return {@link Call} resulting in a Map instance holding all available hashes for the requested path.
      * @throws IllegalArgumentException on a null or empty {@code path} argument.
      */

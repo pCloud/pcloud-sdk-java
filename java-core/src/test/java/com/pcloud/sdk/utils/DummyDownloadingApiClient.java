@@ -36,6 +36,7 @@ import com.pcloud.sdk.UserInfo;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import okhttp3.Cache;
@@ -364,6 +365,16 @@ public class DummyDownloadingApiClient implements ApiClient {
         return null;
     }
 
+	@Override
+	public Call<Map<String, String>> checksumFile(long fileId) {
+		return null;
+	}
+
+	@Override
+	public Call<Map<String, String>> checksumFile(String path) {
+		return null;
+	}
+
     @Override
     public Call<RemoteFolder> loadFolder(long folderId) {
         return null;
@@ -533,4 +544,5 @@ public class DummyDownloadingApiClient implements ApiClient {
             return null;
         }
     }
+
 }

@@ -36,6 +36,7 @@ import com.pcloud.sdk.UploadOptions;
 import com.pcloud.sdk.UserInfo;
 import com.pcloud.sdk.internal.networking.APIHttpException;
 import com.pcloud.sdk.internal.networking.ApiResponse;
+import com.pcloud.sdk.internal.networking.GetChecksumFileResponse;
 import com.pcloud.sdk.internal.networking.GetFileResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
 import com.pcloud.sdk.internal.networking.GetLinkResponse;
@@ -745,6 +746,45 @@ class RealApiClient implements ApiClient {
             }
         });
     }
+
+    @Override
+    public Call<Map<String, String>> checksumFile(long fileId) {
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder()
+                .addPathSegment("checksumfile")
+                .addQueryParameter("fileid", String.valueOf(fileId));
+
+        Request request = newRequest()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+
+        return newCall(request, new ResponseAdapter<Map<String, String>>() {
+            @Override
+            public Map<String, String> adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetChecksumFileResponse.class).getChecksums();
+            }
+        });
+    }
+
+    @Override
+    public Call<Map<String, String>> checksumFile(String path) {
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder()
+                .addPathSegment("checksumfile")
+                .addEncodedQueryParameter("path", String.valueOf(path));
+
+        Request request = newRequest()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+
+        return newCall(request, new ResponseAdapter<Map<String, String>>() {
+            @Override
+            public Map<String, String> adapt(Response response) throws IOException, ApiError {
+                return getAsApiResponse(response, GetChecksumFileResponse.class).getChecksums();
+            }
+        });
+    }
+
 
     @Override
     public Call<RemoteFolder> loadFolder(long folderId) {

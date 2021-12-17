@@ -18,6 +18,7 @@
 package com.pcloud.sdk;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -1045,6 +1046,35 @@ public interface ApiClient {
      * @throws IllegalArgumentException on a null or empty {@code path} argument.
      */
     Call<RemoteFile> loadFile(String path);
+
+    /**
+     * Calculate checksums for the file with the provided {@code fileId}.
+     * <p>
+     * 'sha1' checksum is returned from both US and Europe API servers. 
+     * 'md5' is returned only from US API servers, not added in Europe as it's quite old and has collions. 
+     * 'sha256' is returned in Europe only.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/checksumfile.html" target="_blank">documentation page</a>.
+     * 
+     * @param fileId target file id.
+     * @return {@link Call} resulting in a Map instance holding all available hashes for the requested file id.
+     */
+    Call<Map<String, String>> checksumFile(long fileId);
+
+    /**
+     * Calculate checksums for the file with the provided {@code path}.
+     * <p>    
+     * 'sha1' checksum is returned from both US and Europe API servers. 
+     * 'md5' is returned only from US API servers, not added in Europe as it's quite old and has collions. 
+     * 'sha256' is returned in Europe only.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/checksumfile.html" target="_blank">documentation page</a>.
+     * 
+     * @param fileId target file id.
+     * @return {@link Call} resulting in a Map instance holding all available hashes for the requested path.
+     * @throws IllegalArgumentException on a null or empty {@code path} argument.
+     */
+    Call<Map<String, String>> checksumFile(String path);
 
     /**
      * Load a specific folder.

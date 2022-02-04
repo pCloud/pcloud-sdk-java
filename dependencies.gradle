@@ -21,7 +21,7 @@ ext {
             customTabs   : "androidx.browser:browser:1.4.0",
             localBroadcastManager: 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0',
 
-            okhttp3 : "com.squareup.okhttp3:okhttp:4.9.0",
+            okhttp3 : "com.squareup.okhttp3:okhttp:4.9.3",
             gson : "com.google.code.gson:gson:2.8.6",
 
             // Test dependencies

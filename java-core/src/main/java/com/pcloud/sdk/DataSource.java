@@ -17,12 +17,13 @@
 
 package com.pcloud.sdk;
 
-import okio.*;
+import okio.BufferedSink;
+import okio.ByteString;
+import okio.Okio;
+import okio.Source;
 
 import java.io.File;
 import java.io.IOException;
-
-import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
 /**
  * A source of data.
@@ -59,14 +60,12 @@ public abstract class DataSource {
     };
 
     /**
-     * @return the data source length.
-     * <p>
-     * Override this method to provide the size of the data
-     * to be written, if known in advance, otherwise return -1.
+     * Return the size of the data
+     * to be written.
+     *
+     * @return  a non-negative number of bytes to be written.
      */
-    public long contentLength() {
-        return -1;
-    }
+    public abstract long contentLength();
 
     /**
      * Write the data to a {@link BufferedSink}.
@@ -149,12 +148,8 @@ public abstract class DataSource {
 
             @Override
             public void writeTo(BufferedSink sink) throws IOException {
-                BufferedSource source = null;
-                try {
-                    source = Okio.buffer(Okio.source(file));
+                try (Source source = Okio.source(file)) {
                     sink.writeAll(source);
-                } finally {
-                    closeQuietly(source);
                 }
             }
         };

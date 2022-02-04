@@ -283,19 +283,23 @@ class RealApiClient implements ApiClient {
                         realListener = new ExecutorProgressListener(listener, callbackExecutor);
                     }
 
-                    sink = Okio.buffer(new ProgressCountingSink(
+                    BufferedSink targetSink = Okio.buffer(new ProgressCountingSink(
                             sink,
                             data.contentLength(),
                             realListener,
                             progressCallbackThresholdBytes));
+                    data.writeTo(targetSink);
+                    targetSink.emit();
+                } else {
+                    data.writeTo(sink);
                 }
-                data.writeTo(sink);
-                sink.flush();
             }
 
             @Override
             public long contentLength() {
-                return data.contentLength();
+                long contentLength = data.contentLength();
+                if (contentLength < 0) throw new IllegalArgumentException("Content length must be >= 0.");
+                return contentLength;
             }
         };
 

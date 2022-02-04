@@ -283,6 +283,7 @@ public class ApiClientIntegrationTest {
     public void testMoveFileByPath() throws IOException, ApiError {
         RemoteFolder remoteFolder = createRemoteFolder("/");
         RemoteFile remoteFile = createRemoteFile("/");
+        assertTrue(entryExistsInRoot(remoteFile));
 
         RemoteFile movedFile = apiClient.moveFile("/" + remoteFile.name(), "/" + remoteFolder.name() + "/").execute();
 

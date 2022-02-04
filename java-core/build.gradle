@@ -1,8 +1,6 @@
 import groovy.text.SimpleTemplateEngine
-import groovy.io.FileType
 
-apply plugin: 'java'
-apply plugin: 'kotlin'
+apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.dokka'
 
 sourceCompatibility = rootProject.ext.sourceCompatibilityVersion
@@ -17,7 +15,7 @@ dependencies {
     testImplementation dep.mockito
     testImplementation dep.hamcrestMatchers
 
-    implementation dep.okhttp3
+    api dep.okhttp3
     implementation dep.gson
 }
 

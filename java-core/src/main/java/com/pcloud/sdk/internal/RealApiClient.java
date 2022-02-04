@@ -24,6 +24,7 @@ import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.ApiError;
 import com.pcloud.sdk.Authenticator;
 import com.pcloud.sdk.Call;
+import com.pcloud.sdk.Checksums;
 import com.pcloud.sdk.DataSink;
 import com.pcloud.sdk.DataSource;
 import com.pcloud.sdk.DownloadOptions;
@@ -36,30 +37,15 @@ import com.pcloud.sdk.UploadOptions;
 import com.pcloud.sdk.UserInfo;
 import com.pcloud.sdk.internal.networking.APIHttpException;
 import com.pcloud.sdk.internal.networking.ApiResponse;
+import com.pcloud.sdk.internal.networking.ChecksumsResponse;
 import com.pcloud.sdk.internal.networking.GetFileResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
 import com.pcloud.sdk.internal.networking.GetLinkResponse;
 import com.pcloud.sdk.internal.networking.UploadFilesResponse;
 import com.pcloud.sdk.internal.networking.UserInfoResponse;
+import com.pcloud.sdk.internal.networking.serialization.ByteStringTypeAdapter;
 import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
 import com.pcloud.sdk.internal.networking.serialization.UnmodifiableListTypeFactory;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
@@ -74,16 +60,35 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.BufferedSink;
 import okio.BufferedSource;
+import okio.ByteString;
 import okio.Okio;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import static com.pcloud.sdk.internal.FileIdUtils.isFile;
 import static com.pcloud.sdk.internal.FileIdUtils.toFileId;
 import static com.pcloud.sdk.internal.FileIdUtils.toFolderId;
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 
-import org.jetbrains.annotations.NotNull;
-
 class RealApiClient implements ApiClient {
+
+    private static final String MULTIPART_BOUNDARY = "----pCloud-SDK-"+ Version.NAME+"-"+ UUID.randomUUID() + "----";
 
     private final long progressCallbackThresholdBytes;
     private final Authenticator authenticator;
@@ -136,6 +141,7 @@ class RealApiClient implements ApiClient {
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
                 .registerTypeAdapter(RealRemoteFile.class, new RealRemoteFile.InstanceCreator(this))
                 .registerTypeAdapter(RealRemoteFolder.class, new RealRemoteFolder.InstanceCreator(this))
+                .registerTypeAdapter(ByteString.class, new ByteStringTypeAdapter())
                 .create();
         this.apiHost = builder.apiHost();
     }
@@ -293,7 +299,7 @@ class RealApiClient implements ApiClient {
             }
         };
 
-        RequestBody compositeBody = new MultipartBody.Builder("--")
+        RequestBody compositeBody = new MultipartBody.Builder(MULTIPART_BOUNDARY)
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", filename, dataBody)
                 .build();
@@ -405,6 +411,8 @@ class RealApiClient implements ApiClient {
         return newCall(request, this::getAsFileLink);
 
     }
+
+
 
     private FileLink getAsFileLink(Response response) throws IOException, ApiError {
         GetLinkResponse body = getAsApiResponse(response, GetLinkResponse.class);
@@ -1049,6 +1057,30 @@ class RealApiClient implements ApiClient {
                     body.getTotalQuota(),
                     body.getUsedQuota());
         });
+    }
+
+    @Override
+    public Call<Checksums> getChecksums(long fileId) {
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("checksumfile")
+                        .addQueryParameter("fileid", String.valueOf(fileId))
+                        .build())
+                .get().build();
+
+        return newCall(request, response -> getAsApiResponse(response, ChecksumsResponse.class));
+    }
+
+    @Override
+    public Call<Checksums> getChecksums(String filePath) {
+        Request request = newRequest()
+                .url(apiHost.newBuilder()
+                        .addPathSegment("checksumfile")
+                        .addQueryParameter("path", String.valueOf(filePath))
+                        .build())
+                .get().build();
+
+        return newCall(request, response -> getAsApiResponse(response, ChecksumsResponse.class));
     }
 
     @Override

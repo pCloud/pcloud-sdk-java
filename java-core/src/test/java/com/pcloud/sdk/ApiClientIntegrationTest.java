@@ -17,6 +17,8 @@
 
 package com.pcloud.sdk;
 
+import okio.BufferedSource;
+import okio.ByteString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,13 +28,12 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
-import okio.BufferedSource;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 public class ApiClientIntegrationTest {
 
@@ -82,7 +83,6 @@ public class ApiClientIntegrationTest {
     @Test
     public void testCreateFolderByPath() throws IOException, ApiError {
         RemoteFolder remoteFolder = createRemoteFolder("/");
-
         assertTrue(entryExistsInFolder(remoteFolder, remoteFolder.parentFolderId()));
     }
 
@@ -392,6 +392,47 @@ public class ApiClientIntegrationTest {
         assertArrayEquals(fileContents, source.readByteArray());
     }
 
+    @Test
+    public void testChecksumsForAFile() throws Exception {
+        String name = UUID.randomUUID()+".txt";
+        ByteString content = ByteString.encodeUtf8("a text file with boundary\r\n--------");
+        RemoteFile newFile = createRemoteFile(RemoteFolder.ROOT_FOLDER_ID, name, content);
+
+        Checksums checksums = apiClient.getChecksums(newFile.fileId()).execute();
+
+        assertChecksumsMatch(content, newFile, checksums);
+    }
+
+    @Test
+    public void testChecksumsForAFileViaFilePath() throws Exception {
+        String name = UUID.randomUUID()+".txt";
+        ByteString content = ByteString.encodeUtf8("a text file with boundary\r\n--------");
+        RemoteFile newFile = createRemoteFile(RemoteFolder.ROOT_FOLDER_ID, name, content);
+
+        Checksums checksums = apiClient.getChecksums("/"+name).execute();
+
+        assertChecksumsMatch(content, newFile, checksums);
+    }
+
+    private void assertChecksumsMatch(ByteString content, RemoteFile newFile, Checksums checksums) throws IOException, ApiError {
+        assertTrue(entryExistsInFolder(newFile, newFile.parentFolderId()));
+
+        assertEquals(checksums.getFile().id(), newFile.id());
+        assumeTrue(checksums.getFile().hash().equals(newFile.hash()));
+
+        if (checksums.getSha1() != null) {
+            assertEquals(content.sha1(), checksums.getSha1());
+        }
+
+        if (checksums.getSha256() != null) {
+            assertEquals(content.sha256(), checksums.getSha256());
+        }
+
+        if (checksums.getMd5() != null) {
+            assertEquals(content.md5(), checksums.getMd5());
+        }
+    }
+
     private RemoteFolder createRemoteFolder() throws IOException, ApiError {
         return createRemoteFolder(RemoteFolder.ROOT_FOLDER_ID);
     }
@@ -407,15 +448,12 @@ public class ApiClientIntegrationTest {
     }
 
     private RemoteFile createRemoteFile() throws IOException, ApiError {
-        String someName = UUID.randomUUID().toString();
-        byte[] fileContents = someName.getBytes();
-        return apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, someName + ".txt", DataSource.create(fileContents)).execute();
+        String someName = UUID.randomUUID().toString() + ".txt";
+        return createRemoteFile(RemoteFolder.ROOT_FOLDER_ID, someName, ByteString.of(someName.getBytes()));
     }
 
-    private RemoteFile createRemoteFile(long parentFolderId) throws IOException, ApiError {
-        String someName = UUID.randomUUID().toString();
-        byte[] fileContents = someName.getBytes();
-        return apiClient.createFile(parentFolderId, someName + ".txt", DataSource.create(fileContents)).execute();
+    private RemoteFile createRemoteFile(long parentFolderId, String name, ByteString fileContents) throws IOException, ApiError {
+        return apiClient.createFile(parentFolderId, name, DataSource.create(fileContents)).execute();
     }
 
     private RemoteFile createRemoteFile(String path) throws IOException, ApiError {

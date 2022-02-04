@@ -17,15 +17,15 @@
 
 package com.pcloud.sdk;
 
-import java.util.Date;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okio.BufferedSource;
+
+import java.util.Date;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The general interface that exposes pCloud API's methods.
@@ -1160,6 +1160,26 @@ public interface ApiClient {
      * @return {@link Call} resulting in the accounts details
      */
     Call<UserInfo> getUserInfo();
+
+    /**
+     * Get {@link Checksums} of a remote file by its file id.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/checksumfile.html" target="_blank">documentation page</a>.
+     *
+     * @return {@link Checksums} with the available checksums for file
+     * @see Checksums
+     */
+    Call<Checksums> getChecksums(long fileId);
+
+    /**
+     * Get {@link Checksums} of a remote file by a given file filePath.
+     * <p>
+     * For more information, see the related <a href="https://docs.pcloud.com/methods/file/checksumfile.html" target="_blank">documentation page</a>.
+     *
+     * @return {@link Checksums} with the available checksums for file
+     * @see Checksums
+     */
+    Call<Checksums> getChecksums(String filePath);
 
     /**
      * Create a new shared {@link ApiClient} instance.

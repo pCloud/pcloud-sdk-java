@@ -1,0 +1,48 @@
+variables:
+  GIT_STRATEGY: fetch
+  GIT_SUBMODULE_STRATEGY: normal
+
+before_script:
+  - chmod +x ./gradlew
+
+stages:
+  - build
+  - test
+  - deploy
+
+assemble:
+  stage: build
+  tags:
+    - java
+  script:
+    - ./gradlew assemble
+  dependencies: []
+
+tests:
+  stage: test
+  tags:
+    - java
+  script:
+    - ./gradlew test
+  dependencies: []
+  artifacts:
+    expire_in: 1 week
+    when: on_failure
+    name: "test-reports-$CI_COMMIT_REF_SLUG"
+    paths:
+      - "*/build/reports/tests/test/*"
+    reports:
+      junit:
+        - "*/build/test-results/test/TEST-*.xml"
+
+upload-artifacts-mavenCentral:
+  stage: deploy
+  when: manual
+  only:
+    - tags
+  tags:
+    - java
+  script:
+    - ./gradlew install publishReleasePublicationToSonatypeRepository
+  dependencies: []
+

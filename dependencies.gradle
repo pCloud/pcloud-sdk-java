@@ -1,6 +1,6 @@
 ext {
     compileSdkVersion = 31
-    buildToolsVersion = '30.0.2'
+    buildToolsVersion = '30.0.3'
     minSdkVersion = 21
     targetSdkVersion = 30
     kotlin_version = '1.6.10'
@@ -10,7 +10,7 @@ ext {
     targetCompatibilityVersion = JavaVersion.VERSION_1_8
 
     dep = [
-            androidPlugin        : "com.android.tools.build:gradle:7.0.4",
+            androidPlugin        : "com.android.tools.build:gradle:7.1.1",
             androidMavenPlugin   : "com.github.dcendents:android-maven-gradle-plugin:2.1",
 
             kotlinCompiler       : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version",

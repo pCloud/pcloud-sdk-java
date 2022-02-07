@@ -24,17 +24,7 @@ if (project.hasProperty("android")) { // Android libraries
     }
 }
 
-tasks.register('javadocJar', Jar) {
-    if (project.hasProperty("android")) {
-        dependsOn "javadoc"
-        from javadoc.destinationDir
-    }
-    archiveClassifier.convention('javadoc')
-    archiveClassifier.set('javadoc')
-}
-
 artifacts {
-    archives javadocJar
     archives sourcesJar
 }
 
@@ -66,17 +56,8 @@ afterEvaluate {
 
                 groupId = getPublishProperty('groupId')
                 version = getPublishProperty('versionName')
-                if (project.plugins.findPlugin("com.android.library")) {
-                    javadoc.classpath += files(android.libraryVariants.collect { variant ->
-                        variant.javaCompile.classpath.files
-                    })
-                    from components.release
-                } else {
-                    from components.java
-                }
 
                 artifact sourcesJar
-                artifact javadocJar
 
                 pom {
                     name = getPublishProperty('libraryName')

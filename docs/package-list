@@ -3,6 +3,8 @@ $dokka.linkExtension:html
 
 module:android
 com.pcloud.sdk
+module:core-ktx
+com.pcloud.sdk
 module:java-core
 com.pcloud.sdk
 com.pcloud.sdk.internal

@@ -1,5 +1,3 @@
-import groovy.text.SimpleTemplateEngine
-
 apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.dokka'
 
@@ -25,42 +23,17 @@ sourceSets {
     }
 }
 
-task generateSources {
+import org.apache.tools.ant.filters.ReplaceTokens
 
-    def inputDir = file("$projectDir/src/main/java-templates")
-    File outputDir = file("$buildDir/generated/src/main/java")
-
-    println("Processing template files in $inputDir.absolutePath")
-
-    inputs.files(project.buildFile)
-    inputs.files(fileTree(inputDir))
-    inputs.files
-    outputs.dir outputDir
-
-    doFirst {
-        outputDir.exists() || outputDir.mkdirs()
-
-        def fileList = []
-        inputDir.eachFileRecurse (FileType.FILES) { file ->
-            fileList << file
-        }
-
-        def binding = ["project": project]
-        def templateEngine = new SimpleTemplateEngine()
-        for (File file : fileList){
-            println("Processing template file $file.absolutePath")
-            def relativeOutputPath = inputDir.toPath().relativize(file.toPath()).toString()
-            println("Relative path of template file $relativeOutputPath")
-            File outputFile = new File(outputDir, relativeOutputPath)
-            println("Writing to $outputFile.absolutePath")
-            outputFile.getParentFile().mkdirs()
-            outputFile.write(templateEngine.createTemplate(file).make(binding).toString(), "UTF-8")
-        }
-    }
+def generateSources = tasks.register("generateSources", Copy) {
+    from 'src/main/java-templates'
+    into layout.buildDirectory.dir('generated/src/main/java')
+    filter(ReplaceTokens, tokens: [version: project.version])
 }
 
-compileJava.dependsOn generateSources
-compileJava.source generateSources.outputs.files, sourceSets.main.java
+compileJava.dependsOn(generateSources)
+
+sourceSets.main.java.srcDirs += file('build/generated/src/main/java')
 
 ext {
     artifactId = 'java-core'

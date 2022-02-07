@@ -19,7 +19,7 @@ package com.pcloud.sdk.internal;
 
 public final class Version {
 
-    public static final String NAME = "$project.version";
+    public static final String NAME = "@version@";
 
     private Version(){ }
 }

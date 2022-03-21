@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Version 1.8.0 (21.03.2022)
+--------------------------
+
+- Start returning shared folders from `ApiClient.listFolder()` ([#33](https://github.com/pCloud/pcloud-sdk-java/issues/33))
+- Add properties to `RemoteEntry` and `RemoteFolder` for determining
+access permissions, ownership and entry shared status.
+
 Version 1.7.0 (02.02.2022)
 --------------------------
 
@@ -9,7 +16,7 @@ Version 1.7.0 (02.02.2022)
 - Update to the latest OkHttp (4.9.3)
 - Update to Kotlin 1.6.10
 
-###**BREAKING CHANGES**: 
+**BREAKING CHANGES**: 
 - `DataSource.contentLength()` can no longer return `-1L` as a valid value for cases where the data is not known beforehand. 
 Due to compatibility reasons pCloud's API endpoints do not accept HTTP requests with unknown content length, 
 thus making upload operations for such content largely slow & inefficient. 

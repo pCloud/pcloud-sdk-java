@@ -16,6 +16,11 @@
 
 package com.pcloud.sdk.internal;
 
+import static com.pcloud.sdk.internal.FileIdUtils.isFile;
+import static com.pcloud.sdk.internal.FileIdUtils.toFileId;
+import static com.pcloud.sdk.internal.FileIdUtils.toFolderId;
+import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -46,22 +51,7 @@ import com.pcloud.sdk.internal.networking.UserInfoResponse;
 import com.pcloud.sdk.internal.networking.serialization.ByteStringTypeAdapter;
 import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
 import com.pcloud.sdk.internal.networking.serialization.UnmodifiableListTypeFactory;
-import okhttp3.Cache;
-import okhttp3.ConnectionPool;
-import okhttp3.Dispatcher;
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okio.BufferedSink;
-import okio.BufferedSource;
-import okio.ByteString;
-import okio.Okio;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -81,10 +71,22 @@ import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
-import static com.pcloud.sdk.internal.FileIdUtils.isFile;
-import static com.pcloud.sdk.internal.FileIdUtils.toFileId;
-import static com.pcloud.sdk.internal.FileIdUtils.toFolderId;
-import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
+import okhttp3.Cache;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.ByteString;
+import okio.Okio;
 
 class RealApiClient implements ApiClient {
 
@@ -155,8 +157,7 @@ class RealApiClient implements ApiClient {
     public Call<RemoteFolder> listFolder(long folderId, boolean recursively) {
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
-                .addQueryParameter("folderid", String.valueOf(folderId))
-                .addQueryParameter("noshares", String.valueOf(1));
+                .addQueryParameter("folderid", String.valueOf(folderId));
         if (recursively) {
             urlBuilder.addEncodedQueryParameter("recursive", String.valueOf(1));
         }

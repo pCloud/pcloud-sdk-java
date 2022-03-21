@@ -17,12 +17,20 @@
 
 package com.pcloud.sdk.utils;
 
-import com.pcloud.sdk.*;
-import okio.BufferedSource;
+import com.pcloud.sdk.ApiError;
+import com.pcloud.sdk.DataSink;
+import com.pcloud.sdk.DownloadOptions;
+import com.pcloud.sdk.FileLink;
+import com.pcloud.sdk.ProgressListener;
+import com.pcloud.sdk.RemoteEntry;
+import com.pcloud.sdk.RemoteFile;
+import com.pcloud.sdk.RemoteFolder;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+
+import okio.BufferedSource;
 
 public class DummyFile implements RemoteFile {
 
@@ -102,6 +110,31 @@ public class DummyFile implements RemoteFile {
 
     @Override
     public boolean delete() throws IOException {
+        return false;
+    }
+
+    @Override
+    public boolean canRead() {
+        return true;
+    }
+
+    @Override
+    public boolean canModify() {
+        return true;
+    }
+
+    @Override
+    public boolean canDelete() {
+        return true;
+    }
+
+    @Override
+    public boolean isMine() {
+        return true;
+    }
+
+    @Override
+    public boolean isShared() {
         return false;
     }
 

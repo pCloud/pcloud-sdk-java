@@ -76,4 +76,6 @@ public interface RemoteFolder extends RemoteEntry {
      * @see ApiClient#deleteFolder(RemoteFolder, boolean)
      */
     boolean delete(boolean recursively) throws IOException;
+
+    boolean canCreate();
 }

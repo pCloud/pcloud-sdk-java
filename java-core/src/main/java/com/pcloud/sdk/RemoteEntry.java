@@ -91,6 +91,7 @@ public interface RemoteEntry {
      * @throws IllegalArgumentException on a null {@code toFolder} argument.
      * @throws IOException              on a network or API error.
      * @see ApiClient#copy(RemoteEntry, RemoteFolder)
+     * @see RemoteFolder#canCreate()
      */
     RemoteEntry copy(RemoteFolder toFolder) throws IOException;
 
@@ -118,6 +119,7 @@ public interface RemoteEntry {
      * @throws IllegalArgumentException on a null {@code toFolder} argument.
      * @throws IOException              on a network or API error.
      * @see ApiClient#move(RemoteEntry, RemoteFolder)
+     * @see #canModify()
      */
     RemoteEntry move(RemoteFolder toFolder) throws IOException;
 
@@ -129,6 +131,7 @@ public interface RemoteEntry {
      * @throws IllegalArgumentException on a null {@code newFilename} argument.
      * @throws IOException              on a network or API error.
      * @see ApiClient#rename(RemoteEntry, String)
+     * @see #canModify()
      */
     RemoteEntry rename(String newFilename) throws IOException;
 
@@ -139,6 +142,39 @@ public interface RemoteEntry {
      * @throws IllegalArgumentException on a null {@code file} argument.
      * @throws IOException              on a network or API error.
      * @see ApiClient#delete(RemoteEntry)
+     * @see #canDelete()
      */
     boolean delete() throws IOException;
+
+    /**
+     * @return {@code true} if the entry's content can be read by the current account, {@code false} otherwise
+     * @see #isMine()
+     * */
+    boolean canRead();
+
+    /**
+     * @return {@code true} if the entry's content can be modified by the current account, {@code false} otherwise
+     * @see #isMine()
+     * */
+    boolean canModify();
+
+    /**
+     * @return {@code true} if the entry can be deleted by the current account, {@code false} otherwise
+     * @see #isMine()
+     * */
+    boolean canDelete();
+
+    /**
+     * @return {@code true} if the entry is owned by the current account, {@code false} otherwise
+     * @see #canRead()
+     * @see #canModify()
+     * @see #canDelete()
+     * @see RemoteFolder#canCreate()
+     * */
+    boolean isMine();
+
+    /**
+     * @return {@code true} if the entry is shared with other accounts, {@code false} otherwise
+     * */
+    boolean isShared();
 }

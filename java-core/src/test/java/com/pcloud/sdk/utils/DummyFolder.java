@@ -107,6 +107,31 @@ public class DummyFolder implements RemoteFolder {
     }
 
     @Override
+    public boolean canRead() {
+        return true;
+    }
+
+    @Override
+    public boolean canModify() {
+        return true;
+    }
+
+    @Override
+    public boolean canDelete() {
+        return true;
+    }
+
+    @Override
+    public boolean isMine() {
+        return true;
+    }
+
+    @Override
+    public boolean isShared() {
+        return false;
+    }
+
+    @Override
     public long folderId() {
         return folderId;
     }
@@ -128,6 +153,11 @@ public class DummyFolder implements RemoteFolder {
 
     @Override
     public boolean delete(boolean recursively) throws IOException {
+        return false;
+    }
+
+    @Override
+    public boolean canCreate() {
         return false;
     }
 }

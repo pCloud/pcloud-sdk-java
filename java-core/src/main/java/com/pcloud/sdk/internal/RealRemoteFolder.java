@@ -18,7 +18,10 @@ package com.pcloud.sdk.internal;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.pcloud.sdk.*;
+import com.pcloud.sdk.ApiClient;
+import com.pcloud.sdk.ApiError;
+import com.pcloud.sdk.RemoteEntry;
+import com.pcloud.sdk.RemoteFolder;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -38,6 +41,10 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     @Expose
     @SerializedName("contents")
     private final List<RemoteEntry> children = UNKNOWN_CHILDREN;
+
+    @Expose
+    @SerializedName("cancreate ")
+    private boolean canCreate = true;
 
     RealRemoteFolder(ApiClient apiClient) {
         super(apiClient);
@@ -118,6 +125,11 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
     }
 
     @Override
+    public boolean canCreate() {
+        return isMine() || canCreate;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -126,8 +138,8 @@ public class RealRemoteFolder extends RealRemoteEntry implements RemoteFolder {
         RealRemoteFolder that = (RealRemoteFolder) o;
 
         if (!folderId.equals(that.folderId)) return false;
+        if (canCreate != that.canCreate) return false;
         return children.equals(that.children);
-
     }
 
     @Override

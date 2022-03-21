@@ -63,6 +63,24 @@ abstract class RealRemoteEntry implements RemoteEntry {
     @SerializedName("isfolder")
     private boolean isFolder;
 
+    @Expose
+    @SerializedName("isshared")
+    private boolean isShared;
+
+    @Expose
+    @SerializedName("ismine")
+    private boolean isMine;
+
+    @Expose
+    @SerializedName("canread")
+    private boolean canRead = true;
+    @Expose
+    @SerializedName("canmodify")
+    private boolean canModify = true;
+    @Expose
+    @SerializedName("candelete")
+    private boolean canDelete = true;
+
     RealRemoteEntry(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
@@ -121,6 +139,31 @@ abstract class RealRemoteEntry implements RemoteEntry {
         }
     }
 
+    @Override
+    public boolean canRead() {
+        return isMine || canRead;
+    }
+
+    @Override
+    public boolean canModify() {
+        return isMine || canModify;
+    }
+
+    @Override
+    public boolean canDelete() {
+        return isMine || canDelete;
+    }
+
+    @Override
+    public boolean isMine() {
+        return isMine;
+    }
+
+    @Override
+    public boolean isShared() {
+        return isShared;
+    }
+
     protected ApiClient ownerClient(){
         return apiClient;
     }
@@ -137,6 +180,12 @@ abstract class RealRemoteEntry implements RemoteEntry {
         if (!id.equals(that.id)) return false;
         if (!name.equals(that.name)) return false;
         if (!lastModified.equals(that.lastModified)) return false;
+        if (isMine != that.isMine) return false;
+        if (isShared != that.isShared) return false;
+        if (canRead != that.canRead) return false;
+        if (canModify != that.canModify) return false;
+        if (canDelete != that.canDelete) return false;
+
         return created.equals(that.created);
 
     }

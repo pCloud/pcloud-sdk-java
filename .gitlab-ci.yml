@@ -43,6 +43,6 @@ upload-artifacts-mavenCentral:
   tags:
     - java
   script:
-    - ./gradlew install publishReleasePublicationToSonatypeRepository
+    - ./gradlew publishToSonatype
   dependencies: []
 

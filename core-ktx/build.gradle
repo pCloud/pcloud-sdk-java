@@ -20,4 +20,4 @@ ext {
     artifactId = 'core-ktx'
 }
 
-apply from: '../publish-mavencentral.gradle'
+apply from: '../maven-publish.gradle'

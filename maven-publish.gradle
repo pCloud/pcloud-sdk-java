@@ -1,0 +1,107 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply from: rootProject.file('publishing.gradle')
+
+group = project.getPublishProperty('groupId')
+version = project.getPublishProperty('versionName')
+
+ext["signing.keyId"] = ''
+ext["signing.password"] = ''
+ext["signing.secretKeyRingFile"] = ''
+
+File secretPropsFile = project.rootProject.file('local.properties')
+if (secretPropsFile.exists()) {
+    Properties p = new Properties()
+    p.load(new FileInputStream(secretPropsFile))
+    p.each { name, value ->
+        ext[name] = value
+    }
+} else {
+    ext["signing.keyId"] = System.getenv('SIGNING_KEY_ID')
+    ext["signing.password"] = System.getenv('SIGNING_PASSWORD')
+    ext["signing.secretKeyRingFile"] = System.getenv('SIGNING_SECRET_KEY_RING_FILE')
+}
+
+def pomXml = {
+    resolveStrategy = Closure.DELEGATE_FIRST
+    name 'pcloud-sdk'
+    description "The official pCloud Java SDK for integration with pCloud's API"
+    url 'https://github.com/pCloud/pcloud-sdk-java'
+    licenses {
+        license {
+            name "The Apache License v2.0"
+            url 'https://github.com/pCloud/pcloud-sdk-java/LICENSE'
+        }
+    }
+    developers {
+        developer {
+            name 'pCloud AG'
+            email 'android@pcloud.com'
+            organization 'pCloud AG'
+            organizationUrl 'https://www.pcloud.com'
+        }
+    }
+
+    scm {
+        connection 'https://github.com/pCloud/pcloud-sdk-java.git'
+        developerConnection 'https://github.com/pCloud/pcloud-sdk-java.git'
+        url 'https://github.com/pCloud/pcloud-sdk-java'
+    }
+}
+
+applyForPlugin("java-library") {
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+}
+
+applyForPlugin("com.android.library") {
+    android {
+        publishing {
+            singleVariant("release") {
+                withSourcesJar()
+                withJavadocJar()
+            }
+        }
+    }
+}
+
+afterEvaluate {
+    applyForPlugin("com.android.library") {
+        publishing {
+            publications {
+                release(MavenPublication) {
+                    from components.release
+                    groupId group
+                    version getPublishProperty('versionName')
+
+                    pom.withXml {
+                        asNode().children().last() + pomXml
+                    }
+                }
+            }
+        }
+    }
+
+    applyForPlugin("java-library") {
+        publishing {
+            publications {
+                library(MavenPublication) {
+                    groupId group
+                    version getPublishProperty('versionName')
+                    from components.java
+
+                    pom.withXml {
+                        asNode().children().last() + pomXml
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+signing {
+    sign publishing.publications
+}

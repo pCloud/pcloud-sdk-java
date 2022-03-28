@@ -40,4 +40,4 @@ ext {
     artifactId = 'java-core'
 }
 
-apply from: '../publish-mavencentral.gradle'
+apply from: '../maven-publish.gradle'

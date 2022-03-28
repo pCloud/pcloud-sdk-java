@@ -10,7 +10,7 @@ ext {
     targetCompatibilityVersion = JavaVersion.VERSION_1_8
 
     dep = [
-            androidPlugin        : "com.android.tools.build:gradle:7.1.1",
+            androidPlugin        : "com.android.tools.build:gradle:7.1.2",
             androidMavenPlugin   : "com.github.dcendents:android-maven-gradle-plugin:2.1",
 
             kotlinCompiler       : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version",

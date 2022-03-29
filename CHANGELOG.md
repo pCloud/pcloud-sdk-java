@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 1.8.1 (29.03.2022)
+--------------------------
+
+- The artifacts for `1.8.0` were published on Maven Central with a missing file. No actual changes code changes
+apart from the version bump and updated publishing configuration.
+
 Version 1.8.0 (21.03.2022)
 --------------------------
 

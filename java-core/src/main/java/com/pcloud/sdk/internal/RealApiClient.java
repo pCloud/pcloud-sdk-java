@@ -55,7 +55,6 @@ import com.pcloud.sdk.internal.networking.serialization.UnmodifiableListTypeFact
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -482,10 +481,6 @@ class RealApiClient implements ApiClient {
 
         return newCall(request, response -> {
             try {
-                if (response.code() == 404) {
-                    throw new FileNotFoundException("The requested file cannot be found or the file link has expired.");
-                }
-
                 BufferedSource source = getAsRawBytes(response);
                 if (listener != null) {
                     ProgressListener realListener = listener;
@@ -520,7 +515,7 @@ class RealApiClient implements ApiClient {
                 .build();
         return newCall(newDownloadLinkRequest(file.fileId(), null, options), response -> {
             FileLink link = getAsFileLink(response);
-            return newDownloadCall(link);
+            return  newDownloadCall(link);
         });
     }
 

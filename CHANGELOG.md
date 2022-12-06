@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 1.9.0 (06.12.2022)
+--------------------------
+
+- Do not throw a `FileNotFoundException` on an encountered 404 HTTP error while attempting to stream the content of a generated file link, use the existing `APIHttpException`.
+
 Version 1.8.1 (29.03.2022)
 --------------------------
 

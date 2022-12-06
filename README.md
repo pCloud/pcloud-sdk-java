@@ -2,7 +2,7 @@
 
 The official pCloud SDK for Java & Android for integrating with [ pCloud's API][docs].
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.pcloud.sdk/java-core/1.8.1?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.pcloud.sdk%22)
+[![Maven Central](https://img.shields.io/maven-central/v/com.pcloud.sdk/java-core/1.9.0?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.pcloud.sdk%22)
 
 ## Requirements
 
@@ -53,15 +53,15 @@ Grab via Maven:
 <dependency>
   <groupId>com.pcloud.sdk</groupId>
   <artifactId>java-core</artifactId>
-  <version>1.8.1</version>
+  <version>1.9.0</version>
   <type>pom</type>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.pcloud.sdk:java-core:1.8.1'
+implementation 'com.pcloud.sdk:java-core:1.9.0'
 ```
- [![Maven Central](https://img.shields.io/maven-central/v/com.pcloud.sdk/java-core/1.8.1?label=Maven%20Central)](https://search.maven.org/artifact/com.pcloud.sdk/java-core/1.7.0/jar)
+ [![Maven Central](https://img.shields.io/maven-central/v/com.pcloud.sdk/java-core/1.9.0?label=Maven%20Central)](https://search.maven.org/artifact/com.pcloud.sdk/java-core/1.7.0/jar)
 
 #### Android
 
@@ -76,15 +76,15 @@ Grab via Maven:
 <dependency>
   <groupId>com.pcloud.sdk</groupId>
   <artifactId>android</artifactId>
-  <version>1.8.1</version>
+  <version>1.9.0</version>
   <type>pom</type>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.pcloud.sdk:android:1.8.1'
+implementation 'com.pcloud.sdk:android:1.9.0'
 ```
-[![Maven Central](https://img.shields.io/maven-central/v/com.pcloud.sdk/java-core/1.8.1?label=Maven%20Central)](https://search.maven.org/artifact/com.pcloud.sdk/android/1.7.0/jar)
+[![Maven Central](https://img.shields.io/maven-central/v/com.pcloud.sdk/java-core/1.9.0?label=Maven%20Central)](https://search.maven.org/artifact/com.pcloud.sdk/android/1.7.0/jar)
 
 
 ## Basics

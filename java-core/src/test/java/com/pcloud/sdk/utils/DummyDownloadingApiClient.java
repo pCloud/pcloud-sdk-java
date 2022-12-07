@@ -33,16 +33,18 @@ import com.pcloud.sdk.RemoteFile;
 import com.pcloud.sdk.RemoteFolder;
 import com.pcloud.sdk.UploadOptions;
 import com.pcloud.sdk.UserInfo;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Date;
+import java.util.concurrent.Executor;
+
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okio.BufferedSource;
 import okio.Okio;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Date;
-import java.util.concurrent.Executor;
 
 public class DummyDownloadingApiClient implements ApiClient {
 
@@ -266,11 +268,16 @@ public class DummyDownloadingApiClient implements ApiClient {
 
     @Override
     public Call<Void> download(FileLink fileLink, DataSink sink) {
-        return download(fileLink, sink, null);
+        return new DummyDownloadCall(sink, null);
     }
 
     @Override
-    public Call<Void> download(FileLink fileLink, final DataSink sink, final ProgressListener listener) {
+    public Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener) {
+        return new DummyDownloadCall(sink, listener);
+    }
+
+    @Override
+    public Call<Void> download(FileLink fileLink, URL linkVariant, DataSink sink, ProgressListener listener) {
         return new DummyDownloadCall(sink, listener);
     }
 
@@ -281,6 +288,11 @@ public class DummyDownloadingApiClient implements ApiClient {
 
     @Override
     public Call<BufferedSource> download(FileLink fileLink) {
+        return new DummyCall<>(createSource(data));
+    }
+
+    @Override
+    public Call<BufferedSource> download(FileLink fileLink, URL linkVariant) {
         return new DummyCall<>(createSource(data));
     }
 
@@ -475,18 +487,15 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     private class DummyDownloadLink extends DummyFileLink {
+
         @Override
-        public void download(DataSink sink) throws IOException {
+        public void download(DataSink sink) throws IOException, ApiError {
             this.download(sink, null);
         }
 
         @Override
-        public void download(DataSink sink, ProgressListener listener) throws IOException {
-            try {
-                DummyDownloadingApiClient.this.download(this, sink, listener).execute();
-            } catch (ApiError apiError) {
-                throw new IOException(apiError);
-            }
+        public void download(DataSink sink, ProgressListener listener) throws IOException, ApiError {
+            DummyDownloadingApiClient.this.download(this, sink, listener).execute();
         }
     }
 

@@ -17,20 +17,23 @@
 
 package com.pcloud.sdk;
 
-import com.pcloud.sdk.DataSink;
-import com.pcloud.sdk.ProgressListener;
-import com.pcloud.sdk.RemoteData;
-import com.pcloud.sdk.utils.DummyDataSink;
-import com.pcloud.sdk.utils.TestProgressListener;
-import okio.BufferedSource;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import com.pcloud.sdk.utils.DummyDataSink;
+import com.pcloud.sdk.utils.TestProgressListener;
+
+import org.junit.Test;
+
+import java.io.InputStream;
+
+import okio.BufferedSource;
 
 public abstract class BaseRemoteDataTest {
 
@@ -45,60 +48,47 @@ public abstract class BaseRemoteDataTest {
     }
 
     @Test
-    public void byteStream_Returns_NonNull_OrThrows() {
+    public void byteStream_Returns_NonNull_OrThrows() throws Exception {
         InputStream inputStream = null;
         try {
             inputStream = testInstance.byteStream();
             assertNotNull(inputStream);
-        } catch (IOException ignored) {
-
-        }finally {
+        } finally {
             closeQuietly(inputStream);
         }
     }
 
     @Test
-    public void source_Returns_NonNull_OrThrows() {
+    public void source_Returns_NonNull_OrThrows() throws Exception {
         BufferedSource source = null;
         try {
             source = testInstance.source();
             assertNotNull(source);
-        } catch (IOException ignored) {
-
-        }finally {
+        } finally {
             closeQuietly(source);
         }
     }
 
     @Test
-    public void download_WritesToSink_OrThrows() {
-        try {
-            DataSink sink = spy(new DummyDataSink());
-            testInstance.download(sink);
-            verify(sink, times(1)).readAll(any(BufferedSource.class));
-        } catch (IOException ignored) {
-        }
+    public void download_WritesToSink_OrThrows() throws Exception {
+        DataSink sink = spy(new DummyDataSink());
+        testInstance.download(sink);
+        verify(sink, times(1)).readAll(any(BufferedSource.class));
     }
 
     @Test
-    public void download_WritesToSink_OrThrows2() {
+    public void download_WritesToSink_OrThrows2() throws Exception {
         ProgressListener listener = new TestProgressListener();
-        try {
-            DataSink sink = spy(new DummyDataSink());
-            testInstance.download(sink, listener);
-            verify(sink, times(1)).readAll(any(BufferedSource.class));
-        } catch (IOException ignored) {
-        }
+        DataSink sink = spy(new DummyDataSink());
+        testInstance.download(sink, listener);
+        verify(sink, times(1)).readAll(any(BufferedSource.class));
     }
 
     @Test
-    public void download_Calls_ProgressListener() {
+    public void download_Calls_ProgressListener() throws Exception {
         ProgressListener listener = spy(new TestProgressListener());
-        try {
-            DataSink sink = spy(new DummyDataSink());
-            testInstance.download(sink, listener);
-            verify(listener, atLeastOnce()).onProgress(anyLong(), anyLong());
-        } catch (IOException ignored) {
-        }
+        DataSink sink = spy(new DummyDataSink());
+        testInstance.download(sink, listener);
+        verify(listener, atLeastOnce()).onProgress(anyLong(), anyLong());
     }
 }

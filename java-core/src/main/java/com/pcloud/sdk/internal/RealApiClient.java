@@ -20,6 +20,8 @@ import static com.pcloud.sdk.internal.FileIdUtils.isFile;
 import static com.pcloud.sdk.internal.FileIdUtils.toFileId;
 import static com.pcloud.sdk.internal.FileIdUtils.toFolderId;
 import static com.pcloud.sdk.internal.IOUtils.closeQuietly;
+import static com.pcloud.sdk.internal.RealFileLink.requireLinkNotNull;
+import static com.pcloud.sdk.internal.RealFileLink.requireUrlFromLink;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -89,7 +91,7 @@ import okio.Okio;
 
 class RealApiClient implements ApiClient {
 
-    private static final String MULTIPART_BOUNDARY = "----pCloud-SDK-"+ Version.NAME+"-"+ UUID.randomUUID() + "----";
+    private static final String MULTIPART_BOUNDARY = "----pCloud-SDK-" + Version.NAME + "-" + UUID.randomUUID() + "----";
 
     private final long progressCallbackThresholdBytes;
     private final Authenticator authenticator;
@@ -298,7 +300,8 @@ class RealApiClient implements ApiClient {
             @Override
             public long contentLength() {
                 long contentLength = data.contentLength();
-                if (contentLength < 0) throw new IllegalArgumentException("Content length must be >= 0.");
+                if (contentLength < 0)
+                    throw new IllegalArgumentException("Content length must be >= 0.");
                 return contentLength;
             }
         };
@@ -413,10 +416,7 @@ class RealApiClient implements ApiClient {
         Request request = newDownloadLinkRequest(null, path, options);
 
         return newCall(request, this::getAsFileLink);
-
     }
-
-
 
     private FileLink getAsFileLink(Response response) throws IOException, ApiError {
         GetLinkResponse body = getAsApiResponse(response, GetLinkResponse.class);
@@ -464,20 +464,29 @@ class RealApiClient implements ApiClient {
 
     @Override
     public Call<Void> download(FileLink fileLink, DataSink sink) {
-        return download(fileLink, sink, null);
+        requireLinkNotNull(fileLink);
+        return download(fileLink, fileLink.bestUrl(), sink, null);
     }
 
     @Override
-    public Call<Void> download(FileLink fileLink, final DataSink sink, final ProgressListener listener) {
+    public Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener) {
+        requireLinkNotNull(fileLink);
+        return download(fileLink, fileLink.bestUrl(), sink, listener);
+    }
+
+    @Override
+    public Call<Void> download(FileLink fileLink, URL linkVariant, final DataSink sink, final ProgressListener listener) {
         if (fileLink == null) {
             throw new IllegalArgumentException("FileLink argument cannot be null.");
         }
+
+        requireUrlFromLink(fileLink, linkVariant);
 
         if (sink == null) {
             throw new IllegalArgumentException("DataSink argument cannot be null.");
         }
 
-        Request request = newDownloadRequest(fileLink);
+        Request request = newDownloadRequest(linkVariant);
 
         return newCall(request, response -> {
             try {
@@ -515,17 +524,22 @@ class RealApiClient implements ApiClient {
                 .build();
         return newCall(newDownloadLinkRequest(file.fileId(), null, options), response -> {
             FileLink link = getAsFileLink(response);
-            return  newDownloadCall(link);
+            return newDownloadCall(link.bestUrl());
         });
     }
 
     @Override
     public Call<BufferedSource> download(FileLink fileLink) {
-        if (fileLink == null) {
-            throw new IllegalArgumentException("FileLink argument cannot be null.");
-        }
+        requireLinkNotNull(fileLink);
+        return download(fileLink, fileLink.bestUrl());
+    }
 
-        return newCall(newDownloadRequest(fileLink), this::getAsRawBytes);
+    @Override
+    public Call<BufferedSource> download(FileLink fileLink, URL linkVariant) {
+        requireLinkNotNull(fileLink);
+        requireUrlFromLink(fileLink, linkVariant);
+
+        return newCall(newDownloadRequest(linkVariant), this::getAsRawBytes);
     }
 
     @Override
@@ -1189,15 +1203,15 @@ class RealApiClient implements ApiClient {
         }
     }
 
-    private Request newDownloadRequest(FileLink link) {
+    private Request newDownloadRequest(URL url) {
         return new Request.Builder()
-                .url(link.bestUrl())
+                .url(url)
                 .get()
                 .build();
     }
 
-    private BufferedSource newDownloadCall(FileLink fileLink) throws IOException {
-        return newDownloadCall(newDownloadRequest(fileLink));
+    private BufferedSource newDownloadCall(URL url) throws IOException {
+        return newDownloadCall(newDownloadRequest(url));
     }
 
     private BufferedSource newDownloadCall(Request request) throws IOException {
@@ -1238,5 +1252,4 @@ class RealApiClient implements ApiClient {
             }
         }
     }
-
 }

@@ -17,10 +17,10 @@
 
 package com.pcloud.sdk;
 
-import okio.BufferedSource;
-
 import java.io.IOException;
 import java.io.InputStream;
+
+import okio.BufferedSource;
 
 /**
  * A data container storing a pCloud account's file entry data.
@@ -43,7 +43,7 @@ public interface RemoteData {
      * @throws IOException on a network or API error.
      * @see #source()
      */
-    InputStream byteStream() throws IOException;
+    InputStream byteStream() throws IOException, ApiError;
 
     /**
      * Open an {@link BufferedSource} to the resource.
@@ -60,7 +60,7 @@ public interface RemoteData {
      * @return an {@link BufferedSource} to the contents of the resource. Cannot be null.
      * @throws IOException on a network, IO or API error.
      */
-    BufferedSource source() throws IOException;
+    BufferedSource source() throws IOException, ApiError;
 
     /**
      * Download the contained data to a {@link DataSink}
@@ -76,7 +76,7 @@ public interface RemoteData {
      * @throws IOException              on a network, IO or API error.
      * @throws IllegalArgumentException on a null {@code sink} argument.
      */
-    void download(DataSink sink, ProgressListener listener) throws IOException;
+    void download(DataSink sink, ProgressListener listener) throws IOException, ApiError;
 
     /**
      * Download the contained data to a {@link DataSink}
@@ -89,5 +89,5 @@ public interface RemoteData {
      * @throws IllegalArgumentException on a null {@code sink} argument.
      * @see #download(DataSink, ProgressListener)
      */
-    void download(DataSink sink) throws IOException;
+    void download(DataSink sink) throws IOException, ApiError;
 }

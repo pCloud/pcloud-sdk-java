@@ -17,15 +17,16 @@
 
 package com.pcloud.sdk;
 
+import java.net.URL;
+import java.util.Date;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okio.BufferedSource;
-
-import java.util.Date;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The general interface that exposes pCloud API's methods.
@@ -95,7 +96,7 @@ public interface ApiClient {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/folder/listfolder.html" target="_blank">documentation page</a>.
      *
-     * @param path    target folder path
+     * @param path        target folder path
      * @param recursively if true, a full folder tree will be returned, otherwise the resulting {@linkplain RemoteFolder folder} will contain only its direct children
      * @return {@link Call} resulting in a {@link RemoteFolder} instance holding the metadata for the requested fodler id.
      * @throws IllegalArgumentException on a null or empty {@code path} argument.
@@ -722,7 +723,8 @@ public interface ApiClient {
     /**
      * Download a {@link FileLink} to a specified destination.
      * <p>
-     * Same as calling {@link #download(FileLink, DataSink, ProgressListener)} with a null {@code listener}.
+     * Same as calling {@link #download(FileLink, DataSink, ProgressListener)} with a null {@code listener}
+     * and {@link FileLink#bestUrl()} for the {@code linkVariant} parameter.
      *
      * @param fileLink the file link to be downloaded. Must not be null.
      * @param sink     the sink that will receive the data. Must not be null.
@@ -734,6 +736,24 @@ public interface ApiClient {
      * @see FileLink
      */
     Call<Void> download(FileLink fileLink, DataSink sink);
+
+    /**
+     * Download a {@link FileLink} to a specified destination.
+     * <p>
+     * Same as calling {@link #download(FileLink, URL, DataSink, ProgressListener)} with
+     * * {@link FileLink#bestUrl()} for the {@code linkVariant} parameter.
+     *
+     * @param fileLink the file link to be downloaded. Must not be null.
+     * @param sink     the sink that will receive the data. Must not be null.
+     * @param listener an optional listener that will get notified on progress. If null, no progress will be reported.
+     * @return a void {@link Call} which will return on success, or report an error otherwise.
+     * @throws IllegalArgumentException on a null {@code fileLink} argument.
+     * @throws IllegalArgumentException on a null {@code sink} argument.
+     * @see DataSink
+     * @see ProgressListener
+     * @see FileLink
+     */
+    Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener);
 
     /**
      * Download a {@link FileLink} to a specified destination.
@@ -752,9 +772,10 @@ public interface ApiClient {
      * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank"> documentation page</a>
      * for details on any {@link ApiError} errors.
      *
-     * @param fileLink the file link to be downloaded. Must not be null.
-     * @param sink     the sink that will receive the data. Must not be null.
-     * @param listener an optional listener that will get notified on progress. If null, no progress will be reported.
+     * @param fileLink    the file link to be downloaded. Must not be null.
+     * @param linkVariant the URL variant from the provided link to be used for downloading.
+     * @param sink        the sink that will receive the data. Must not be null.
+     * @param listener    an optional listener that will get notified on progress. If null, no progress will be reported.
      * @return a void {@link Call} which will return on success, or report an error otherwise.
      * @throws IllegalArgumentException on a null {@code fileLink} argument.
      * @throws IllegalArgumentException on a null {@code sink} argument.
@@ -762,7 +783,7 @@ public interface ApiClient {
      * @see ProgressListener
      * @see FileLink
      */
-    Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener);
+    Call<Void> download(FileLink fileLink, URL linkVariant, DataSink sink, ProgressListener listener);
 
     /**
      * Get the content of a specified remote file.
@@ -789,6 +810,20 @@ public interface ApiClient {
     /**
      * Get the content of a specified file link.
      * <p>
+     * Same as calling {@link #download(FileLink, URL)} with
+     * {@link FileLink#bestUrl()} for the {@code linkVariant} parameter.
+     *
+     * @param fileLink the file link to be downloaded. Must not be null.
+     * @return {@link Call} which results in a bytes source
+     * @throws IllegalArgumentException on a null {@code fileLink} argument.
+     */
+    Call<BufferedSource> download(FileLink fileLink);
+
+
+
+    /**
+     * Get the content of a specified file link.
+     * <p>
      * Upon success, this call will return a bytes source of the file that
      * the provided {@code fileLink} object was created for.
      * <p>
@@ -799,11 +834,12 @@ public interface ApiClient {
      * or resource leaks will occur.
      * </h3>
      *
-     * @param fileLink the file link to be downloaded. Must not be null.
+     * @param fileLink    the file link to be downloaded. Must not be null.
+     * @param linkVariant the URL variant from the provided link to be used for downloading.
      * @return {@link Call} which results in a bytes source
      * @throws IllegalArgumentException on a null {@code fileLink} argument.
      */
-    Call<BufferedSource> download(FileLink fileLink);
+    Call<BufferedSource> download(FileLink fileLink, URL linkVariant);
 
     /**
      * Copy a specified file.
@@ -1107,8 +1143,8 @@ public interface ApiClient {
      * <p>
      * For more information, see the related <a href="https://docs.pcloud.com/methods/file/renamefile.html" target="_blank">documentation page</a>.
      *
-     * @param path     The path of the file to be moved.
-     * @param toPath   The path of the folder where the file will be moved.
+     * @param path   The path of the file to be moved.
+     * @param toPath The path of the folder where the file will be moved.
      * @return {@link Call} resulting in the metadata of the moved file
      * @throws IllegalArgumentException on a null or empty {@code path} argument.
      * @throws IllegalArgumentException on a null or empty {@code toPath} argument.

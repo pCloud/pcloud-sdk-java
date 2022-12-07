@@ -17,10 +17,10 @@
 
 package com.pcloud.sdk.utils;
 
+import com.pcloud.sdk.ApiError;
 import com.pcloud.sdk.DataSink;
 import com.pcloud.sdk.FileLink;
 import com.pcloud.sdk.ProgressListener;
-import okio.BufferedSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import okio.BufferedSource;
 
 public class DummyFileLink implements FileLink {
 
@@ -68,17 +70,32 @@ public class DummyFileLink implements FileLink {
     }
 
     @Override
+    public InputStream byteStream(URL linkVariant) throws IOException, ApiError {
+        return null;
+    }
+
+    @Override
     public BufferedSource source() throws IOException {
         return null;
     }
 
     @Override
-    public void download(DataSink sink, ProgressListener listener) throws IOException {
+    public BufferedSource source(URL linkVariant) throws IOException, ApiError {
+        return null;
+    }
+
+    @Override
+    public void download(DataSink sink, ProgressListener listener) throws IOException,ApiError {
 
     }
 
     @Override
-    public void download(DataSink sink) throws IOException {
+    public void download(DataSink sink) throws IOException,ApiError {
+
+    }
+
+    @Override
+    public void download(URL linkVariant, DataSink sink, ProgressListener listener) throws IOException, ApiError {
 
     }
 }

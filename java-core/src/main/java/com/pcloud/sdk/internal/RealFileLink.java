@@ -16,8 +16,12 @@
 
 package com.pcloud.sdk.internal;
 
-import com.pcloud.sdk.*;
-import okio.BufferedSource;
+import com.pcloud.sdk.ApiClient;
+import com.pcloud.sdk.ApiError;
+import com.pcloud.sdk.Call;
+import com.pcloud.sdk.DataSink;
+import com.pcloud.sdk.FileLink;
+import com.pcloud.sdk.ProgressListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +30,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import okio.BufferedSource;
 
 class RealFileLink implements FileLink {
 
@@ -52,12 +58,23 @@ class RealFileLink implements FileLink {
     }
 
     @Override
-    public InputStream byteStream() throws IOException {
-        return source().inputStream();
+    public InputStream byteStream() throws IOException, ApiError {
+        return source(bestUrl()).inputStream();
     }
 
     @Override
-    public BufferedSource source() throws IOException {
+    public InputStream byteStream(URL linkVariant) throws IOException, ApiError {
+        return source(linkVariant).inputStream();
+    }
+
+    @Override
+    public BufferedSource source() throws IOException, ApiError {
+        return source(bestUrl());
+    }
+
+    @Override
+    public BufferedSource source(URL linkVariant) throws IOException, ApiError {
+        requireUrlFromLink(this, linkVariant);
         boolean success = false;
         Call<BufferedSource> call = apiClient.download(this);
         try {
@@ -74,17 +91,19 @@ class RealFileLink implements FileLink {
     }
 
     @Override
-    public void download(DataSink sink, ProgressListener listener) throws IOException {
-        try {
-            apiClient.download(this, sink, listener).execute();
-        } catch (ApiError apiError) {
-            throw new IOException("API error occurred while trying to download link.", apiError);
-        }
+    public void download(DataSink sink, ProgressListener listener) throws IOException, ApiError {
+        apiClient.download(this, sink, listener).execute();
     }
 
     @Override
-    public void download(DataSink sink) throws IOException {
-        download(sink, null);
+    public void download(URL linkVariant, DataSink sink, ProgressListener listener) throws IOException, ApiError {
+        requireUrlFromLink(this, linkVariant);
+        apiClient.download(this, linkVariant, sink, listener).execute();
+    }
+
+    @Override
+    public void download(DataSink sink) throws IOException, ApiError {
+        apiClient.download(this, bestUrl(), sink, null).execute();
     }
 
     @Override
@@ -109,5 +128,17 @@ class RealFileLink implements FileLink {
     @Override
     public String toString() {
         return String.format(Locale.US, "%s | Valid until:%s", bestUrl(), expirationDate);
+    }
+
+    static void requireLinkNotNull(FileLink fileLink) {
+        if (fileLink == null) {
+            throw new IllegalArgumentException("FileLink argument cannot be null.");
+        }
+    }
+
+    static void requireUrlFromLink(FileLink fileLink, URL linkVariant) {
+        if (!fileLink.urls().contains(linkVariant)) {
+            throw new IllegalArgumentException("Provided url must be one of the variants in the provided file link.");
+        }
     }
 }

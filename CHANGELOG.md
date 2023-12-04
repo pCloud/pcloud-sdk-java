@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 1.9.1 (04.12.2023)
+--------------------------
+
+- Start returning shared folders from `ApiClient.listFolder(String)` and `ApiClient.loadFolder()` methods
+
+
 Version 1.9.0 (06.12.2022)
 --------------------------
 

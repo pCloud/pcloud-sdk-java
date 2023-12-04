@@ -181,8 +181,7 @@ class RealApiClient implements ApiClient {
         requireValidPath(path);
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
-                .addEncodedQueryParameter("path", path)
-                .addQueryParameter("noshares", String.valueOf(1));
+                .addEncodedQueryParameter("path", path);
         if (recursively) {
             urlBuilder.addEncodedQueryParameter("recursive", String.valueOf(1));
         }
@@ -721,7 +720,6 @@ class RealApiClient implements ApiClient {
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
                 .addQueryParameter("folderid", String.valueOf(folderId))
-                .addQueryParameter("noshares", String.valueOf(1))
                 .addQueryParameter("nofiles", String.valueOf(1));
 
 
@@ -739,7 +737,6 @@ class RealApiClient implements ApiClient {
         HttpUrl.Builder urlBuilder = apiHost.newBuilder()
                 .addPathSegment("listfolder")
                 .addQueryParameter("path", path)
-                .addQueryParameter("noshares", String.valueOf(1))
                 .addQueryParameter("nofiles", String.valueOf(1));
 
         Request request = newRequest()

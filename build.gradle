@@ -40,6 +40,10 @@ allprojects {
             }
         }
     }
+
+    tasks.withType(Javadoc).configureEach {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
 }
 
 subprojects {

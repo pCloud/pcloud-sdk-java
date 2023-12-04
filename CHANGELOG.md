@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Version 1.9.1 (04.12.2023)
+--------------------------
+
+- Start returning shared folders from `ApiClient.listFolder(String)` and `ApiClient.loadFolder()` methods.
+- Add the option to select from the download URL variants provided by a `FileLink` when using the `ApiClient.download()`
+  methods that accept a `FileLink`.
+- All methods in `RemoteData` will now also throw `ApiError` which was previously wrapped in an `IOException`.
+- Add additional methods in `FileLink` that allow starting a download by specifying the download URL variant to be used.
+
+
 Version 1.9.0 (06.12.2022)
 --------------------------
 

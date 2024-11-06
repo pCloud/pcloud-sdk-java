@@ -22,6 +22,8 @@ import com.pcloud.sdk.DataSink;
 import com.pcloud.sdk.FileLink;
 import com.pcloud.sdk.ProgressListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -62,6 +64,12 @@ public class DummyFileLink implements FileLink {
     @Override
     public URL bestUrl() {
         return url;
+    }
+
+    @NotNull
+    @Override
+    public String hash() {
+        return "12345";
     }
 
     @Override

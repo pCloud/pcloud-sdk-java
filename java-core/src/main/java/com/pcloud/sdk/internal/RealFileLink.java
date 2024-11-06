@@ -19,9 +19,12 @@ package com.pcloud.sdk.internal;
 import com.pcloud.sdk.ApiClient;
 import com.pcloud.sdk.ApiError;
 import com.pcloud.sdk.Call;
+import com.pcloud.sdk.ContentLink;
 import com.pcloud.sdk.DataSink;
 import com.pcloud.sdk.FileLink;
 import com.pcloud.sdk.ProgressListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,112 +36,34 @@ import java.util.Locale;
 
 import okio.BufferedSource;
 
-class RealFileLink implements FileLink {
+class RealFileLink extends RealContentLink implements FileLink {
 
-    private final ApiClient apiClient;
-    private final Date expirationDate;
-    private final List<URL> links;
+    private final String hash;
 
-    RealFileLink(ApiClient apiClient, Date expirationDate, List<URL> links) {
-        this.apiClient = apiClient;
-        this.expirationDate = expirationDate;
-        this.links = Collections.unmodifiableList(links);
+    RealFileLink(ApiClient apiClient, Date expirationDate, List<URL> links, String hash) {
+        super(apiClient, expirationDate, links);
+        this.hash = hash;
     }
 
-    public Date expirationDate() {
-        return expirationDate;
-    }
-
-    public List<URL> urls() {
-        return links;
-    }
-
-    public URL bestUrl(){
-        return links.get(0);
+    @NotNull
+    @Override
+    public String hash() {
+        return hash;
     }
 
     @Override
-    public InputStream byteStream() throws IOException, ApiError {
-        return source(bestUrl()).inputStream();
-    }
-
-    @Override
-    public InputStream byteStream(URL linkVariant) throws IOException, ApiError {
-        return source(linkVariant).inputStream();
-    }
-
-    @Override
-    public BufferedSource source() throws IOException, ApiError {
-        return source(bestUrl());
-    }
-
-    @Override
-    public BufferedSource source(URL linkVariant) throws IOException, ApiError {
-        requireUrlFromLink(this, linkVariant);
-        boolean success = false;
-        Call<BufferedSource> call = apiClient.download(this);
-        try {
-            BufferedSource source = call.execute();
-            success = true;
-            return source;
-        } catch (ApiError apiError) {
-            throw new IOException("API error occurred while trying to read from download link.", apiError);
-        } finally {
-            if (!success) {
-                call.cancel();
-            }
-        }
-    }
-
-    @Override
-    public void download(DataSink sink, ProgressListener listener) throws IOException, ApiError {
-        apiClient.download(this, sink, listener).execute();
-    }
-
-    @Override
-    public void download(URL linkVariant, DataSink sink, ProgressListener listener) throws IOException, ApiError {
-        requireUrlFromLink(this, linkVariant);
-        apiClient.download(this, linkVariant, sink, listener).execute();
-    }
-
-    @Override
-    public void download(DataSink sink) throws IOException, ApiError {
-        apiClient.download(this, bestUrl(), sink, null).execute();
-    }
-
-    @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RealFileLink that = (RealFileLink) o;
-
-        if (!expirationDate.equals(that.expirationDate)) return false;
-        return links.equals(that.links);
-
+        if (!(o instanceof RealFileLink )) return false;
+        final RealFileLink that = (RealFileLink)o;
+        return expirationDate().equals(that.expirationDate()) && urls().equals(that.urls()) && hash.equals(that.hash);
     }
 
     @Override
     public int hashCode() {
-        int result = expirationDate.hashCode();
-        result = 31 * result + links.hashCode();
+        int result = expirationDate().hashCode();
+        result = 31 * result + urls().hashCode();
+        result = 31 * result + hash.hashCode();
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return String.format(Locale.US, "%s | Valid until:%s", bestUrl(), expirationDate);
-    }
-
-    static void requireLinkNotNull(FileLink fileLink) {
-        if (fileLink == null) {
-            throw new IllegalArgumentException("FileLink argument cannot be null.");
-        }
-    }
-
-    static void requireUrlFromLink(FileLink fileLink, URL linkVariant) {
-        if (!fileLink.urls().contains(linkVariant)) {
-            throw new IllegalArgumentException("Provided url must be one of the variants in the provided file link.");
-        }
     }
 }

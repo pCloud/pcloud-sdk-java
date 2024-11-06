@@ -44,6 +44,10 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     @SerializedName("hash")
     private String hash;
 
+    @Expose
+    @SerializedName("thumb")
+    private Boolean hasThumbnail;
+
     RealRemoteFile(ApiClient apiClient) {
         super(apiClient);
     }
@@ -66,6 +70,11 @@ class RealRemoteFile extends RealRemoteEntry implements RemoteFile {
     @Override
     public String hash() {
         return hash;
+    }
+
+    @Override
+    public boolean hasThumbnail() {
+        return hasThumbnail;
     }
 
     @Override

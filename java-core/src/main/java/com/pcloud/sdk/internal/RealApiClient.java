@@ -32,6 +32,7 @@ import com.pcloud.sdk.ApiError;
 import com.pcloud.sdk.Authenticator;
 import com.pcloud.sdk.Call;
 import com.pcloud.sdk.Checksums;
+import com.pcloud.sdk.ContentLink;
 import com.pcloud.sdk.DataSink;
 import com.pcloud.sdk.DataSource;
 import com.pcloud.sdk.DownloadOptions;
@@ -40,18 +41,21 @@ import com.pcloud.sdk.ProgressListener;
 import com.pcloud.sdk.RemoteEntry;
 import com.pcloud.sdk.RemoteFile;
 import com.pcloud.sdk.RemoteFolder;
+import com.pcloud.sdk.Resolution;
 import com.pcloud.sdk.UploadOptions;
 import com.pcloud.sdk.UserInfo;
 import com.pcloud.sdk.internal.networking.APIHttpException;
 import com.pcloud.sdk.internal.networking.ApiResponse;
 import com.pcloud.sdk.internal.networking.ChecksumsResponse;
+import com.pcloud.sdk.internal.networking.ContentLinkResponse;
+import com.pcloud.sdk.internal.networking.GetFileLinkResponse;
 import com.pcloud.sdk.internal.networking.GetFileResponse;
 import com.pcloud.sdk.internal.networking.GetFolderResponse;
-import com.pcloud.sdk.internal.networking.GetLinkResponse;
 import com.pcloud.sdk.internal.networking.UploadFilesResponse;
 import com.pcloud.sdk.internal.networking.UserInfoResponse;
 import com.pcloud.sdk.internal.networking.serialization.ByteStringTypeAdapter;
 import com.pcloud.sdk.internal.networking.serialization.DateTypeAdapter;
+import com.pcloud.sdk.internal.networking.serialization.ResolutionDeserializer;
 import com.pcloud.sdk.internal.networking.serialization.UnmodifiableListTypeFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +63,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -123,6 +128,7 @@ class RealApiClient implements ApiClient {
             httpClientBuilder.connectionPool(builder.connectionPool());
         }
 
+        //noinspection resource
         if (builder.cache() != null) {
             httpClientBuilder.cache(builder.cache());
         }
@@ -145,6 +151,7 @@ class RealApiClient implements ApiClient {
                 .registerTypeAdapter(RealRemoteFile.class, new RealRemoteFile.InstanceCreator(this))
                 .registerTypeAdapter(RealRemoteFolder.class, new RealRemoteFolder.InstanceCreator(this))
                 .registerTypeAdapter(ByteString.class, new ByteStringTypeAdapter())
+                .registerTypeAdapter(Resolution.class, ResolutionDeserializer.INSTANCE)
                 .create();
         this.apiHost = builder.apiHost();
     }
@@ -402,7 +409,6 @@ class RealApiClient implements ApiClient {
         Request request = newDownloadLinkRequest(fileId, null, options);
 
         return newCall(request, this::getAsFileLink);
-
     }
 
     @Override
@@ -417,14 +423,26 @@ class RealApiClient implements ApiClient {
         return newCall(request, this::getAsFileLink);
     }
 
-    private FileLink getAsFileLink(Response response) throws IOException, ApiError {
-        GetLinkResponse body = getAsApiResponse(response, GetLinkResponse.class);
-        List<URL> downloadUrls = new ArrayList<>(body.getHosts().size());
-        for (String host : body.getHosts()) {
-            downloadUrls.add(new URL("https", host, body.getPath()));
-        }
+    private ContentLink getAsThumbnailLink(Response response) throws IOException, ApiError {
+        ContentLinkResponse body = getAsApiResponse(response, ContentLinkResponse.class);
+        List<URL> downloadUrls = buildUrlsList(body.getHosts(), body.getPath());
 
-        return new RealFileLink(RealApiClient.this, body.getExpires(), downloadUrls);
+        return new RealContentLink(RealApiClient.this, body.getExpires(), downloadUrls);
+    }
+
+    private FileLink getAsFileLink(Response response) throws IOException, ApiError {
+        GetFileLinkResponse body = getAsApiResponse(response, GetFileLinkResponse.class);
+        List<URL> downloadUrls = buildUrlsList(body.getHosts(), body.getPath());
+
+        return new RealFileLink(RealApiClient.this, body.getExpires(), downloadUrls, body.getHash());
+    }
+
+    private static List<URL> buildUrlsList(List<String> body, String body1) throws MalformedURLException {
+        List<URL> downloadUrls = new ArrayList<>(body.size());
+        for (String host : body) {
+            downloadUrls.add(new URL("https", host, body1));
+        }
+        return downloadUrls;
     }
 
     private Request newDownloadLinkRequest(Long fileId, String path, DownloadOptions options) {
@@ -461,20 +479,52 @@ class RealApiClient implements ApiClient {
                 .build();
     }
 
+    private Request newThumbnailRequest(Long fileId, Resolution size, boolean crop) {
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder().
+                addPathSegment("getthumb");
+
+        addThumbParameters(urlBuilder, fileId, size, crop);
+
+        return new Request.Builder()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+    }
+
+    private Request newThumbnailLinkRequest(Long fileId, Resolution size, boolean crop) {
+        HttpUrl.Builder urlBuilder = apiHost.newBuilder().
+                addPathSegment("getthumblink");
+
+        addThumbParameters(urlBuilder, fileId, size, crop);
+
+        return new Request.Builder()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+    }
+
+    private static void addThumbParameters(HttpUrl.Builder urlBuilder, Long fileId, Resolution size, boolean crop) {
+        urlBuilder.addQueryParameter("fileid", String.valueOf(fileId));
+        urlBuilder.addQueryParameter("size", String.format(Locale.US, "%dx%d", size.getWidth(), size.getHeight()));
+        if (crop) {
+            urlBuilder.addQueryParameter("crop", String.valueOf(1));
+        }
+    }
+
     @Override
-    public Call<Void> download(FileLink fileLink, DataSink sink) {
+    public Call<Void> download(ContentLink fileLink, DataSink sink) {
         requireLinkNotNull(fileLink);
         return download(fileLink, fileLink.bestUrl(), sink, null);
     }
 
     @Override
-    public Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener) {
+    public Call<Void> download(ContentLink fileLink, DataSink sink, ProgressListener listener) {
         requireLinkNotNull(fileLink);
         return download(fileLink, fileLink.bestUrl(), sink, listener);
     }
 
     @Override
-    public Call<Void> download(FileLink fileLink, URL linkVariant, final DataSink sink, final ProgressListener listener) {
+    public Call<Void> download(ContentLink fileLink, URL linkVariant, final DataSink sink, final ProgressListener listener) {
         if (fileLink == null) {
             throw new IllegalArgumentException("FileLink argument cannot be null.");
         }
@@ -528,13 +578,13 @@ class RealApiClient implements ApiClient {
     }
 
     @Override
-    public Call<BufferedSource> download(FileLink fileLink) {
+    public Call<BufferedSource> download(ContentLink fileLink) {
         requireLinkNotNull(fileLink);
         return download(fileLink, fileLink.bestUrl());
     }
 
     @Override
-    public Call<BufferedSource> download(FileLink fileLink, URL linkVariant) {
+    public Call<BufferedSource> download(ContentLink fileLink, URL linkVariant) {
         requireLinkNotNull(fileLink);
         requireUrlFromLink(fileLink, linkVariant);
 
@@ -1092,6 +1142,30 @@ class RealApiClient implements ApiClient {
                 .get().build();
 
         return newCall(request, response -> getAsApiResponse(response, ChecksumsResponse.class));
+    }
+
+    @Override
+    public Call<BufferedSource> getThumbnail(long fileId, Resolution resolution, boolean crop) {
+        requireValidThumbnailResolution(resolution);
+        Request request = newThumbnailRequest(fileId, ThumbnailSizeLimitsKt.normalize(ThumbnailSizeLimits.INSTANCE,resolution), crop);
+        return newCall(request, this::getAsRawBytes);
+    }
+
+    @Override
+    public Call<ContentLink> getThumbnailLink(long fileId, Resolution resolution, boolean crop) {
+        requireValidThumbnailResolution(resolution);
+        Request request = newThumbnailLinkRequest(fileId, ThumbnailSizeLimitsKt.normalize(ThumbnailSizeLimits.INSTANCE,resolution), crop);
+        return newCall(request, this::getAsThumbnailLink);
+    }
+
+    private static void requireValidThumbnailResolution(Resolution resolution) {
+        Objects.requireNonNull(resolution);
+        requireValidThumbnailSize(resolution.getWidth(), "Width");
+        requireValidThumbnailSize(resolution.getHeight(), "Height");
+    }
+
+    private static void requireValidThumbnailSize(int size, String name) {
+        if (!ThumbnailSizeLimits.INSTANCE.contains(size)) throw new IllegalArgumentException(String.format(Locale.US,"%s must be in the range [16,2048].", name));
     }
 
     @Override

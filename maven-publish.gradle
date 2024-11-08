@@ -84,7 +84,6 @@ afterEvaluate {
     }
 }
 
-
 signing {
     def signingKey = System.getenv("SIGNING_KEY")
     def signingKeyPassword = System.getenv("SIGNING_KEY_PASSWORD")

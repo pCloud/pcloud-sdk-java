@@ -19,35 +19,18 @@ package com.pcloud.sdk.internal.networking;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Date;
-import java.util.List;
-
-public class GetLinkResponse extends ApiResponse {
+public class GetFileLinkResponse extends ContentLinkResponse {
 
     @Expose
-    @SerializedName("path")
-    private String path;
+    @SerializedName("hash")
+    private String hash;
 
-    @Expose
-    @SerializedName("expires")
-    private Date expires;
 
-    @Expose
-    @SerializedName("hosts")
-    private List<String> hosts;
-
-    private GetLinkResponse() {
+    private GetFileLinkResponse() {
+        super();
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public Date getExpires() {
-        return expires;
-    }
-
-    public List<String> getHosts() {
-        return hosts;
+    public String getHash() {
+        return hash;
     }
 }

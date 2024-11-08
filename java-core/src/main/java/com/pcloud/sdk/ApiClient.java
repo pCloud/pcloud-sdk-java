@@ -721,9 +721,9 @@ public interface ApiClient {
     Call<FileLink> createFileLink(String path, DownloadOptions options);
 
     /**
-     * Download a {@link FileLink} to a specified destination.
+     * Download a {@link ContentLink} to a specified destination.
      * <p>
-     * Same as calling {@link #download(FileLink, DataSink, ProgressListener)} with a null {@code listener}
+     * Same as calling {@link #download(ContentLink, DataSink, ProgressListener)} with a null {@code listener}
      * and {@link FileLink#bestUrl()} for the {@code linkVariant} parameter.
      *
      * @param fileLink the file link to be downloaded. Must not be null.
@@ -735,12 +735,12 @@ public interface ApiClient {
      * @see ProgressListener
      * @see FileLink
      */
-    Call<Void> download(FileLink fileLink, DataSink sink);
+    Call<Void> download(ContentLink fileLink, DataSink sink);
 
     /**
-     * Download a {@link FileLink} to a specified destination.
+     * Download a {@link ContentLink} to a specified destination.
      * <p>
-     * Same as calling {@link #download(FileLink, URL, DataSink, ProgressListener)} with
+     * Same as calling {@link #download(ContentLink, URL, DataSink, ProgressListener)} with
      * * {@link FileLink#bestUrl()} for the {@code linkVariant} parameter.
      *
      * @param fileLink the file link to be downloaded. Must not be null.
@@ -753,7 +753,7 @@ public interface ApiClient {
      * @see ProgressListener
      * @see FileLink
      */
-    Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener);
+    Call<Void> download(ContentLink fileLink, DataSink sink, ProgressListener listener);
 
     /**
      * Download a {@link FileLink} to a specified destination.
@@ -783,14 +783,14 @@ public interface ApiClient {
      * @see ProgressListener
      * @see FileLink
      */
-    Call<Void> download(FileLink fileLink, URL linkVariant, DataSink sink, ProgressListener listener);
+    Call<Void> download(ContentLink fileLink, URL linkVariant, DataSink sink, ProgressListener listener);
 
     /**
      * Get the content of a specified remote file.
      * <p>
      * This call is a shorthand for obtaining a {@link FileLink} object via
      * {@link #createFileLink(RemoteFile, DownloadOptions)} with {@link DownloadOptions#DEFAULT},
-     * then using it with the {@link #download(FileLink)} method.
+     * then using it with the {@link #download(ContentLink)} method.
      * <p>
      * Refer to the file links <a href="https://docs.pcloud.com/methods/streaming/getfilelink.html" target="_blank"> documentation page</a>
      * for details on any {@link ApiError} errors.
@@ -803,26 +803,24 @@ public interface ApiClient {
      * @return {@link Call} which results in a bytes source
      * @throws IllegalArgumentException on a null {@code file} argument.
      * @see #createFileLink(long, DownloadOptions)
-     * @see #download(FileLink)
+     * @see #download(ContentLink)
      */
     Call<BufferedSource> download(RemoteFile file);
 
     /**
-     * Get the content of a specified file link.
+     * Get the content of a specified content link.
      * <p>
-     * Same as calling {@link #download(FileLink, URL)} with
+     * Same as calling {@link #download(ContentLink, URL)} with
      * {@link FileLink#bestUrl()} for the {@code linkVariant} parameter.
      *
      * @param fileLink the file link to be downloaded. Must not be null.
      * @return {@link Call} which results in a bytes source
      * @throws IllegalArgumentException on a null {@code fileLink} argument.
      */
-    Call<BufferedSource> download(FileLink fileLink);
-
-
+    Call<BufferedSource> download(ContentLink fileLink);
 
     /**
-     * Get the content of a specified file link.
+     * Get the content of a specified content link.
      * <p>
      * Upon success, this call will return a bytes source of the file that
      * the provided {@code fileLink} object was created for.
@@ -839,7 +837,7 @@ public interface ApiClient {
      * @return {@link Call} which results in a bytes source
      * @throws IllegalArgumentException on a null {@code fileLink} argument.
      */
-    Call<BufferedSource> download(FileLink fileLink, URL linkVariant);
+    Call<BufferedSource> download(ContentLink fileLink, URL linkVariant);
 
     /**
      * Copy a specified file.
@@ -1218,6 +1216,39 @@ public interface ApiClient {
     Call<Checksums> getChecksums(String filePath);
 
     /**
+     * Load a thumbnail for a given file by its id.
+     * <p>
+     *
+     * @param fileId identifier of the file
+     * @param size the required thumbnail dimensions.
+     *             The resulting thumbnail's size may not exactly match the requested size.
+     * @param crop {@code true} to crop the image to fit the image, {@code false} to keep the original aspect ratio
+     * @return the thumbnail's data as a {@code BufferedSource}.
+     *
+     * @throws IllegalArgumentException if the requested thumbnail size is outside [16,2048].
+     * @throws IllegalArgumentException if size is null
+     * @see RemoteFile#hasThumbnail()
+     * @see Resolution
+     * */
+    Call<BufferedSource> getThumbnail(long fileId, Resolution size, boolean crop);
+
+    /**
+     * Generate a link for the thumbnail of a given file by its id.
+     *
+     * @param fileId identifier of the file
+     * @param size the required thumbnail dimensions.
+     *             The resulting thumbnail's size may not exactly match the requested size.
+     * @param crop {@code true} to crop the image to fit the image, {@code false} to keep the original aspect ratio
+     * @return a {@code ContentLink} with for the thumbnail's data.
+     *
+     * @throws IllegalArgumentException if the requested thumbnail size is outside [16,2048].
+     * @throws IllegalArgumentException if size is null
+     * @see RemoteFile#hasThumbnail()
+     * @see Resolution
+     * */
+    Call<ContentLink> getThumbnailLink(long fileId, Resolution size, boolean crop);
+
+    /**
      * Create a new shared {@link ApiClient} instance.
      *
      * @return a {@link Builder} sharing the same configuration as this instance.
@@ -1394,7 +1425,7 @@ public interface ApiClient {
          * @return the same {@link Builder} instance
          * @see ProgressListener
          * @see ApiClient#createFile(long, String, DataSource, Date, ProgressListener)
-         * @see ApiClient#download(FileLink, DataSink, ProgressListener)
+         * @see ApiClient#download(ContentLink, DataSink, ProgressListener)
          * @see RemoteData#download(DataSink, ProgressListener)
          */
         Builder progressCallbackThreshold(long bytes);

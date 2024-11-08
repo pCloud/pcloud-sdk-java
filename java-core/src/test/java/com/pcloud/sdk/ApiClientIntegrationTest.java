@@ -24,7 +24,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.UUID;
 
@@ -32,6 +36,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
@@ -413,6 +418,45 @@ public class ApiClientIntegrationTest {
         Checksums checksums = apiClient.getChecksums("/"+name).execute();
 
         assertChecksumsMatch(content, newFile, checksums);
+    }
+
+    @Test
+    public void testThumbnail() throws Exception {
+
+        String someName = "image_file-"+UUID.randomUUID()+".png";
+        File imageContent = Paths.get(this.getClass().getResource("/image_file.png").toURI()).toFile();
+        Resolution thumbnailResolution = new Resolution(200, 200);
+
+        RemoteFile remoteFile = apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, someName, DataSource.create(imageContent)).execute();
+
+        if (!remoteFile.hasThumbnail()) throw new IllegalStateException("expected remote file does not have a thumbnail.");
+
+        BufferedSource thumbContent = apiClient.getThumbnail(remoteFile.fileId(), thumbnailResolution, true).execute();
+        try {
+            ByteString contents = thumbContent.readByteString();
+            assertTrue(contents.size()> 0);
+        } finally {
+            thumbContent.close();
+        }
+    }
+
+    @Test
+    public void testThumbnailLink() throws Exception {
+
+        String someName = "image_file-"+UUID.randomUUID()+".png";
+        File imageContent = Paths.get(this.getClass().getResource("/image_file.png").toURI()).toFile();
+        Resolution thumbnailResolution = new Resolution(200, 200);
+
+        RemoteFile remoteFile = apiClient.createFile(RemoteFolder.ROOT_FOLDER_ID, someName, DataSource.create(imageContent)).execute();
+
+        if (!remoteFile.hasThumbnail()) throw new IllegalStateException("expected remote file does not have a thumbnail.");
+
+        ContentLink thumbLink = apiClient.getThumbnailLink(remoteFile.fileId(), thumbnailResolution, true).execute();
+
+        assertNotNull(thumbLink.expirationDate());
+        assertNotNull(thumbLink.bestUrl());
+        assertNotNull(thumbLink.urls());
+        assertFalse(thumbLink.urls().isEmpty());
     }
 
     private void assertChecksumsMatch(ByteString content, RemoteFile newFile, Checksums checksums) throws IOException, ApiError {

@@ -2,26 +2,27 @@ apply from: rootProject.file('publishing.gradle')
 
 group = getPublishProperty('groupId')
 
-
-def ossrhUsername, ossrhPassword, sonatypeStagingProfileId = ''
-
-File secretPropsFile = project.rootProject.file('local.properties')
-if (secretPropsFile.exists()) {
-    Properties properties = new Properties()
-    properties.load(secretPropsFile.newDataInputStream())
-    ossrhUsername = properties.getProperty("ossrhUsername")
-    ossrhPassword = properties.getProperty("ossrhPassword")
-    sonatypeStagingProfileId = properties.getProperty("sonatypeStagingProfileId")
-
-} else {
-    ossrhUsername = System.getenv('OSSRH_USERNAME')
-    ossrhPassword = System.getenv('OSSRH_PASSWORD')
-    sonatypeStagingProfileId = System.getenv('SONATYPE_STAGING_PROFILE_ID')
-}
-
 nexusPublishing {
     repositories {
         sonatype {
+            def ossrhUsername, ossrhPassword, sonatypeStagingProfileId = ''
+
+            if (System.getenv().containsKey('CI')) {
+                ossrhUsername = System.getenv('OSSRH_USERNAME')
+                ossrhPassword = System.getenv('OSSRH_PASSWORD')
+                sonatypeStagingProfileId = System.getenv('SONATYPE_STAGING_PROFILE_ID')
+            } else {
+                File secretPropsFile = project.rootProject.file('local.properties')
+                Properties properties = new Properties()
+                try(def input = secretPropsFile.newDataInputStream()) {
+                    properties.load(input)
+                }
+
+                ossrhUsername = properties.getProperty("ossrhUsername")
+                ossrhPassword = properties.getProperty("ossrhPassword")
+                sonatypeStagingProfileId = properties.getProperty("sonatypeStagingProfileId")
+            }
+
             nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
             username = ossrhUsername

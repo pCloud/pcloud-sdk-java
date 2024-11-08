@@ -64,6 +64,11 @@ public class DummyFile implements RemoteFile {
     }
 
     @Override
+    public boolean hasThumbnail() {
+        return false;
+    }
+
+    @Override
     public long parentFolderId() {
         return 0;
     }

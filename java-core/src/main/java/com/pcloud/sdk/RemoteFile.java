@@ -46,6 +46,11 @@ public interface RemoteFile extends RemoteEntry, RemoteData {
     long size();
 
     /**
+     * @return {@code true} if a thumbnail can be generated for the file, {@code false} otherwise.
+     * */
+    boolean hasThumbnail();
+
+    /**
      * @return the hash of the file content. Can be used to detect content changes.
      */
     String hash();

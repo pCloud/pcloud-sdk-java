@@ -34,7 +34,7 @@ public class RealFileLinkTest extends BaseFileLinkTest {
     @Before
     public void setUp() throws Exception {
         service = DummyDownloadingApiClient.create();
-        testInstance(new RealFileLink(service, new Date(), Collections.singletonList(new URL("http://www.pcloud.com"))));
+        testInstance(new RealFileLink(service, new Date(), Collections.singletonList(new URL("http://www.pcloud.com")), "123124"));
     }
 
     @After

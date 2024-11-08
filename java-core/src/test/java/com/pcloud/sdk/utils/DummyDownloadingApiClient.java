@@ -23,6 +23,7 @@ import com.pcloud.sdk.Authenticator;
 import com.pcloud.sdk.Call;
 import com.pcloud.sdk.Callback;
 import com.pcloud.sdk.Checksums;
+import com.pcloud.sdk.ContentLink;
 import com.pcloud.sdk.DataSink;
 import com.pcloud.sdk.DataSource;
 import com.pcloud.sdk.DownloadOptions;
@@ -31,6 +32,7 @@ import com.pcloud.sdk.ProgressListener;
 import com.pcloud.sdk.RemoteEntry;
 import com.pcloud.sdk.RemoteFile;
 import com.pcloud.sdk.RemoteFolder;
+import com.pcloud.sdk.Resolution;
 import com.pcloud.sdk.UploadOptions;
 import com.pcloud.sdk.UserInfo;
 
@@ -267,17 +269,17 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
-    public Call<Void> download(FileLink fileLink, DataSink sink) {
+    public Call<Void> download(ContentLink fileLink, DataSink sink) {
         return new DummyDownloadCall(sink, null);
     }
 
     @Override
-    public Call<Void> download(FileLink fileLink, DataSink sink, ProgressListener listener) {
+    public Call<Void> download(ContentLink fileLink, DataSink sink, ProgressListener listener) {
         return new DummyDownloadCall(sink, listener);
     }
 
     @Override
-    public Call<Void> download(FileLink fileLink, URL linkVariant, DataSink sink, ProgressListener listener) {
+    public Call<Void> download(ContentLink fileLink, URL linkVariant, DataSink sink, ProgressListener listener) {
         return new DummyDownloadCall(sink, listener);
     }
 
@@ -287,12 +289,12 @@ public class DummyDownloadingApiClient implements ApiClient {
     }
 
     @Override
-    public Call<BufferedSource> download(FileLink fileLink) {
+    public Call<BufferedSource> download(ContentLink fileLink) {
         return new DummyCall<>(createSource(data));
     }
 
     @Override
-    public Call<BufferedSource> download(FileLink fileLink, URL linkVariant) {
+    public Call<BufferedSource> download(ContentLink fileLink, URL linkVariant) {
         return new DummyCall<>(createSource(data));
     }
 
@@ -423,6 +425,16 @@ public class DummyDownloadingApiClient implements ApiClient {
 
     @Override
     public Call<Checksums> getChecksums(String filePath) {
+        return null;
+    }
+
+    @Override
+    public Call<BufferedSource> getThumbnail(long fileId, Resolution resolution, boolean crop) {
+        return null;
+    }
+
+    @Override
+    public Call<ContentLink> getThumbnailLink(long fileId, Resolution resolution, boolean crop) {
         return null;
     }
 
